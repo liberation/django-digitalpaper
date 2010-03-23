@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>reader</title>
+    <style type="text/css">
+.book {
+    position: relative;
+    display: inline-block;
+}
+#evenSide, #oddSide {
+    position: relative;
+    display: inline-block;
+    width: 388px;
+    height: 500px;
+    outline: 1px solid blue;
+}
+.page {
+    position: absolute;
+    visibility: hidden;
+}
+.page .area {
+    position: absolute;
+    display: block;
+    background-color: black;
+    opacity: 0;
+}
+    </style>
+</head>
+<body>
+
+<a id="previousButton" href="#">Previous</a>
+<div class="book">
+    <div id="evenSide"></div>
+    <div id="oddSide"></div>
+</div>
+<a id="nextButton" href="#">Next</a>
+
+<script type="text/javascript" src="jquery-1.4.2.js"></script>
+<script type="text/javascript">
+$.noConflict();
+</script>
+
+<script type="text/javascript" src="config.js"></script>
+<script type="text/javascript" src="reader.js"></script>
+<script type="text/javascript" src="page.js"></script>
+<script type="text/javascript">
+// Variables initialisées par le backend
+var publicationId = 246;
+var bookName = "Cin\u00e9ma";
+
+jQuery(document).ready(function () {libeReader.init(publicationId, bookName)})
+</script>
+</body>
+</html>
