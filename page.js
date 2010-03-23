@@ -22,24 +22,32 @@ var libePage = function(pageNumber, pageId) {
             
             var areaElement = document.createElement('a');
             areaElement.className = "area";
-            areaElement.href = area["@objectId"];
+            areaElement.href = "#";
             areaElement.style.left = left + "px";
             areaElement.style.top = top + "px";
             areaElement.style.width = width + "px";
             areaElement.style.height = height + "px";
             
             areaElement = jQuery(areaElement);
+            areaElement.click(openArea);
             _areasElement.push(areaElement);
             jQuery(_pageElement).append(areaElement);
             
-            areaElement.data('objectId', area["@objectId"]);
+            areaElement.data('area', area);
             areaElement.hover(hoverInArea, hoverOutArea);
+        }
+    }
+    
+    function openArea() {
+        var data = jQuery(this).data('area');
+        if (data["@objectClass"] == "article") {
+            window.open(data["@objectId"]);
         }
     }
 
     function animateAreas(objectId, animation, duration) {
         for (var i = 0, il = _areasElement.length; i < il; i++) {
-            if (_areasElement[i].data('objectId') == objectId) {
+            if (_areasElement[i].data('area')["@objectId"] == objectId) {
                 _areasElement[i].animate(animation, duration);
             }
         }
@@ -47,13 +55,13 @@ var libePage = function(pageNumber, pageId) {
     
     function hoverInArea() {
         var target = jQuery(this);
-        var objectId = target.data('objectId');
+        var objectId = target.data('area')["@objectId"];
         _lastObjectId = objectId;
         animateAreas(objectId, {opacity: 0.3}, 300);
     }
     function hoverOutArea() {
         var target = jQuery(this);
-        var objectId = target.data('objectId');
+        var objectId = target.data('area')["@objectId"];
         _lastObjectId = null;
         setTimeout(function () {
             // Don't animate if we come from the same article
