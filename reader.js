@@ -6,6 +6,7 @@ var libeReader = function() {
     }
     
     function showPage(number) {
+
         if (_displayedPage != "undefined") {
             if (_pages[_displayedPage]) {
                 _pages[_displayedPage].hide();
@@ -50,28 +51,20 @@ var libeReader = function() {
             }
         }
         
-        var _pagesToFetch = [];
-        for (var i in _selectedBook.page) {
+        _pages = new Array(parseInt(_selectedBook.total, 10));
+        for (var i = 0, il = _selectedBook.page.length; i < il ; i++) {
             var page = _selectedBook.page[i];
-            _pagesToFetch[page.pageNumber] = page.id;
+            _pages[page.pageNumber] = libePage(page.pageNumber, page.id);
         }
         
-        var firstPageDone = false;
-        _pages = [];
-        // Pour être sur de charger les pages dans l'ordre numérique.
-        for(var i = 0, il = _pagesToFetch.length; i < il; i++) {
-            if (!_pagesToFetch[i]) {
-                continue;
-            }
-            
-            _pages[i] = libePage(i, _pagesToFetch[i]);
-            
-            if (!firstPageDone) {
-                showPage(i);
-                firstPageDone = true;
+        var pageToShow = 0;
+        if (location.hash != "") {
+            var possiblePage = parseInt(location.hash.split('#')[1], 10);
+            if (possiblePage >= 0 && possiblePage <= _selectedBook.total) {
+                pageToShow = possiblePage;
             }
         }
-        
+        showPage(pageToShow);
     }
     
     function init(publicationId, bookName) {
