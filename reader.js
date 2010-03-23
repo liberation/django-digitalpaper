@@ -34,10 +34,18 @@ var libeReader = function() {
         e.preventDefault();
         showPage(_displayedPage - 2);
     }
-
     function showNextPage(e) {
         e.preventDefault();
         showPage(_displayedPage + 2);
+    }
+    
+    function showFirstPage(e) {
+        e.preventDefault();
+        showPage(0);
+    }
+    function showLastPage(e) {
+        e.preventDefault();
+        showPage(_selectedBook.total);
     }
     
     function handlePublication(data) {
@@ -76,6 +84,8 @@ var libeReader = function() {
         
         jQuery('#previousButton').click(showPreviousPage);
         jQuery('#nextButton').click(showNextPage);
+        jQuery('#firstButton').click(showFirstPage);
+        jQuery('#lastButton').click(showLastPage);
     }
     
     return {
