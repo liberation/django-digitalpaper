@@ -13,7 +13,6 @@
     display: inline-block;
     width: 388px;
     height: 500px;
-    outline: 1px solid blue;
 }
 .page {
     position: absolute;
@@ -25,6 +24,17 @@
     background-color: black;
     opacity: 0;
 }
+#previousCorner, #nextCorner {
+    position: absolute;
+    top: 0;
+    opacity: 0;
+}
+#previousCorner {
+    left: 0;
+}
+#nextCorner {
+    right: 0;
+}
     </style>
 </head>
 <body>
@@ -34,6 +44,8 @@
 <div class="book">
     <div id="evenSide"></div>
     <div id="oddSide"></div>
+    <a id="previousCorner" href="#"><img src="left-corner.png"></a>
+    <a id="nextCorner" href="#"><img src="right-corner.png"></a>
 </div>
 <a id="nextButton" href="#">Next</a>
 <a id="lastButton" href="#">Last</a>

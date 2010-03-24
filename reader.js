@@ -5,6 +5,29 @@ var libeReader = function() {
         console.log(XMLHttpRequest, textStatus, errorThrown);
     }
     
+    function showHoverCorner() {
+        jQuery(this).css('opacity', 1);
+    }
+    function hideHoverCorner() {
+        jQuery(this).css('opacity', 0);
+    }
+    
+    function displayCorners() {
+        var previousCorner = jQuery('#previousCorner');
+        if (_displayedPage -2 >= 0) {
+            previousCorner.show();
+        } else {
+            previousCorner.hide();
+        }
+        
+        var nextCorner = jQuery('#nextCorner');
+        if (_displayedPage + 2 <= _selectedBook.total) {
+            nextCorner.show();
+        } else {
+            nextCorner.hide();
+        }
+    }
+    
     function showPage(number) {
 
         if (_displayedPage != "undefined") {
@@ -28,6 +51,8 @@ var libeReader = function() {
         if (_pages[_displayedPage + 1]) {
             _pages[_displayedPage + 1].show();
         }
+        
+        displayCorners();
     }
     
     function showPreviousPage(e) {
@@ -82,8 +107,9 @@ var libeReader = function() {
         var url = libeConfig.apiRoot + "publication_" + publicationId + ".json";
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: defaultAjaxError});
         
-        jQuery('#previousButton').click(showPreviousPage);
-        jQuery('#nextButton').click(showNextPage);
+        jQuery('#previousButton, #previousCorner').click(showPreviousPage);
+        jQuery('#nextButton, #nextCorner').click(showNextPage);
+        jQuery('#previousCorner, #nextCorner').hover(showHoverCorner, hideHoverCorner)
         jQuery('#firstButton').click(showFirstPage);
         jQuery('#lastButton').click(showLastPage);
     }
