@@ -34,7 +34,18 @@ var libePage = function(pageNumber, pageId) {
             jQuery(_pageElement).append(areaElement);
             
             areaElement.data('area', area);
-            areaElement.hover(hoverInArea, hoverOutArea);
+            areaElement.hover(function() {
+                var target = jQuery(this);
+                var objectId = target.data('area')["@objectId"];
+                jQuery('.area').trigger("highlight-area-" + objectId);
+            }, function() {
+                var target = jQuery(this);
+                var objectId = target.data('area')["@objectId"];
+                jQuery('.area').trigger("unhighlight-area-" + objectId);
+            });
+            
+            areaElement.bind('highlight-area-' + area["@objectId"], highlightArea);
+            areaElement.bind('unhighlight-area-' + area["@objectId"], unhighlightArea);
         }
     }
     
@@ -45,34 +56,13 @@ var libePage = function(pageNumber, pageId) {
         }
     }
 
-    function animateAreas(objectId, animation, duration) {
-        for (var i = 0, il = _areasElement.length; i < il; i++) {
-            if (_areasElement[i].data('area')["@objectId"] == objectId) {
-                _areasElement[i].animate(animation, duration);
-            }
-        }
+    function highlightArea() {
+        jQuery(this).animate({opacity: 0.3}, 300);
     }
-    
-    function hoverInArea() {
-        var target = jQuery(this);
-        var objectId = target.data('area')["@objectId"];
-        _lastObjectId = objectId;
-        animateAreas(objectId, {opacity: 0.3}, 300);
+    function unhighlightArea() {
+        jQuery(this).animate({opacity: 0}, 300);
     }
-    function hoverOutArea() {
-        var target = jQuery(this);
-        var objectId = target.data('area')["@objectId"];
-        _lastObjectId = null;
-        setTimeout(function () {
-            // Don't animate if we come from the same article
-            if (_lastObjectId == objectId) {
-                return;
-            }
-            
-            animateAreas(objectId, {opacity: 0}, 300);
-        }, 50);
-    }
-    
+        
     function show() {
         _pageElement.style.visibility = "visible";
     }
@@ -104,6 +94,6 @@ var libePage = function(pageNumber, pageId) {
 
     return {
         show: show,
-        hide: hide,
+        hide: hide
     }
 }
