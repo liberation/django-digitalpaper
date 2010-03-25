@@ -1,5 +1,5 @@
 var libeReader = function() {
-    var _publicationId, _bookName, _publication, _selectedBook, _pages, _displayedPage;
+    var _publicationId, _bookName, _publication, _selectedBook, _pages, _displayedPage, _ratio;
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
         console.log(XMLHttpRequest, textStatus, errorThrown);
@@ -73,6 +73,14 @@ var libeReader = function() {
         showPage(_selectedBook.total);
     }
     
+    function ratioKnown(e, ratio) {
+        _ratio = ratio;
+        var sides = jQuery('#evenSide, #oddSide');
+        sides.width(sides.height() * ratio);
+        console.warn(sides.height(), sides.width(), ratio);
+        jQuery(window).unbind(e);
+    }
+    
     function handlePublication(data) {
         _publication = data.publication[0];
         
@@ -83,6 +91,9 @@ var libeReader = function() {
                 break;
             }
         }
+        
+        // Hack to know the ratio of the pages for a publication
+        jQuery(window).bind('ratio-known', ratioKnown);
         
         _pages = new Array(parseInt(_selectedBook.total, 10));
         for (var i = 0, il = _selectedBook.page.length; i < il ; i++) {

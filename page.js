@@ -9,16 +9,19 @@ var libePage = function(pageNumber, pageId) {
         if (!data.map[0].area) {
             return;
         }
+        var map = data.map[0];
         
-        var ratio = libeConfig.pageWidth / data.map[0]["@width"];
+        var ratio = map["@width"] / map["@height"]
+        jQuery(window).trigger('ratio-known', [ratio]);
+        var reductionRatio = libeConfig.pageWidth / map["@width"];
         
-        for (var i=0, il=data.map[0].area.length; i < il; i++) {
-            var area = data.map[0].area[i];
+        for (var i=0, il=map.area.length; i < il; i++) {
+            var area = map.area[i];
             var coords = area["@coords"].split(",");
-            var left = coords[0] * ratio;
-            var top = coords[1] * ratio;
-            var width = (coords[2] - coords[0]) * ratio;
-            var height = (coords[3] - coords[1]) * ratio;
+            var left = coords[0] * reductionRatio;
+            var top = coords[1] * reductionRatio;
+            var width = (coords[2] - coords[0]) * reductionRatio;
+            var height = (coords[3] - coords[1]) * reductionRatio;
             
             var areaElement = document.createElement('a');
             areaElement.className = "area";
@@ -64,11 +67,11 @@ var libePage = function(pageNumber, pageId) {
     }
         
     function show() {
-        _pageElement.style.visibility = "visible";
+        jQuery(_pageElement).show();
     }
     
     function hide() {
-        _pageElement.style.visibility = "hidden";
+        jQuery(_pageElement).hide();
     }
     
     // Init Code
