@@ -1,5 +1,5 @@
 var libePage = function(pageNumber, pageId) {
-    var _pageNumber, _pageId, _pageElement, _areasElement = [], _lastObjectId;
+    var _pageNumber, _pageId, _imageSource, _pageElement, _areasElement = [], _lastObjectId;
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
         console.log(XMLHttpRequest, textStatus, errorThrown);
@@ -83,7 +83,7 @@ var libePage = function(pageNumber, pageId) {
     _pageElement.className = "page";
     
     var img = document.createElement("img");
-    img.src = libeConfig.apiRoot + 'page_preview_' + _pageId + '.jpg';
+    img.src = _imageSource = libeConfig.apiRoot + 'page_preview_' + _pageId + '.jpg';
     _pageElement.appendChild(img);
     
     if (_pageNumber % 2 == 0) {
@@ -97,6 +97,7 @@ var libePage = function(pageNumber, pageId) {
 
     return {
         show: show,
-        hide: hide
+        hide: hide,
+        imageSource: _imageSource
     }
 }

@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <title>reader</title>
     <style type="text/css">
+img {
+    border: 0;
+}
 .book {
     position: relative;
     display: inline-block;
@@ -23,11 +26,13 @@
     display: block;
     background-color: black;
     opacity: 0;
+    filter: alpha(opacity=0);
 }
 #previousCorner, #nextCorner {
     position: absolute;
     top: 0;
     opacity: 0;
+    filter: alpha(opacity=0);
 }
 #previousCorner {
     left: 0;

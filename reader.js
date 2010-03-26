@@ -29,7 +29,55 @@ var libeReader = function() {
     }
     
     function showPage(number) {
-
+        var newDisplayedPage = number - number % 2;
+        
+        // Non-existant page, nothing to do
+        if (!_pages[newDisplayedPage] && !_pages[newDisplayedPage + 1]) {
+            return;
+        }
+        
+        var evenSide = jQuery('#evenSide');
+        var finalWidth = evenSide.width();
+        var height = evenSide.parent().height();
+        var position = evenSide.position();
+        
+        var leftPage = jQuery(document.createElement('div'));
+        var backgroundLeft = 'white';
+        if (_pages[newDisplayedPage]) {
+            backgroundLeft = 'url(' + _pages[newDisplayedPage].imageSource + ')';
+        }
+        leftPage.css({'background': backgroundLeft, 'width': '50%', 'height': '100%', 'display': 'inline-block'});
+        
+        var rightPage = jQuery(document.createElement('div'));
+        var backgroundRight = 'white';
+        if (_pages[newDisplayedPage + 1]) {
+            backgroundRight = 'url(' + _pages[newDisplayedPage + 1].imageSource + ')';
+        }
+        rightPage.css({'background': backgroundRight, 'width': '50%', 'height': '100%','display': 'inline-block'});
+        
+        
+        var transitionElement = jQuery(document.createElement('div'));
+        transitionElement.css({'width': 0, 'height': height, 'top': 0, 'position': 'absolute'});
+        if (_displayedPage > newDisplayedPage) {
+            transitionElement.css({'left': 0});
+        } else {
+            transitionElement.css({'right': 0});
+            leftPage.css({'background-position': 'right top'});
+            rightPage.css({'background-position': 'right top'});
+        }
+        transitionElement.append(leftPage);
+        transitionElement.append(rightPage);
+        
+        var dummyPositionElement = jQuery(document.createElement('div'));
+        dummyPositionElement.css({'width': 2 * finalWidth, 'height': height,
+            'left': position.left, 'top': 0, 'position': 'absolute'});
+        dummyPositionElement.append(transitionElement);
+        evenSide.parent().append(dummyPositionElement);
+        
+        transitionElement.animate({'width': 2 * finalWidth}, function() { cleanAfterShowPage(number); jQuery(this).parent().detach()});
+    }
+    
+    function cleanAfterShowPage(number) {
         if (_displayedPage != "undefined") {
             if (_pages[_displayedPage]) {
                 _pages[_displayedPage].hide();
@@ -77,7 +125,6 @@ var libeReader = function() {
         _ratio = ratio;
         var sides = jQuery('#evenSide, #oddSide');
         sides.width(sides.height() * ratio);
-        console.warn(sides.height(), sides.width(), ratio);
         jQuery(window).unbind(e);
     }
     
@@ -108,7 +155,7 @@ var libeReader = function() {
                 pageToShow = possiblePage;
             }
         }
-        showPage(pageToShow);
+        cleanAfterShowPage(pageToShow);
     }
     
     function init(publicationId, bookName) {
