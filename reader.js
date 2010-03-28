@@ -42,37 +42,34 @@ var libeReader = function() {
         var position = evenSide.position();
         
         var leftPage = jQuery(document.createElement('div'));
-        var backgroundLeft = 'white';
+        leftPage.addClass('leftPage');
         if (_pages[newDisplayedPage]) {
-            backgroundLeft = 'url(' + _pages[newDisplayedPage].imageSource + ')';
+            leftPage.css('background-image', 'url(' + _pages[newDisplayedPage].imageSource + ')');
         }
-        leftPage.css({'background': backgroundLeft, 'width': '50%', 'height': '100%', 'display': 'inline-block'});
         
         var rightPage = jQuery(document.createElement('div'));
-        var backgroundRight = 'white';
+        rightPage.addClass('rightPage');
         if (_pages[newDisplayedPage + 1]) {
-            backgroundRight = 'url(' + _pages[newDisplayedPage + 1].imageSource + ')';
+            rightPage.css('background-image', 'url(' + _pages[newDisplayedPage + 1].imageSource + ')');
         }
-        rightPage.css({'background': backgroundRight, 'width': '50%', 'height': '100%','display': 'inline-block'});
-        
         
         var transitionElement = jQuery(document.createElement('div'));
-        transitionElement.css({'width': 0, 'height': height, 'top': 0, 'position': 'absolute'});
+        transitionElement.addClass('transitionPage');
+        transitionElement.css({'height': height});
         if (_displayedPage > newDisplayedPage) {
-            transitionElement.css({'left': 0});
+            transitionElement.css('left', 0);
         } else {
-            transitionElement.css({'right': 0});
-            leftPage.css({'background-position': 'right top'});
-            rightPage.css({'background-position': 'right top'});
+            transitionElement.css('right', 0);
         }
         transitionElement.append(leftPage);
         transitionElement.append(rightPage);
         
-        var dummyPositionElement = jQuery(document.createElement('div'));
-        dummyPositionElement.css({'width': 2 * finalWidth, 'height': height,
-            'left': position.left, 'top': 0, 'position': 'absolute'});
-        dummyPositionElement.append(transitionElement);
-        evenSide.parent().append(dummyPositionElement);
+        var transitionContainerElement = jQuery(document.createElement('div'));
+        transitionContainerElement.addClass('transitionContainer');
+        transitionContainerElement.css({'width': 2 * finalWidth, 'height': height,
+            'left': position.left});
+        transitionContainerElement.append(transitionElement);
+        evenSide.parent().append(transitionContainerElement);
         
         transitionElement.animate({'width': 2 * finalWidth}, function() { cleanAfterShowPage(number); jQuery(this).parent().detach()});
     }

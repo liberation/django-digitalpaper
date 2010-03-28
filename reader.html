@@ -28,6 +28,28 @@ img {
     opacity: 0;
     filter: alpha(opacity=0);
 }
+
+.leftPage, .rightPage {
+    background-color: white;
+    width: 50%;
+    height: 100%;
+    display: inline-block;
+}
+.leftPage {
+    background-position: left top;
+}
+.rightPage {
+    background-position: right top;
+}
+.transitionPage {
+    position: absolute;
+    width: 0;
+    top: 0;
+}
+.transitionContainer {
+    position: absolute;
+    top: 0;
+}
 #previousCorner, #nextCorner {
     position: absolute;
     top: 0;
