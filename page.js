@@ -40,11 +40,18 @@ var libePage = function(pageNumber, pageId) {
             areaElement.hover(function() {
                 var target = jQuery(this);
                 var objectId = target.data('area')["@objectId"];
+                _lastObjectId = objectId;
                 jQuery('.area').trigger("highlight-area-" + objectId);
             }, function() {
                 var target = jQuery(this);
                 var objectId = target.data('area')["@objectId"];
-                jQuery('.area').trigger("unhighlight-area-" + objectId);
+                _lastObjectId = null;
+                setTimeout(function () {
+                    if (_lastObjectId == objectId) {
+                        return;
+                    }
+                    jQuery('.area').trigger("unhighlight-area-" + objectId);
+                }, 100);
             });
             
             areaElement.bind('highlight-area-' + area["@objectId"], highlightArea);
