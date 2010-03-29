@@ -5,6 +5,20 @@ var libeReader = function() {
         console.log(XMLHttpRequest, textStatus, errorThrown);
     }
     
+    function bindButtons() {
+        jQuery('#previousButton, #previousCorner').click(showPreviousPage);
+        jQuery('#nextButton, #nextCorner').click(showNextPage);
+        jQuery('#firstButton').click(showFirstPage);
+        jQuery('#lastButton').click(showLastPage);
+    }
+    
+    function unbindButtons() {
+        jQuery('#previousButton, #previousCorner').unbind("click", showPreviousPage);
+        jQuery('#nextButton, #nextCorner').unbind("click", showNextPage);
+        jQuery('#firstButton').unbind("click", showFirstPage);
+        jQuery('#lastButton').unbind("click", showLastPage);
+    }
+    
     function showHoverCorner() {
         jQuery(this).css('opacity', 1);
     }
@@ -36,6 +50,8 @@ var libeReader = function() {
             return;
         }
         
+        unbindButtons();
+        
         var evenSide = jQuery('#evenSide');
         var finalWidth = evenSide.width();
         var height = evenSide.parent().height();
@@ -55,7 +71,7 @@ var libeReader = function() {
         
         var transitionElement = jQuery(document.createElement('div'));
         transitionElement.addClass('transitionPage');
-        transitionElement.css({'height': height});
+        transitionElement.css('height', height);
         if (_displayedPage > newDisplayedPage) {
             transitionElement.css('left', 0);
         } else {
@@ -98,6 +114,7 @@ var libeReader = function() {
         }
         
         displayCorners();
+        bindButtons();
     }
     
     function showPreviousPage(e) {
@@ -162,11 +179,7 @@ var libeReader = function() {
         var url = libeConfig.apiRoot + "publication_" + publicationId + ".json";
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: defaultAjaxError});
         
-        jQuery('#previousButton, #previousCorner').click(showPreviousPage);
-        jQuery('#nextButton, #nextCorner').click(showNextPage);
         jQuery('#previousCorner, #nextCorner').hover(showHoverCorner, hideHoverCorner)
-        jQuery('#firstButton').click(showFirstPage);
-        jQuery('#lastButton').click(showLastPage);
     }
     
     return {
