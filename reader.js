@@ -26,19 +26,19 @@ var libeReader = function() {
         jQuery(this).css('opacity', 0);
     }
     
-    function displayCorners() {
-        var previousCorner = jQuery('#previousCorner');
+    function displayPagination() {
+        var previousButtons = jQuery('#previousCorner, #previousButton, #firstButton');
         if (_displayedPage -2 >= 0) {
-            previousCorner.show();
+            previousButtons.show();
         } else {
-            previousCorner.hide();
+            previousButtons.hide();
         }
         
-        var nextCorner = jQuery('#nextCorner');
+        var nextButtons = jQuery('#nextCorner, #nextButton, #lastButton');
         if (_displayedPage + 2 <= _selectedBook.total) {
-            nextCorner.show();
+            nextButtons.show();
         } else {
-            nextCorner.hide();
+            nextButtons.hide();
         }
     }
     
@@ -113,7 +113,7 @@ var libeReader = function() {
             _pages[_displayedPage + 1].show();
         }
         
-        displayCorners();
+        displayPagination();
         bindButtons();
     }
     
