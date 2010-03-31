@@ -136,9 +136,16 @@ var libeReader = function() {
     }
     
     function ratioKnown(e, ratio) {
-        _ratio = ratio;
         var sides = jQuery('#evenSide, #oddSide');
-        sides.width(sides.height() * ratio);
+        var height = sides.height();
+        // If no image downloaded, leave and wait for the next event
+        if (height < 100) {
+            return;
+        }
+
+        _ratio = ratio;
+        
+        sides.width(height * ratio);
         jQuery(window).unbind(e);
     }
     
