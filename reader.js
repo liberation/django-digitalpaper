@@ -1,5 +1,7 @@
 var libeReader = function() {
-    var _publicationId, _bookName, _publication, _selectedBook, _pages, _displayedPage, _ratio;
+    var _publicationId, _bookName, _publication, _selectedBook, _pages, _displayedPage,
+        _pageHeight, _pageWidth,_ratio, _zoomWindow;
+    var _zoomFactor = 4;
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
         console.log(XMLHttpRequest, textStatus, errorThrown);
@@ -10,6 +12,7 @@ var libeReader = function() {
         jQuery('#nextButton, #nextCorner').click(showNextPage);
         jQuery('#firstButton').click(showFirstPage);
         jQuery('#lastButton').click(showLastPage);
+        jQuery('#evenSide, #oddSide').dblclick(zoom);
     }
     
     function unbindButtons() {
@@ -17,6 +20,74 @@ var libeReader = function() {
         jQuery('#nextButton, #nextCorner').unbind("click", showNextPage);
         jQuery('#firstButton').unbind("click", showFirstPage);
         jQuery('#lastButton').unbind("click", showLastPage);
+        jQuery('#evenSide, #oddSide').unbind("dblclick");
+    }
+    
+    function zoom(event) {
+        var x = event.offsetX;
+        var y = event.offsetY;
+        
+        var previousElement = jQuery(this).prev();
+        if (previousElement) {
+            x = x + previousElement.width();
+        }
+        zoomAtCoordinates(x, y);
+    }
+    
+    function zoomAtCoordinates(x, y) {
+        var x = x * _zoomFactor;
+        var y = y * _zoomFactor;
+        var zoomedPageHeight = _pageHeight * _zoomFactor;
+        var zoomedPageWidth = _pageWidth * _zoomFactor;
+        
+        jQuery(document.body).css('overflow', 'hidden');
+        
+        _zoomWindow = jQuery(document.createElement('div'));
+        _zoomWindow.attr('id', 'zoomWindow');
+
+        var doc = jQuery(document);
+        var docHeight = doc.height();
+        var docWidth = doc.width();
+        
+        
+        _zoomedPages = jQuery(document.createElement('div'));
+        _zoomedPages.attr('id', 'zoomedPages');
+        
+        var top = y - (docHeight / 2);
+        if (top < 0) {
+            top = 0;
+        }
+        if (top > zoomedPageHeight - docHeight)
+        {
+            top = zoomedPageHeight - docHeight;
+        }
+        
+        var left = x - (docWidth / 2);
+        if (left < 0) {
+            left = 0;
+        }
+        
+        _zoomedPages.css({'height': zoomedPageHeight, 'width': 2 * zoomedPageWidth, 'top': -top, 'left': -left});
+        
+        if (_pages[_displayedPage]) {
+            var leftPage = jQuery(document.createElement('img'));
+            leftPage.attr({'id': 'leftPageZoomed', 'src': _pages[_displayedPage].imageSource});
+            _zoomedPages.append(leftPage);
+        }
+        if (_pages[_displayedPage + 1]) {
+            var rightPage = jQuery(document.createElement('img'));
+            rightPage.attr({'id': 'rightPageZoomed', 'src': _pages[_displayedPage + 1].imageSource});
+            _zoomedPages.append(rightPage);
+        }
+        _zoomWindow.append(_zoomedPages);
+        _zoomWindow.dblclick(quitZoom);
+        
+        jQuery(document.body).append(_zoomWindow);
+    }
+    
+    function quitZoom() {
+        jQuery(_zoomWindow).detach();
+        jQuery(document.body).css('overflow', 'visible');
     }
     
     function showHoverCorner() {
@@ -144,8 +215,10 @@ var libeReader = function() {
         }
 
         _ratio = ratio;
+        _pageHeight = height;
+        _pageWidth = height * ratio;
         
-        sides.width(height * ratio);
+        sides.width(_pageWidth);
         jQuery(window).unbind(e);
     }
     
