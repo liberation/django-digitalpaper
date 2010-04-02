@@ -24,8 +24,9 @@ var libeReader = function() {
     }
     
     function zoom(event) {
-        var x = event.offsetX;
-        var y = event.offsetY;
+        var offset = jQuery(this).offset()
+        var x = event.pageX - offset.left;
+        var y = event.pageY - offset.top;
         
         var previousElement = jQuery(this).prev();
         if (previousElement) {
