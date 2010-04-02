@@ -49,9 +49,25 @@ var libeReader = function() {
         var docHeight = doc.height();
         var docWidth = doc.width();
         
-        
         _zoomedPages = jQuery(document.createElement('div'));
         _zoomedPages.attr('id', 'zoomedPages');
+        
+        var numberOfPages = 0;
+        if (_pages[_displayedPage]) {
+            var leftPage = jQuery(document.createElement('img'));
+            leftPage.attr({'id': 'leftPageZoomed', 'src': _pages[_displayedPage].imageSource});
+            _zoomedPages.append(leftPage);
+            numberOfPages++;
+        }
+        if (_pages[_displayedPage + 1]) {
+            var rightPage = jQuery(document.createElement('img'));
+            rightPage.attr({'id': 'rightPageZoomed', 'src': _pages[_displayedPage + 1].imageSource});
+            _zoomedPages.append(rightPage);
+            numberOfPages++;
+        }
+        if (numberOfPages == 1) {
+            _zoomedPages.children().first().css('width', '100%');
+        }
         
         var top = y - (docHeight / 2);
         if (top < 0) {
@@ -62,26 +78,18 @@ var libeReader = function() {
             top = zoomedPageHeight - docHeight;
         }
         
+        if (numberOfPages == 1 && x > zoomedPageWidth) {
+            x = x - zoomedPageWidth;
+        }
         var left = x - (docWidth / 2);
         if (left < 0) {
             left = 0;
         }
-        if (left > 2 * zoomedPageWidth - docWidth) {
-            left = 2 * zoomedPageWidth - docWidth;
+        if (left > numberOfPages * zoomedPageWidth - docWidth) {
+            left = numberOfPages * zoomedPageWidth - docWidth;
         }
+        _zoomedPages.css({'height': zoomedPageHeight, 'width': numberOfPages * zoomedPageWidth, 'top': -top, 'left': -left});
         
-        _zoomedPages.css({'height': zoomedPageHeight, 'width': 2 * zoomedPageWidth, 'top': -top, 'left': -left});
-        
-        if (_pages[_displayedPage]) {
-            var leftPage = jQuery(document.createElement('img'));
-            leftPage.attr({'id': 'leftPageZoomed', 'src': _pages[_displayedPage].imageSource});
-            _zoomedPages.append(leftPage);
-        }
-        if (_pages[_displayedPage + 1]) {
-            var rightPage = jQuery(document.createElement('img'));
-            rightPage.attr({'id': 'rightPageZoomed', 'src': _pages[_displayedPage + 1].imageSource});
-            _zoomedPages.append(rightPage);
-        }
         _zoomWindow.append(_zoomedPages);
         _zoomWindow.dblclick(quitZoom);
         
