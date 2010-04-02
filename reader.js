@@ -66,6 +66,9 @@ var libeReader = function() {
         if (left < 0) {
             left = 0;
         }
+        if (left > 2 * zoomedPageWidth - docWidth) {
+            left = 2 * zoomedPageWidth - docWidth;
+        }
         
         _zoomedPages.css({'height': zoomedPageHeight, 'width': 2 * zoomedPageWidth, 'top': -top, 'left': -left});
         
