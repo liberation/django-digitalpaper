@@ -1,7 +1,6 @@
 var libeReader = function() {
     var _publicationId, _bookName, _publication, _selectedBook, _pages, _displayedPage,
-        _pageHeight, _pageWidth,_ratio, _zoomWindow;
-    var _zoomFactor = 4;
+        _pageHeight, _pageWidth,_ratio, _zoomWindow, _docHeight, _docWidth, _zoomedPageHeight, _zoomedPageWidth, _numberOfPages;
     
     var _zoomMouseDown, _zoomMouseInitX, _zoomMouseInitY;
     
@@ -38,10 +37,10 @@ var libeReader = function() {
     }
     
     function zoomAtCoordinates(x, y) {
-        var x = x * _zoomFactor;
-        var y = y * _zoomFactor;
-        var zoomedPageHeight = _pageHeight * _zoomFactor;
-        var zoomedPageWidth = _pageWidth * _zoomFactor;
+        var x = x * libeConfig.zoomFactor;
+        var y = y * libeConfig.zoomFactor;
+        _zoomedPageHeight = _pageHeight * libeConfig.zoomFactor;
+        _zoomedPageWidth = _pageWidth * libeConfig.zoomFactor;
         
         jQuery(document.body).css('overflow', 'hidden');
         
@@ -49,49 +48,38 @@ var libeReader = function() {
         _zoomWindow.attr('id', 'zoomWindow');
 
         var doc = jQuery(document);
-        var docHeight = doc.height();
-        var docWidth = doc.width();
+        _docHeight = doc.height();
+        _docWidth = doc.width();
         
         _zoomedPages = jQuery(document.createElement('div'));
         _zoomedPages.attr('id', 'zoomedPages');
         
-        var numberOfPages = 0;
+        _numberOfPages = 0;
         if (_pages[_displayedPage]) {
             var leftPage = jQuery(document.createElement('img'));
             leftPage.attr({'id': 'leftPageZoomed', 'src': _pages[_displayedPage].imageSource});
             _zoomedPages.append(leftPage);
-            numberOfPages++;
+            _numberOfPages++;
         }
         if (_pages[_displayedPage + 1]) {
             var rightPage = jQuery(document.createElement('img'));
             rightPage.attr({'id': 'rightPageZoomed', 'src': _pages[_displayedPage + 1].imageSource});
             _zoomedPages.append(rightPage);
-            numberOfPages++;
+            _numberOfPages++;
         }
-        if (numberOfPages == 1) {
+        if (_numberOfPages == 1) {
             _zoomedPages.children().first().css('width', '100%');
         }
         
-        var top = y - (docHeight / 2);
-        if (top < 0) {
-            top = 0;
-        }
-        if (top > zoomedPageHeight - docHeight)
-        {
-            top = zoomedPageHeight - docHeight;
-        }
+        var top = (_docHeight / 2) - y;
+        top = zoomTopInArea(top);
         
-        if (numberOfPages == 1 && x > zoomedPageWidth) {
-            x = x - zoomedPageWidth;
+        if (_numberOfPages == 1 && x > _zoomedPageWidth) {
+            x = x - _zoomedPageWidth;
         }
-        var left = x - (docWidth / 2);
-        if (left < 0) {
-            left = 0;
-        }
-        if (left > numberOfPages * zoomedPageWidth - docWidth) {
-            left = numberOfPages * zoomedPageWidth - docWidth;
-        }
-        _zoomedPages.css({'height': zoomedPageHeight, 'width': numberOfPages * zoomedPageWidth, 'top': -top, 'left': -left});
+        var left = (_docWidth / 2) - x;
+        left = zoomLeftInArea(left);
+        _zoomedPages.css({'height': _zoomedPageHeight, 'width': _numberOfPages * _zoomedPageWidth, 'top': top, 'left': left});
         
         _zoomWindow.append(_zoomedPages);
         _zoomWindow.dblclick(quitZoom);
@@ -129,10 +117,33 @@ var libeReader = function() {
         }
         
         var newLeft = _zoomPosInit.x + (e.pageX - _zoomMouseInit.x);
+        newLeft = zoomLeftInArea(newLeft)
         var newTop = _zoomPosInit.y + (e.pageY - _zoomMouseInit.y);
+        newTop = zoomTopInArea(newTop);
         
         _zoomedPages.css({'left': newLeft, 'top': newTop});
         e.preventDefault();
+    }
+    
+    function zoomLeftInArea(left) {
+        if (left > 0) {
+            left = 0;
+        }
+        if (left < _docWidth - _numberOfPages * _zoomedPageWidth) {
+            left = _docWidth - _numberOfPages * _zoomedPageWidth;
+        }
+        
+        return left;
+    }
+    function zoomTopInArea(top) {
+        if (top > 0) {
+            top = 0;
+        }
+        if (top < _docHeight - _zoomedPageHeight)
+        {
+            top = _docHeight - _zoomedPageHeight;
+        }
+        return top;
     }
     
     function showHoverCorner() {

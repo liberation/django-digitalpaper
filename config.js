@@ -3,7 +3,8 @@ var libeConfig = function () {
     
     var pageWidth = 388;
     var pageHeight = 500;
-        
+    var zoomFactor = 4;
+    
     var evenSideElement = document.getElementById('evenSide');
     var oddSideElement = document.getElementById('oddSide');
     
@@ -11,6 +12,7 @@ var libeConfig = function () {
         apiRoot: apiRoot,
         pageWidth: pageWidth,
         pageHeight: pageHeight,
+        zoomFactor: zoomFactor,
         evenSideElement: evenSideElement,
         oddSideElement: oddSideElement
     }
