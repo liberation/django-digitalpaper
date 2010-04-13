@@ -183,12 +183,11 @@ var libeReader = function() {
     }
     
     function getZoomImage(xRow, yColumn) {
-        var plop = yColumn * libeConfig.imagesPerRow * _numberOfPages + xRow;
-        var img = _HDgridContainer.children().eq(plop);
+        var imgIndex = yColumn * libeConfig.imagesPerRow * _numberOfPages + xRow;
+        var img = _HDgridContainer.children().eq(imgIndex);
         
         var currentPage = _pages[_displayedPage + Math.floor(xRow / libeConfig.imagesPerRow)];
         var src = 'http://hanblog.info/libe/big_resources/page_' + currentPage.pageId + '_x' + xRow + '_y' + yColumn + '.jpg';
-        console.log(src);
         img.attr('src', src);
     }
     
