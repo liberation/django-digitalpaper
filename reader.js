@@ -1,8 +1,7 @@
 var libeReader = function() {
     var _publicationId, _bookName, _publication, _selectedBook, _pages, _displayedPage,
-        _pageHeight, _pageWidth,_ratio, _zoomWindow, _docHeight, _docWidth, _zoomedPageHeight, _zoomedPageWidth, _numberOfPages;
-    
-    var _zoomMouseDown, _zoomMouseInitX, _zoomMouseInitY;
+        _pageHeight, _pageWidth,_ratio, _zoomWindow, _docHeight, _docWidth, _numberOfPages, 
+        _zoomedPageHeight, _zoomedPageWidth, _zoomMouseInit, _zoomPosInit, _zoomedPages, _zoomMouseDown;
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
         console.log(XMLHttpRequest, textStatus, errorThrown);
@@ -71,15 +70,15 @@ var libeReader = function() {
             _zoomedPages.children().first().css('width', '100%');
         }
         
-        var top = (_docHeight / 2) - y;
+        var top = y - (_docHeight / 2);
         top = zoomTopInArea(top);
         
         if (_numberOfPages == 1 && x > _zoomedPageWidth) {
             x = x - _zoomedPageWidth;
         }
-        var left = (_docWidth / 2) - x;
+        var left = x - (_docWidth / 2);
         left = zoomLeftInArea(left);
-        _zoomedPages.css({'height': _zoomedPageHeight, 'width': _numberOfPages * _zoomedPageWidth, 'top': top, 'left': left});
+        _zoomedPages.css({'height': _zoomedPageHeight, 'width': _numberOfPages * _zoomedPageWidth, 'top': -top, 'left': -left});
         
         _zoomWindow.append(_zoomedPages);
         _zoomWindow.dblclick(quitZoom);
@@ -90,6 +89,28 @@ var libeReader = function() {
         jQuery(document.body).mouseleave(zoomMouseUp);
         
         jQuery(document.body).append(_zoomWindow);
+        
+        zoomInitHDGrid(top, left);
+    }
+    
+    function zoomInitHDGrid(top, left) {
+        _HDgridContainer = jQuery(document.createElement('div'));
+        _HDgridContainer.css({'height': _zoomedPageHeight, 'width': _numberOfPages * _zoomedPageWidth, 'top': -top, 'left': -left});
+        _HDgridContainer.attr('id', 'HDGrid');
+        
+        var nbZones = _numberOfPages * libeConfig.imagesPerRow * libeConfig.imagesPerColumn;
+        var xRowSize = _zoomedPageWidth / libeConfig.imagesPerRow;
+        var yColumnSize = _zoomedPageHeight / libeConfig.imagesPerColumn;
+        
+        for (var i = 0; i < nbZones; i++) {
+            var img = jQuery(document.createElement('img'));
+            img.addClass('grid');
+            img.css({'height': yColumnSize, 'width': xRowSize});
+            _HDgridContainer.append(img);
+        }
+        _zoomWindow.append(_HDgridContainer);
+        
+        zoomHighDefAtCoordinates(top, left);
     }
     
     function quitZoom() {
@@ -99,7 +120,7 @@ var libeReader = function() {
     
     function zoomMouseDown(e) {
         _zoomMouseDown = true;
-        _zoomPosInit = {x: parseInt(_zoomedPages.css('left'), 10), y: parseInt(_zoomedPages.css('top'), 10)};
+        _zoomPosInit = {x: -parseInt(_zoomedPages.css('left'), 10), y: -parseInt(_zoomedPages.css('top'), 10)};
         _zoomMouseInit = {x: e.pageX, y: e.pageY};
         _zoomedPages.css('cursor', '-webkit-grabbing');
         _zoomedPages.css('cursor', '-moz-grabbing');
@@ -110,40 +131,65 @@ var libeReader = function() {
         _zoomedPages.css('cursor', '-webkit-grab');
         _zoomedPages.css('cursor', '-moz-grab');
         e.preventDefault();
+        
+        zoomHighDefAtCoordinates(-parseInt(_zoomedPages.css('left'), 10), -parseInt(_zoomedPages.css('top'), 10))
     }
     function zoomMouseMove(e) {
         if (_zoomMouseDown != true) {
             return;
         }
         
-        var newLeft = _zoomPosInit.x + (e.pageX - _zoomMouseInit.x);
+        var newLeft = _zoomPosInit.x + (_zoomMouseInit.x - e.pageX);
         newLeft = zoomLeftInArea(newLeft)
-        var newTop = _zoomPosInit.y + (e.pageY - _zoomMouseInit.y);
+        var newTop = _zoomPosInit.y + (_zoomMouseInit.y - e.pageY);
         newTop = zoomTopInArea(newTop);
         
-        _zoomedPages.css({'left': newLeft, 'top': newTop});
+        _zoomedPages.css({'left': -newLeft, 'top': -newTop});
+        _HDgridContainer.css({'left': -newLeft, 'top': -newTop});
         e.preventDefault();
     }
     
     function zoomLeftInArea(left) {
-        if (left > 0) {
+        if (left < 0) {
             left = 0;
         }
-        if (left < _docWidth - _numberOfPages * _zoomedPageWidth) {
-            left = _docWidth - _numberOfPages * _zoomedPageWidth;
+        if (left > _numberOfPages * _zoomedPageWidth - _docWidth) {
+            left = _numberOfPages * _zoomedPageWidth - _docWidth;
         }
         
         return left;
     }
     function zoomTopInArea(top) {
-        if (top > 0) {
+        if (top < 0) {
             top = 0;
         }
-        if (top < _docHeight - _zoomedPageHeight)
+        if (top > _zoomedPageHeight - _docHeight)
         {
-            top = _docHeight - _zoomedPageHeight;
+            top = _zoomedPageHeight - _docHeight;
         }
         return top;
+    }
+    
+    function zoomHighDefAtCoordinates(x, y) {
+        x = x + (_docWidth / 2);
+        y = y + (_docHeight / 2);
+        
+        var xRowSize = _zoomedPageWidth / libeConfig.imagesPerRow;
+        var yColumnSize = _zoomedPageHeight / libeConfig.imagesPerColumn;
+            
+        var xRow = Math.floor( x / xRowSize);
+        var yColumn = Math.floor( y / yColumnSize);
+        getZoomImage(xRow, yColumn);
+    }
+    
+    function getZoomImage(xRow, yColumn) {
+        var plop = yColumn * libeConfig.imagesPerRow * _numberOfPages + xRow;
+        var img = _HDgridContainer.children().eq(plop);
+        
+        var currentPage = _pages[_displayedPage + Math.floor(xRow / libeConfig.imagesPerRow)];
+        var src = 'http://hanblog.info/libe/big_resources/page_' + currentPage.pageId + '_x' + xRow + '_y' + yColumn + '.jpg';
+        console.log(src);
+        img.attr('src', src);
     }
     
     function showHoverCorner() {

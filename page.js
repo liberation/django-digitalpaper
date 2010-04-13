@@ -105,6 +105,7 @@ var libePage = function(pageNumber, pageId) {
     return {
         show: show,
         hide: hide,
-        imageSource: _imageSource
+        imageSource: _imageSource,
+        pageId: _pageId
     }
 }
