@@ -90,7 +90,7 @@ var libePage = function(pageNumber, pageId) {
     _pageElement.className = "page";
     
     var img = document.createElement("img");
-    img.src = _imageSource = libeConfig.apiRoot + 'page_preview_' + _pageId + '.jpg';
+    img.src = _imageSource = libeConfig.apiRoot + 'resources/page_preview_' + _pageId + '.jpg';
     _pageElement.appendChild(img);
     
     if (_pageNumber % 2 == 0) {
@@ -99,7 +99,7 @@ var libePage = function(pageNumber, pageId) {
         libeConfig.oddSideElement.appendChild(_pageElement);
     }
     
-    var url = libeConfig.apiRoot + "page_map_" + _pageId + ".json";
+    var url = libeConfig.apiRoot + "resources/page_map_" + _pageId + ".json";
     jQuery.ajax({url: url, dataType: "json", success: handleMap, error: defaultAjaxError});
 
     return {

@@ -42,6 +42,7 @@ var libeReader = function() {
         _zoomedPageWidth = _pageWidth * libeConfig.zoomFactor;
         
         jQuery(document.body).css('overflow', 'hidden');
+        document.body.scrollTop = 0;
         
         _zoomWindow = jQuery(document.createElement('div'));
         _zoomWindow.attr('id', 'zoomWindow');
@@ -99,8 +100,8 @@ var libeReader = function() {
         _HDgridContainer.attr('id', 'HDGrid');
         
         var nbZones = _numberOfPages * libeConfig.imagesPerRow * libeConfig.imagesPerColumn;
-        var xRowSize = _zoomedPageWidth / libeConfig.imagesPerRow;
-        var yColumnSize = _zoomedPageHeight / libeConfig.imagesPerColumn;
+        var xRowSize = Math.floor(_zoomedPageWidth / libeConfig.imagesPerRow);
+        var yColumnSize = Math.floor(_zoomedPageHeight / libeConfig.imagesPerColumn);
         
         for (var i = 0; i < nbZones; i++) {
             var img = jQuery(document.createElement('img'));
@@ -207,7 +208,7 @@ var libeReader = function() {
         }
         
         var currentPage = _pages[_displayedPage + Math.floor(xRow / libeConfig.imagesPerRow)];
-        var src = 'http://hanblog.info/libe/big_resources/page_' + currentPage.pageId + '_x' + xRow + '_y' + yColumn + '.jpg';
+        var src = libeConfig.apiRoot + 'big_resources/page_' + currentPage.pageId + '_x' + xRow + '_y' + yColumn + '.jpg';
         img.attr('src', src);
     }
     
@@ -377,7 +378,7 @@ var libeReader = function() {
         _publicationId = publicationId;
         _bookName = bookName;
                 
-        var url = libeConfig.apiRoot + "publication_" + publicationId + ".json";
+        var url = libeConfig.apiRoot + "resources/publication_" + publicationId + ".json";
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: defaultAjaxError});
         
         jQuery('#previousCorner, #nextCorner').hover(showHoverCorner, hideHoverCorner)
