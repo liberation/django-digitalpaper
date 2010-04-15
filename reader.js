@@ -123,14 +123,14 @@ var libeReader = function() {
         _zoomMouseDown = true;
         _zoomPosInit = {x: -parseInt(_zoomedPages.css('left'), 10), y: -parseInt(_zoomedPages.css('top'), 10)};
         _zoomMouseInit = {x: e.pageX, y: e.pageY};
-        _zoomedPages.css('cursor', '-webkit-grabbing');
-        _zoomedPages.css('cursor', '-moz-grabbing');
+        _zoomWindow.css('cursor', '-webkit-grabbing');
+        _zoomWindow.css('cursor', '-moz-grabbing');
         e.preventDefault();
     }
     function zoomMouseUp(e) {
         _zoomMouseDown = false;
-        _zoomedPages.css('cursor', '-webkit-grab');
-        _zoomedPages.css('cursor', '-moz-grab');
+        _zoomWindow.css('cursor', '-webkit-grab');
+        _zoomWindow.css('cursor', '-moz-grab');
         e.preventDefault();
         
         zoomHighDefAtCoordinates(-parseInt(_zoomedPages.css('left'), 10), -parseInt(_zoomedPages.css('top'), 10))
