@@ -207,6 +207,9 @@ var libeReader = function() {
             return;
         }
         
+        if (img.attr('src')) {
+            return;
+        }
         var currentPage = _pages[_displayedPage + Math.floor(xRow / libeConfig.imagesPerRow)];
         var src = libeConfig.apiRoot + 'big_resources/page_' + currentPage.pageId + '_x' + xRow + '_y' + yColumn + '.jpg';
         img.attr('src', src);
