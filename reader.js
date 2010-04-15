@@ -88,6 +88,7 @@ var libeReader = function() {
         _zoomWindow.mouseup(zoomMouseUp);
         _zoomWindow.mousemove(zoomMouseMove);
         jQuery(document.body).mouseleave(zoomMouseUp);
+        jQuery(window).bind('resize', zoomResize);
         
         jQuery(document.body).append(_zoomWindow);
         
@@ -116,7 +117,13 @@ var libeReader = function() {
     
     function quitZoom() {
         jQuery(_zoomWindow).detach();
+        jQuery(window).unbind('resize', zoomResize);
         jQuery(document.body).css('overflow', 'visible');
+    }
+    function zoomResize() {
+        var doc = jQuery(document);
+        _docHeight = doc.height();
+        _docWidth = doc.width();
     }
     
     function zoomMouseDown(e) {
