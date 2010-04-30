@@ -38,6 +38,7 @@ var libeReader = function() {
     function zoomAtCoordinates(x, y) {
         var x = x * libeConfig.zoomFactor;
         var y = y * libeConfig.zoomFactor;
+
         _zoomedPageHeight = _pageHeight * libeConfig.zoomFactor;
         _zoomedPageWidth = _pageWidth * libeConfig.zoomFactor;
         
@@ -92,6 +93,11 @@ var libeReader = function() {
         
         jQuery(document.body).append(_zoomWindow);
         
+        // Just for Apple touch, jQuery suxx and delete e.touches
+        document.getElementById('zoomWindow').addEventListener('touchstart', zoomMouseDown, true);
+        document.getElementById('zoomWindow').addEventListener('touchend', zoomMouseUp, true);
+        document.getElementById('zoomWindow').addEventListener('touchmove', zoomMouseMove, true);
+        
         zoomInitHDGrid(top, left);
     }
     
@@ -127,12 +133,19 @@ var libeReader = function() {
     }
     
     function zoomMouseDown(e) {
+        // iPhone/iPad
+        if (e.touches) {
+            e.preventDefault();
+            e = e.touches[0];
+        } else {
+            e.preventDefault();            
+        }
+        
         _zoomMouseDown = true;
         _zoomPosInit = {x: -parseInt(_zoomedPages.css('left'), 10), y: -parseInt(_zoomedPages.css('top'), 10)};
-        _zoomMouseInit = {x: e.pageX, y: e.pageY};
+        _zoomMouseInit = {x: e.clientX, y: e.clientY};
         _zoomWindow.css('cursor', '-webkit-grabbing');
         _zoomWindow.css('cursor', '-moz-grabbing');
-        e.preventDefault();
     }
     function zoomMouseUp(e) {
         _zoomMouseDown = false;
@@ -147,14 +160,21 @@ var libeReader = function() {
             return;
         }
         
-        var newLeft = _zoomPosInit.x + (_zoomMouseInit.x - e.pageX);
+        // iPhone/iPad
+        if (e.touches) {
+            e.preventDefault();
+            e = e.touches[0];
+        } else {
+            e.preventDefault();
+        }
+        
+        var newLeft = _zoomPosInit.x + (_zoomMouseInit.x - e.clientX);
         newLeft = zoomLeftInArea(newLeft)
-        var newTop = _zoomPosInit.y + (_zoomMouseInit.y - e.pageY);
+        var newTop = _zoomPosInit.y + (_zoomMouseInit.y - e.clientY);
         newTop = zoomTopInArea(newTop);
         
         _zoomedPages.css({'left': -newLeft, 'top': -newTop});
         _HDgridContainer.css({'left': -newLeft, 'top': -newTop});
-        e.preventDefault();
     }
     
     function zoomLeftInArea(left) {
@@ -391,6 +411,7 @@ var libeReader = function() {
         var url = libeConfig.apiRoot + "resources/publication_" + publicationId + ".json";
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: defaultAjaxError});
         
+        jQuery('#zoomButton').click(function () {zoomAtCoordinates(0, 0)});
         jQuery('#previousCorner, #nextCorner').hover(showHoverCorner, hideHoverCorner)
     }
     
