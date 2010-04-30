@@ -1,5 +1,5 @@
 var libePage = function(pageNumber, pageId) {
-    var _pageNumber, _pageId, _imageSource, _pageElement, _areasElement = [], _lastObjectId;
+    var _pageNumber, _pageId, _imageSource, _pageElement, _areasElement = [];
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
         console.log(XMLHttpRequest, textStatus, errorThrown);
@@ -40,18 +40,11 @@ var libePage = function(pageNumber, pageId) {
             areaElement.hover(function() {
                 var target = jQuery(this);
                 var objectId = target.data('area')["@objectId"];
-                _lastObjectId = objectId;
                 jQuery('.area').trigger("highlight-area-" + objectId);
             }, function() {
                 var target = jQuery(this);
                 var objectId = target.data('area')["@objectId"];
-                _lastObjectId = null;
-                setTimeout(function () {
-                    if (_lastObjectId == objectId) {
-                        return;
-                    }
-                    jQuery('.area').trigger("unhighlight-area-" + objectId);
-                }, 100);
+                jQuery('.area').trigger("unhighlight-area-" + objectId);
             });
             
             areaElement.bind('highlight-area-' + area["@objectId"], highlightArea);
@@ -67,10 +60,10 @@ var libePage = function(pageNumber, pageId) {
     }
 
     function highlightArea() {
-        jQuery(this).animate({opacity: 0.3}, 300);
+        jQuery(this).clearQueue().animate({opacity: 0.3}, 300);
     }
     function unhighlightArea() {
-        jQuery(this).animate({opacity: 0}, 300);
+        jQuery(this).clearQueue().animate({opacity: 0}, 300);
     }
         
     function show() {
