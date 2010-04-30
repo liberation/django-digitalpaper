@@ -18,10 +18,10 @@ var libePage = function(pageNumber, pageId) {
         for (var i=0, il=map.area.length; i < il; i++) {
             var area = map.area[i];
             var coords = area["@coords"].split(",");
-            var left = coords[0] * reductionRatio;
-            var top = coords[1] * reductionRatio;
-            var width = (coords[2] - coords[0]) * reductionRatio;
-            var height = (coords[3] - coords[1]) * reductionRatio;
+            var left = Math.ceil(coords[0] * reductionRatio);
+            var top = Math.ceil(coords[1] * reductionRatio);
+            var width = Math.ceil( (coords[2] - coords[0]) * reductionRatio );
+            var height = Math.ceil( (coords[3] - coords[1]) * reductionRatio );
             
             var areaElement = document.createElement('a');
             areaElement.className = "area";
