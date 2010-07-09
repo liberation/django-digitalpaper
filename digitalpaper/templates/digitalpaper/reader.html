@@ -119,7 +119,7 @@ $.noConflict();
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/page.js"></script>
 <script type="text/javascript">
 // Variables initialisées par le backend
-var publicationId = 281;
+var publicationId = {{ publication.id }};
 var bookName = "Quotidien";
 
 jQuery(document).ready(function () {libeReader.init(publicationId, bookName)})
