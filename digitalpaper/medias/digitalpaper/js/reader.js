@@ -360,18 +360,17 @@ var libeReader = function() {
     
     function ratioKnown(e, ratio) {
         var sides = jQuery('#evenSide, #oddSide');
-        var height = sides.height();
+        //var height = sides.height();
         // If no image downloaded, leave and wait for the next event
-        if (height < 100) {
-            return;
+        //if (height < libeConfig.pageHeight) {
+        //    height= libeConfig.pageHeight;
+        //}
+        if (ratio > 0)
+        {
+            _pageWidth = libeConfig.pageHeight * ratio;
+            sides.width(_pageWidth);
+            jQuery(window).unbind(e);
         }
-
-        _ratio = ratio;
-        _pageHeight = height;
-        _pageWidth = height * ratio;
-        
-        sides.width(_pageWidth);
-        jQuery(window).unbind(e);
     }
     
     function handlePublication(data) {
