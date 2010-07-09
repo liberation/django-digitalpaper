@@ -1,8 +1,4 @@
-<!doctype html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>reader</title>
+{% block content %}
     <style type="text/css">
 img {
     border: 0;
@@ -123,5 +119,4 @@ var bookName = "Cin\u00e9ma";
 
 jQuery(document).ready(function () {libeReader.init(publicationId, bookName)})
 </script>
-</body>
-</html>
+{% endblock %}
