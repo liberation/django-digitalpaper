@@ -227,7 +227,7 @@ var libeReader = function() {
         if (xRow >= _numberOfPages * libeConfig.imagesPerRow || yColumn >= libeConfig.imagesPerColumn) {
             return;
         }
-        
+
         var imgIndex = yColumn * libeConfig.imagesPerRow * _numberOfPages + xRow;
         var img = _HDgridContainer.children().eq(imgIndex);
         if (!img) {
@@ -237,8 +237,9 @@ var libeReader = function() {
         if (img.attr('src')) {
             return;
         }
+        //img.css({'background-color': "yellow", 'border': "1 px solid black"});
         var currentPage = _pages[_displayedPage + Math.floor(xRow / libeConfig.imagesPerRow)];
-        var src = libeConfig.apiRoot + 'big_resources/page_' + currentPage.pageId + '_x' + xRow + '_y' + yColumn + '.jpg';
+        var src = libeConfig.apiRoot + 'api/libe/png/paperpage/' + currentPage.pageId + '/crop/' + libeConfig.imagesPerRow + 'x' + libeConfig.imagesPerRow + '/' + xRow + '/' + yColumn + '/';
         img.attr('src', src);
     }
     
@@ -367,6 +368,7 @@ var libeReader = function() {
         //}
         if (ratio > 0)
         {
+            _pageHeight = libeConfig.pageHeight 
             _pageWidth = libeConfig.pageHeight * ratio;
             sides.width(_pageWidth);
             jQuery(window).unbind(e);

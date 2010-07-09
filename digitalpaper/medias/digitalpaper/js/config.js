@@ -5,7 +5,7 @@ var libeConfig = function () {
     var pageHeight = 500;
     var zoomFactor = 4;
     
-    var imagesPerRow = 3;
+    var imagesPerRow = 4;
     var imagesPerColumn = 4;
     
     var evenSideElement = document.getElementById('evenSide');
