@@ -1,5 +1,5 @@
 var libeConfig = function () {
-    var apiRoot = "http://hanblog.info/libe/";
+    var apiRoot = "http://localhost:8000/";
     
     var pageWidth = 388;
     var pageHeight = 500;

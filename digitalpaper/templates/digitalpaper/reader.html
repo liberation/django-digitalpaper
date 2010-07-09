@@ -1,4 +1,10 @@
-{% block content %}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>reader</title>
+
+
     <style type="text/css">
 img {
     border: 0;
@@ -92,14 +98,13 @@ img {
     </style>
 </head>
 <body>
-
 <a id="zoomButton" href="#">Zoom</a>
 <a id="firstButton" href="#">First</a>
 <a id="previousButton" href="#">Previous</a>
 <div class="book">
     <div id="evenSide"></div><div id="oddSide"></div>
-    <a id="previousCorner" href="#"><img src="left-corner.png"></a>
-    <a id="nextCorner" href="#"><img src="right-corner.png"></a>
+    <a id="previousCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/left-corner.png"></a>
+    <a id="nextCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/right-corner.png"></a>
 </div>
 <a id="nextButton" href="#">Next</a>
 <a id="lastButton" href="#">Last</a>
@@ -114,9 +119,10 @@ $.noConflict();
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/page.js"></script>
 <script type="text/javascript">
 // Variables initialisées par le backend
-var publicationId = 246;
-var bookName = "Cin\u00e9ma";
+var publicationId = 281;
+var bookName = "Quotidien";
 
 jQuery(document).ready(function () {libeReader.init(publicationId, bookName)})
 </script>
-{% endblock %}
+</body>
+</html>

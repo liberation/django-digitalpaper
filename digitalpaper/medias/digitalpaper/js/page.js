@@ -1,4 +1,4 @@
-var libePage = function(pageNumber, pageId) {
+var libePage = function(pageNumber, pageId, pageMaps) {
     var _pageNumber, _pageId, _imageSource, _pageElement, _areasElement = [];
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
@@ -6,18 +6,18 @@ var libePage = function(pageNumber, pageId) {
     }
     
     function handleMap(data) {
-        if (!data.map[0].area) {
+        if (!data.areas) {
             return;
         }
-        var map = data.map[0];
+        var map = data;
         
-        var ratio = map["@width"] / map["@height"]
+        var ratio = map.width / map.height
         jQuery(window).trigger('ratio-known', [ratio]);
-        var reductionRatio = libeConfig.pageWidth / map["@width"];
+        var reductionRatio = libeConfig.pageWidth / map.width;
         
-        for (var i=0, il=map.area.length; i < il; i++) {
-            var area = map.area[i];
-            var coords = area["@coords"].split(",");
+        for (var i=0, il=map.areas.length; i < il; i++) {
+            var area = map.areas[i];
+            var coords = area.coords.split(",");
             var left = Math.ceil(coords[0] * reductionRatio);
             var top = Math.ceil(coords[1] * reductionRatio);
             var width = Math.ceil( (coords[2] - coords[0]) * reductionRatio );
@@ -39,23 +39,23 @@ var libePage = function(pageNumber, pageId) {
             areaElement.data('area', area);
             areaElement.hover(function() {
                 var target = jQuery(this);
-                var objectId = target.data('area')["@objectId"];
+                var objectId = target.data('area').object_id;
                 jQuery('.area').trigger("highlight-area-" + objectId);
             }, function() {
                 var target = jQuery(this);
-                var objectId = target.data('area')["@objectId"];
+                var objectId = target.data('area').object_id;
                 jQuery('.area').trigger("unhighlight-area-" + objectId);
             });
             
-            areaElement.bind('highlight-area-' + area["@objectId"], highlightArea);
-            areaElement.bind('unhighlight-area-' + area["@objectId"], unhighlightArea);
+            areaElement.bind('highlight-area-' + area.object_id, highlightArea);
+            areaElement.bind('unhighlight-area-' + area.object_id, unhighlightArea);
         }
     }
     
     function openArea() {
         var data = jQuery(this).data('area');
-        if (data["@objectClass"] == "article") {
-            window.open(data["@objectId"]);
+        if (data.object_class == "article") {
+            window.open(data.object_id);
         }
     }
 
@@ -83,7 +83,7 @@ var libePage = function(pageNumber, pageId) {
     _pageElement.className = "page";
     
     var img = document.createElement("img");
-    img.src = _imageSource = libeConfig.apiRoot + 'resources/page_preview_' + _pageId + '.jpg';
+    img.src = _imageSource = libeConfig.apiRoot + 'api/libe/jpg/paperpage/' + _pageId + '/size/x500/';
     _pageElement.appendChild(img);
     
     if (_pageNumber % 2 == 0) {
@@ -92,9 +92,10 @@ var libePage = function(pageNumber, pageId) {
         libeConfig.oddSideElement.appendChild(_pageElement);
     }
     
-    var url = libeConfig.apiRoot + "resources/page_map_" + _pageId + ".json";
-    jQuery.ajax({url: url, dataType: "json", success: handleMap, error: defaultAjaxError});
-
+    //var url = libeConfig.apiRoot + "resources/page_map_" + _pageId + ".json";
+    //jQuery.ajax({url: url, dataType: "json", success: handleMap, error: defaultAjaxError});
+    handleMap(pageMaps);
+    
     return {
         show: show,
         hide: hide,

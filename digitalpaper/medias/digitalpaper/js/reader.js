@@ -375,12 +375,15 @@ var libeReader = function() {
     }
     
     function handlePublication(data) {
-        _publication = data.publication[0];
+        /*
+        *   data is the publication json
+        */
+        _publication = data;
         
-        _selectedBook = _publication.book[0];
-        for (var i in _publication.book) {
-            if (_publication.book[i].name == _bookName) {
-                _selectedBook = _publication.book[i];
+        _selectedBook = _publication.books[0];
+        for (var i in _publication.books) {
+            if (_publication.books[i].name == _bookName) {
+                _selectedBook = _publication.books[i];
                 break;
             }
         }
@@ -389,9 +392,9 @@ var libeReader = function() {
         jQuery(window).bind('ratio-known', ratioKnown);
         
         _pages = new Array(parseInt(_selectedBook.total, 10));
-        for (var i = 0, il = _selectedBook.page.length; i < il ; i++) {
-            var page = _selectedBook.page[i];
-            _pages[page.pageNumber] = libePage(page.pageNumber, page.id);
+        for (var i = 0, il = _selectedBook.pages.length; i < il ; i++) {
+            var page = _selectedBook.pages[i];
+            _pages[page.page_number] = libePage(page.page_number, page.id, page.maps);
         }
         
         var pageToShow = 0;
@@ -408,7 +411,7 @@ var libeReader = function() {
         _publicationId = publicationId;
         _bookName = bookName;
                 
-        var url = libeConfig.apiRoot + "resources/publication_" + publicationId + ".json";
+        var url = libeConfig.apiRoot + "api/libe/json/publication/structure/" + publicationId + "/";
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: defaultAjaxError});
         
         jQuery('#zoomButton').click(function () {zoomAtCoordinates(0, 0)});
