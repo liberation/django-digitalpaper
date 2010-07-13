@@ -239,7 +239,20 @@ var libeReader = function() {
         }
         //img.css({'background-color': "yellow", 'border': "1 px solid black"});
         var currentPage = _pages[_displayedPage + Math.floor(xRow / libeConfig.imagesPerRow)];
-        var src = libeConfig.apiRoot + 'api/libe/png/paperpage/' + currentPage.pageId + '/crop/' + libeConfig.imagesPerRow + 'x' + libeConfig.imagesPerRow + '/' + xRow + '/' + yColumn + '/';
+        
+        var replaces = {
+            '{emitter_format}' : 'png',
+            '{id}' : currentPage.pageId,
+            '{perrow}' : libeConfig.imagesPerRow,
+            '{percol}' : libeConfig.imagesPerColumn,
+            '{x}' : xRow,
+            '{y}' : yColumn
+        }
+        
+        var src = 'http://' + libeConfig.webservices.paper_page_crop;
+        for (key in replaces) {
+            src = src.replace(key, replaces[key]);
+        }
         img.attr('src', src);
     }
     
@@ -412,7 +425,8 @@ var libeReader = function() {
         _publicationId = publicationId;
         _bookName = bookName;
                 
-        var url = libeConfig.apiRoot + "api/libe/json/publication/structure/" + publicationId + "/";
+        var url = 'http://' + libeConfig.webservices['publication_structure'].replace('{emitter_format}', 'json').replace('{id}', publicationId);
+        console.log("url: " + url)
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: defaultAjaxError});
         
         jQuery('#zoomButton').click(function () {zoomAtCoordinates(0, 0)});

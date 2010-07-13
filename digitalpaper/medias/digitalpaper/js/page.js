@@ -1,4 +1,4 @@
-var libePage = function(pageNumber, pageId, pageMaps) {
+var libePage = function(pageNumber, pageId, pageMaps, canAccessCallback) {
     var _pageNumber, _pageId, _imageSource, _pageElement, _areasElement = [];
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
@@ -82,9 +82,17 @@ var libePage = function(pageNumber, pageId, pageMaps) {
     _pageElement = document.createElement("div");
     _pageElement.className = "page";
     
-    var img = document.createElement("img");
-    img.src = _imageSource = libeConfig.apiRoot + 'api/libe/jpg/paperpage/' + _pageId + '/size/x500/';
-    _pageElement.appendChild(img);
+    if (libeConfig.canAccess(_pageNumber, _pageId)) {
+        var img = document.createElement("img");
+        img.src = _imageSource = 'http://' + libeConfig.webservices.paper_page.replace('{emitter_format}', 'jpg').replace('{id}', _pageId).replace('{size}', 'x500');
+        console.log(img.src);
+        handleMap(pageMaps);
+        _pageElement.appendChild(img);
+    } else {
+        var img = document.createElement("img");
+        img.src = _imageSource = 'http://q.liberation.fr/publication/non-acces.png';
+        _pageElement.appendChild(img);
+    }
     
     if (_pageNumber % 2 == 0) {
         libeConfig.evenSideElement.appendChild(_pageElement);
@@ -94,7 +102,6 @@ var libePage = function(pageNumber, pageId, pageMaps) {
     
     //var url = libeConfig.apiRoot + "resources/page_map_" + _pageId + ".json";
     //jQuery.ajax({url: url, dataType: "json", success: handleMap, error: defaultAjaxError});
-    handleMap(pageMaps);
     
     return {
         show: show,

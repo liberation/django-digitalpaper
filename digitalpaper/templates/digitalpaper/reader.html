@@ -13,6 +13,13 @@ img {
     position: relative;
     display: inline-block;
 }
+#menu {
+    display: block;
+}
+
+#menu li {
+    display: inline;
+}
 .book * {
     padding: 0;
     margin: 0;
@@ -98,16 +105,19 @@ img {
     </style>
 </head>
 <body>
-<a id="zoomButton" href="#">Zoom</a>
-<a id="firstButton" href="#">First</a>
-<a id="previousButton" href="#">Previous</a>
+<p> Hello, {{ user }} </p>
 <div class="book">
     <div id="evenSide"></div><div id="oddSide"></div>
     <a id="previousCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/left-corner.png"></a>
     <a id="nextCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/right-corner.png"></a>
 </div>
-<a id="nextButton" href="#">Next</a>
-<a id="lastButton" href="#">Last</a>
+<ul id="menu">
+<li><a id="zoomButton" href="#">Zoom</a></li>
+<li><a id="firstButton" href="#">First</a></li>
+<li><a id="previousButton" href="#">Previous</a></li>
+<li><a id="nextButton" href="#">Next</a></li>
+<li><a id="lastButton" href="#">Last</a></li>
+</ul>
 
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery-1.4.2.js"></script>
 <script type="text/javascript">
@@ -115,6 +125,7 @@ $.noConflict();
 </script>
 
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/config.js"></script>
+<script type="text/javascript" src="/{{ API_ROOT }}jsonp/reader/?jsonp=libeConfig=libeConfigFunc"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/reader.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/page.js"></script>
 <script type="text/javascript">
