@@ -240,6 +240,10 @@ var libeReader = function() {
         //img.css({'background-color': "yellow", 'border': "1 px solid black"});
         var currentPage = _pages[_displayedPage + Math.floor(xRow / libeConfig.imagesPerRow)];
         
+        if (!currentPage) {
+            return;
+        }
+        
         var replaces = {
             '{emitter_format}' : 'png',
             '{id}' : currentPage.pageId,
