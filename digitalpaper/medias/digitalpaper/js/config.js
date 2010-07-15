@@ -2,16 +2,23 @@ var libeConfigFunc = function (data) {
    
     var evenSideElement = document.getElementById('evenSide');
     var oddSideElement = document.getElementById('oddSide');
+    var accessLevel = 0;
     
     var canAccess = function(pageNumber, pageId) {
-        return settings.pagesFree.indexOf(pageNumber) >= 0
+        return settings.pagesFree.indexOf(pageNumber) >= 0;
     };
     
-    var canZoom = function(pageNumber, pageId) {
-        return canAccess(pageNumber, pageId)
+    var canZoom = function() {
+        return settings.accessLevel > 0;
     };
     
+    var changeAccessLevel = function(newlevel) {
+        settings.accessLevel = newlevel;
+    };
+
     this.settings = {
+        'accessLevel' : accessLevel,
+        'changeAccessLevel' : changeAccessLevel,
         'canAccess': canAccess,
         'canZoom': canZoom,
         'evenSideElement' : evenSideElement,

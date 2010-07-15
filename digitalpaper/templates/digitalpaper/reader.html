@@ -121,7 +121,7 @@ img {
 
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery-1.4.2.js"></script>
 <script type="text/javascript">
-$.noConflict();
+//$.noConflict();
 </script>
 
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/config.js"></script>
@@ -129,11 +129,29 @@ $.noConflict();
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/reader.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/page.js"></script>
 <script type="text/javascript">
-// Variables initialisées par le backend
 var publicationId = {{ publication.id }};
-var bookName = "Quotidien";
+var bookName = "Quotidien"; // FIXME: this needs to be dynamic and switchable by the user!
+var tokenUrl = {% if API_TOKEN_ALLOW_UNSECURE %}"http://"{% else %}"https://"{% endif %} + libeConfig.webservices.token
+tokenUrl = tokenUrl.replace('{emitter_format}', 'json');
 
-jQuery(document).ready(function () {libeReader.init(publicationId, bookName)})
+var accessLevels = {
+    'BAS' : 0,
+    'ESS' : 10,
+    'PRE' : 20
+}
+
+jQuery(document).ready(function () {
+    $.ajax({
+        'url': tokenUrl,
+        'type': 'post',
+        'data' : {'use_session' : 1 },
+        'dataType': 'json',
+        'success': function(data, textStatus, xhrobject) {
+            libeConfig.changeAccessLevel(accessLevels[data['access_level']]);
+            libeReader.init(publicationId, bookName);
+        }
+    })
+})
 </script>
 </body>
 </html>
