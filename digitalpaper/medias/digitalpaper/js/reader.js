@@ -36,6 +36,9 @@ var libeReader = function() {
     }
     
     function zoomAtCoordinates(x, y) {
+        if (!libeConfig.canZoom()) {
+            return false;
+        }
         var x = x * libeConfig.zoomFactor;
         var y = y * libeConfig.zoomFactor;
 
