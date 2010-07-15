@@ -85,7 +85,6 @@ var libePage = function(pageNumber, pageId, pageMaps) {
     if (libeConfig.canAccess(_pageNumber, _pageId)) {
         var img = document.createElement("img");
         img.src = _imageSource = 'http://' + libeConfig.webservices.paper_page.replace('{emitter_format}', 'jpg').replace('{id}', _pageId).replace('{size}', 'x500');
-        console.log(img.src);
         handleMap(pageMaps);
         _pageElement.appendChild(img);
     } else {
