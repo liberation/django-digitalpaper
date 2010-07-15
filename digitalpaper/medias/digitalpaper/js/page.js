@@ -1,4 +1,4 @@
-var libePage = function(pageNumber, pageId, pageMaps, canAccessCallback) {
+var libePage = function(pageNumber, pageId, pageMaps) {
     var _pageNumber, _pageId, _imageSource, _pageElement, _areasElement = [];
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
