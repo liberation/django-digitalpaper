@@ -426,7 +426,6 @@ var libeReader = function() {
         _bookName = bookName;
                 
         var url = 'http://' + libeConfig.webservices['publication_structure'].replace('{emitter_format}', 'json').replace('{id}', publicationId);
-        console.log("url: " + url)
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: defaultAjaxError});
         
         jQuery('#zoomButton').click(function () {zoomAtCoordinates(0, 0)});
