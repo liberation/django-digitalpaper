@@ -117,17 +117,19 @@ var libePage = function(pageNumber, pageId, pageMaps) {
     } else if (_pageId < 0) {
         // page not yet included in the book, but that should exist: display it as "in construction"
         var img = document.createElement("img");
-        img.src = _imageSource = libeConfig.pageInConstructionImage;
+        img.src = _imageSource = _smallImageSource = libeConfig.pageInConstructionImage;
         _pageElement.appendChild(img);
     } else if (!libeConfig.canAccess(_pageNumber, _pageId)) {
         // page that the user isn't allowed to read
         var img = document.createElement("img");
-        img.src = _imageSource = libeConfig.pageLimitedAccessImage;
+        img.src = _imageSource = _smallImageSource = libeConfig.pageLimitedAccessImage;
         _pageElement.appendChild(img);
     } else {
         // normal page    
         var img = document.createElement("img");
-        img.src = _imageSource = 'http://' + libeConfig.webservices.paper_page.replace('{emitter_format}', 'jpg').replace('{id}', _pageId).replace('{size}', 'x500');
+        var tmp = libeConfig.webservices.paper_page.replace('{emitter_format}', 'jpg').replace('{id}', _pageId)
+        img.src = _imageSource = 'http://' + tmp.replace('{size}', 'x500');
+        _smallImageSource = 'http://' + tmp.replace('{size}', 'x148');
         handleMap(pageMaps);
         _pageElement.appendChild(img);
     }
@@ -145,6 +147,7 @@ var libePage = function(pageNumber, pageId, pageMaps) {
         show: show,
         hide: hide,
         imageSource: _imageSource,
+        smallImageSource: _smallImageSource,
         pageId: _pageId
     }
 }

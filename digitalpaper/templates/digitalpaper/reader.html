@@ -105,6 +105,14 @@ img {
 #DOMWindow {
     overflow: visible !important;
 }
+
+#pagesList a {
+    display: inline-block;
+}
+
+#pagesList img {
+    height: 148px;
+}
     </style>
 </head>
 <body>
@@ -118,6 +126,7 @@ img {
     <a id="previousCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/left-corner.png"></a>
     <a id="nextCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/right-corner.png"></a>
 </div>
+<div id="pagesList"></div>
 <ul id="menu">
 <li><a id="zoomButton" href="#">Zoom</a></li>
 <li><a id="firstButton" href="#">First</a></li>

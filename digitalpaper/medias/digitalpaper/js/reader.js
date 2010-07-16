@@ -322,7 +322,7 @@ var libeReader = function() {
         }
     }
     
-    function showPage(number) {
+    function showPage(number) {    
         var newDisplayedPage = number - number % 2;
         
         // Non-existant page, nothing to do
@@ -400,6 +400,15 @@ var libeReader = function() {
         displayPagination();
         bindButtons();
     }
+        
+    function showSelectedPage(e) {
+        e.preventDefault();
+        var tmp = _parseHashtoGetParams(this.href.split('#')[1]);
+        var newDisplayedPage = tmp[1] - tmp[1] % 2;
+        if (newDisplayedPage != _displayedPage) {        
+            showPage(newDisplayedPage);
+        }
+    }
     
     function showPreviousPage(e) {
         e.preventDefault();
@@ -439,6 +448,9 @@ var libeReader = function() {
         if (newBook > _publication.books.length) {
             newBook = 0;
         }
+        if (_displayedBook != newBook) {
+            jQuery('#pagesList').empty()
+        }
         _selectedBook = _publication.books[newBook];
         _displayedBook = newBook;
     }
@@ -461,13 +473,21 @@ var libeReader = function() {
             var page = _selectedBook.pages[i];
             _pages[page.page_number] = libePage(page.page_number, page.id, page.maps);
         }
-        for (var i = 0; i < _selectedBook.total; i++) {
+        for (var i = 1; i <= _selectedBook.total; i++) {
             if (!_pages[i]) {
                 _pages[i] = libePage(i, -1, []);
-            }            
+            }
+            var a = jQuery('<a href="#' + _displayedBook + '_' + i + '"><img src="' + _pages[i].smallImageSource + ' /></a>');
+            jQuery('#pagesList').append(a);
+            a.bind('click', showSelectedPage);
         }
-
         cleanAfterShowPage(pageToShow);
+    }
+    
+    function _parseHashtoGetParams(hash) {
+        var bookToShow = parseInt(hash.split('_')[0])
+        var possiblePage = parseInt(hash.split('_')[1])
+        return [bookToShow, possiblePage]
     }
     
     function handlePublication(data) {
@@ -475,15 +495,12 @@ var libeReader = function() {
         *   data is the publication json
         */
         _publication = data;
-                
-        var possiblePage = 0;
-        var bookToShow = 0;
+
+        var tmp = [0, 0];
         if (location.hash != "") {
-            var tmp = location.hash.split('#')[1]
-            var bookToShow = parseInt(tmp.split('_')[0])
-            var possiblePage = parseInt(tmp.split('_')[1])
+            tmp = _parseHashtoGetParams(location.hash.split('#')[1]);
         }
-        showBook(bookToShow, possiblePage);
+        showBook(tmp[0], tmp[1]);
     }
     
     function init(publicationId) {
@@ -501,6 +518,7 @@ var libeReader = function() {
         showPage: showPage,
         showPreviousPage: showPreviousPage,
         showNextPage: showNextPage,
+        showSelectedPage: showSelectedPage,
         showBook: showBook
     }
 }();
