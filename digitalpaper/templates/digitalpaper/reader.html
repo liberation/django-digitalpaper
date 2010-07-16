@@ -106,8 +106,42 @@ img {
     overflow: visible !important;
 }
 
-#pagesList a {
+#pagesSlider {
+    overflow: hidden;
+    height: 150px;
+    white-space: nowrap;
+    position: relative;
+}
+
+#pagesList, #pagesList a {
     display: inline-block;
+    height: 148px;
+}
+
+#pagesList {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#sliderNext, #sliderPrev {
+    position: absolute;
+    border: 1px solid #333;
+    background-color: #999;
+    opacity: 0.7;
+    color: #333;
+    padding: 5px;
+    top: 5px;
+    height: 130px;
+    z-index: 42;
+}
+
+#sliderNext {
+    right: 0;
+}
+
+#sliderPrev {
+    left: 0;
 }
 
 #pagesList img {
@@ -126,7 +160,11 @@ img {
     <a id="previousCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/left-corner.png"></a>
     <a id="nextCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/right-corner.png"></a>
 </div>
-<div id="pagesList"></div>
+<div id="pagesSlider">
+    <a href="#" id="sliderPrev" onclick="return false;">«</a>
+    <div id="pagesList"></div>
+    <a href="#" id="sliderNext" onclick="return false;">»</a>
+</div>
 <ul id="menu">
 <li><a id="zoomButton" href="#">Zoom</a></li>
 <li><a id="firstButton" href="#">First</a></li>
@@ -162,6 +200,29 @@ var contentmapping = {
 }
 
 jQuery(document).ready(function () {
+    iSlideSize = 200;
+    sSlideSpeed = 'slow';
+    iPosition = 0;
+
+    jQuery('#sliderPrev').bind('mousedown', function(e) {
+        iPosition += iSlideSize;
+        minPosition = 0
+        if (iPosition > minPosition) {
+            iPosition = minPosition;
+        }
+        jQuery('#pagesList').animate({left: iPosition}, sSlideSpeed);
+    });
+    jQuery('#sliderNext').bind('mousedown', function(e) {
+        iPosition -= iSlideSize;
+        maxPosition = parseInt(jQuery('#pagesList').css('width'), 10) - parseInt(jQuery('#pagesSlider').css('width'), 10);
+        if (maxPosition > 0) {
+            if (iPosition < -maxPosition) {
+                iPosition = -maxPosition;
+            }
+            jQuery('#pagesList').animate({left: iPosition}, sSlideSpeed);
+        }
+    });
+
     jQuery.ajax({
         'url': tokenUrl,
         'type': 'post',
@@ -178,7 +239,9 @@ jQuery(document).ready(function () {
             libeReader.init(publicationId);
         }
     })
-})
+});
+
+
 </script>
 </body>
 </html>

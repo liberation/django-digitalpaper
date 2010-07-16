@@ -450,6 +450,8 @@ var libeReader = function() {
         }
         if (_displayedBook != newBook) {
             jQuery('#pagesList').empty()
+            jQuery('#pagesList').css({'left' : 0 });
+            iPosition = 0;
         }
         _selectedBook = _publication.books[newBook];
         _displayedBook = newBook;
