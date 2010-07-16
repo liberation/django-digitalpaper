@@ -93,6 +93,7 @@ var libeReader = function() {
         _zoomWindow.mousemove(zoomMouseMove);
         jQuery(document.body).mouseleave(zoomMouseUp);
         jQuery(window).bind('resize', zoomResize);
+        jQuery(window).bind('keypress', zoomKeypress);
         
         jQuery(document.body).append(_zoomWindow);
         
@@ -127,12 +128,43 @@ var libeReader = function() {
     function quitZoom() {
         jQuery(_zoomWindow).detach();
         jQuery(window).unbind('resize', zoomResize);
+        jQuery(window).unbind('keypress', zoomKeypress);        
         jQuery(document.body).css('overflow', 'visible');
     }
     function zoomResize() {
         var doc = jQuery(document);
         _docHeight = doc.height();
         _docWidth = doc.width();
+    }
+    
+    function zoomKeypress(e) {
+        _zoomLoadPosInit();
+        var x = 0;
+        var y = 0;
+        var step = 21;
+        switch (e.keyCode) {
+            case 37: // left
+                x = -step;
+                break;
+            case 38: // up
+                y = -step;
+                break;
+            case 39: // right
+                x = step;
+                break;
+            case 40: // bottom
+                y = step;
+                break;
+            default:
+                break;
+        }
+        if (x || y) {
+            zoomBy(x, y);
+        }
+    }
+    
+    function _zoomLoadPosInit() {
+        _zoomPosInit = {x: -parseInt(_zoomedPages.css('left'), 10), y: -parseInt(_zoomedPages.css('top'), 10)}
     }
     
     function zoomMouseDown(e) {
@@ -145,7 +177,7 @@ var libeReader = function() {
         }
         
         _zoomMouseDown = true;
-        _zoomPosInit = {x: -parseInt(_zoomedPages.css('left'), 10), y: -parseInt(_zoomedPages.css('top'), 10)};
+        _zoomLoadPosInit();
         _zoomMouseInit = {x: e.clientX, y: e.clientY};
         _zoomWindow.css('cursor', '-webkit-grabbing');
         _zoomWindow.css('cursor', '-moz-grabbing');
@@ -170,10 +202,14 @@ var libeReader = function() {
         } else {
             e.preventDefault();
         }
-        
-        var newLeft = _zoomPosInit.x + (_zoomMouseInit.x - e.clientX);
+
+        zoomBy(_zoomMouseInit.x - e.clientX, _zoomMouseInit.y - e.clientY);
+    }
+    
+    function zoomBy(x, y) {
+        var newLeft = _zoomPosInit.x + (x);
         newLeft = zoomLeftInArea(newLeft)
-        var newTop = _zoomPosInit.y + (_zoomMouseInit.y - e.clientY);
+        var newTop = _zoomPosInit.y + (y);
         newTop = zoomTopInArea(newTop);
         
         _zoomedPages.css({'left': -newLeft, 'top': -newTop});
