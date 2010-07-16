@@ -57,7 +57,7 @@ var libePage = function(pageNumber, pageId, pageMaps) {
         if (data.object_class == "article") {
             var url = "http://" + libeConfig.webservices.contentmodel_content
             var replaces = {
-                '{emitter_format}' : 'json',
+                '{emitter_format}' : 'html',
                 '{id}' : data.object_id,
                 '{type}' : 'article',
             }
@@ -66,17 +66,26 @@ var libePage = function(pageNumber, pageId, pageMaps) {
                 url = url.replace(key, replaces[key]);
             }
             
-            jQuery(this).openDOMWindow({
-                windowSourceURL: url,
-                windowSourceID: 'reader_contentmodel_content', 
-                height:400, 
-                width:700, 
-                positionType:'absolute', 
-                positionTop:50, 
-                positionLeft:50, 
-                windowSource:'iframe', 
-                loader:1, 
-            });
+            var key = 'default'
+            if (typeof libeConfig.modelmapping[data.object_class] !== 'undefined') {
+                key = data.object_class
+            }
+
+            if (libeConfig.modelmapping[key] == 'iframe') {
+                jQuery(this).openDOMWindow({
+                    windowSourceURL: url,
+                    windowSourceID: 'reader_contentmodel_content', 
+                    height:400, 
+                    width:700, 
+                    positionType:'absolute', 
+                    positionTop:50, 
+                    positionLeft:50, 
+                    windowSource:'iframe', 
+                    loader:1, 
+                });
+            } else {
+                window.open(url); // FIXME
+            }
         }
     }
 
