@@ -1,5 +1,5 @@
 var libeReader = function() {
-    var _publicationId, _bookName, _publication, _selectedBook, _pages, _displayedPage,
+    var _publicationId, _bookName, _publication, _selectedBook, _pages, _displayedPage, _displayedBook,
         _pageHeight, _pageWidth,_ratio, _zoomWindow, _docHeight, _docWidth, _numberOfPages, 
         _zoomedPageHeight, _zoomedPageWidth, _zoomMouseInit, _zoomPosInit, _zoomedPages, _zoomMouseDown;
     
@@ -370,8 +370,8 @@ var libeReader = function() {
         transitionElement.animate({'width': 2 * finalWidth}, function() { cleanAfterShowPage(number); jQuery(this).parent().detach()});
     }
     
-    function cleanAfterShowPage(number) {
-        if (_displayedPage != "undefined") {
+    function _hideOldPages() {
+        if (typeof _displayedPage != "undefined") {
             if (_pages[_displayedPage]) {
                 _pages[_displayedPage].hide();
             }
@@ -379,11 +379,15 @@ var libeReader = function() {
                 _pages[_displayedPage + 1].hide();
             }
         }
+    }
+    
+    function cleanAfterShowPage(number) {    
+        _hideOldPages();
 
         var newDisplayedPage = number - number % 2;
         if (_pages[newDisplayedPage] || _pages[newDisplayedPage + 1]) {
             _displayedPage = newDisplayedPage;
-            window.location.hash = "#" + _displayedPage;
+            window.location.hash = "#" + _displayedBook + '_' + _displayedPage;
         }
 
         if (_pages[_displayedPage]) {
@@ -431,20 +435,24 @@ var libeReader = function() {
         }
     }
     
-    function handlePublication(data) {
-        /*
-        *   data is the publication json
-        */
-        _publication = data;
-        
-        _selectedBook = _publication.books[0];
-        for (var i in _publication.books) {
-            if (_publication.books[i].name == _bookName) {
-                _selectedBook = _publication.books[i];
-                break;
-            }
+    function _changeBook(newBook) {    
+        if (newBook > _publication.books.length) {
+            newBook = 0;
         }
+        _selectedBook = _publication.books[newBook];
+        _displayedBook = newBook;
+    }
+    
+    function showBook(bookToShow, possiblePage) {
         
+        _hideOldPages();
+        _changeBook(bookToShow);
+        
+        var pageToShow = 0;
+        if (possiblePage >= 0 && possiblePage <= _selectedBook.total) {
+            pageToShow = possiblePage;
+        }
+
         // Hack to know the ratio of the pages for a publication
         jQuery(window).bind('ratio-known', ratioKnown);
         
@@ -453,20 +461,29 @@ var libeReader = function() {
             var page = _selectedBook.pages[i];
             _pages[page.page_number] = libePage(page.page_number, page.id, page.maps);
         }
-        
-        var pageToShow = 0;
-        if (location.hash != "") {
-            var possiblePage = parseInt(location.hash.split('#')[1], 10);
-            if (possiblePage >= 0 && possiblePage <= _selectedBook.total) {
-                pageToShow = possiblePage;
-            }
-        }
+        // FIXME: loop on _pages, filling the missing pages with "Page in construction"        
+
         cleanAfterShowPage(pageToShow);
     }
     
-    function init(publicationId, bookName) {
+    function handlePublication(data) {
+        /*
+        *   data is the publication json
+        */
+        _publication = data;
+                
+        var possiblePage = 0;
+        var bookToShow = 0;
+        if (location.hash != "") {
+            var tmp = location.hash.split('#')[1]
+            var bookToShow = parseInt(tmp.split('_')[0])
+            var possiblePage = parseInt(tmp.split('_')[1])
+        }
+        showBook(bookToShow, possiblePage);
+    }
+    
+    function init(publicationId) {
         _publicationId = publicationId;
-        _bookName = bookName;
                 
         var url = 'http://' + libeConfig.webservices['publication_structure'].replace('{emitter_format}', 'json').replace('{id}', publicationId);
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: defaultAjaxError});
@@ -479,6 +496,7 @@ var libeReader = function() {
         init: init,
         showPage: showPage,
         showPreviousPage: showPreviousPage,
-        showNextPage: showNextPage
+        showNextPage: showNextPage,
+        showBook: showBook
     }
 }();
