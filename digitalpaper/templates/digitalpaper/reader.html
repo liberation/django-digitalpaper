@@ -105,7 +105,11 @@ img {
     </style>
 </head>
 <body>
-<p> Hello, {{ user }} </p>
+{% if user.is_authenticated %}
+    <p id="hello_reader">Hello, {{ user }} !</p>
+{% else %}
+    <p> You are not identified. Please <a href="{% url django.contrib.auth.views.login %}?next={{ request.path }}">log in</a>.</p>
+{% endif %}
 <div class="book">
     <div id="evenSide"></div><div id="oddSide"></div>
     <a id="previousCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/left-corner.png"></a>
@@ -147,7 +151,13 @@ jQuery(document).ready(function () {
         'data' : {'use_session' : 1 },
         'dataType': 'json',
         'success': function(data, textStatus, xhrobject) {
-            libeConfig.changeAccessLevel(accessLevels[data['access_level']]);
+            var level = accessLevels[data['access_level']];
+            {% if debug %}
+            if (level > 0) {
+                jQuery('#hello_reader').append(' Your access rights are: ' + level);
+            }
+            {% endif %}
+            libeConfig.changeAccessLevel(level);
             libeReader.init(publicationId, bookName);
         }
     })
