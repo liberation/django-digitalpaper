@@ -112,7 +112,9 @@ var libePage = function(pageNumber, pageId, pageMaps) {
     _pageElement = document.createElement("div");
     _pageElement.className = "page";
     
-    if (_pageId < 0) {
+    if (_pageNumber <= 0) {
+        // non existant page, do nothing
+    } else if (_pageId < 0) {
         // page not yet included in the book, but that should exist: display it as "in construction"
         var img = document.createElement("img");
         img.src = _imageSource = libeConfig.pageInConstructionImage;
