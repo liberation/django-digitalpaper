@@ -154,7 +154,7 @@ jQuery(document).ready(function () {
             var level = accessLevels[data['access_level']];
             {% if debug %}
             if (level > 0) {
-                jQuery('#hello_reader').append(' Your access rights are: ' + level);
+                jQuery('#hello_reader').append(' Your access level is: ' + level);
             }
             {% endif %}
             libeConfig.changeAccessLevel(level);
