@@ -461,6 +461,11 @@ var libeReader = function() {
             var page = _selectedBook.pages[i];
             _pages[page.page_number] = libePage(page.page_number, page.id, page.maps);
         }
+        for (var i = 0; i < _selectedBook.total; i++) {
+            if (!_pages[i]) {
+                _pages[i] = libePage(i, -1, []);
+            }            
+        }
         // FIXME: loop on _pages, filling the missing pages with "Page in construction"        
 
         cleanAfterShowPage(pageToShow);
