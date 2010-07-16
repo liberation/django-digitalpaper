@@ -466,7 +466,6 @@ var libeReader = function() {
                 _pages[i] = libePage(i, -1, []);
             }            
         }
-        // FIXME: loop on _pages, filling the missing pages with "Page in construction"        
 
         cleanAfterShowPage(pageToShow);
     }
