@@ -55,7 +55,28 @@ var libePage = function(pageNumber, pageId, pageMaps) {
     function openArea() {
         var data = jQuery(this).data('area');
         if (data.object_class == "article") {
-            window.open(data.object_id);
+            var url = "http://" + libeConfig.webservices.contentmodel_content
+            var replaces = {
+                '{emitter_format}' : 'json',
+                '{id}' : data.object_id,
+                '{type}' : 'article',
+            }
+
+            for (key in replaces) {
+                url = url.replace(key, replaces[key]);
+            }
+            
+            jQuery(this).openDOMWindow({
+                windowSourceURL: url,
+                windowSourceID: 'reader_contentmodel_content', 
+                height:400, 
+                width:700, 
+                positionType:'absolute', 
+                positionTop:50, 
+                positionLeft:50, 
+                windowSource:'iframe', 
+                loader:1, 
+            });
         }
     }
 
