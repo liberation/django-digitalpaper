@@ -115,12 +115,12 @@ var libePage = function(pageNumber, pageId, pageMaps) {
     if (_pageId < 0) {
         // page not yet included in the book, but that should exist: display it as "in construction"
         var img = document.createElement("img");
-        img.src = _imageSource = 'http://q.liberation.fr/publication/nonaccess.png';
+        img.src = _imageSource = libeConfig.pageInConstructionImage;
         _pageElement.appendChild(img);
     } else if (!libeConfig.canAccess(_pageNumber, _pageId)) {
         // page that the user isn't allowed to read
         var img = document.createElement("img");
-        img.src = _imageSource = 'http://q.liberation.fr/publication/non-acces.png';
+        img.src = _imageSource = libeConfig.pageLimitedAccessImage;
         _pageElement.appendChild(img);
     } else {
         // normal page    
