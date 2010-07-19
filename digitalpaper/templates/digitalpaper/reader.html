@@ -11,7 +11,10 @@ img {
 }
 .book {
     position: relative;
-    display: inline-block;
+    display: block;
+    width: 880px;
+    margin-right: auto;
+    margin-left: auto;
 }
 #menu {
     display: block;
@@ -20,10 +23,42 @@ img {
 #menu li {
     display: inline;
 }
+
+#menu li a {
+    position: absolute;
+}
+
+#nextButton {
+    right: 0;
+    top: 225px;
+}
+#lastButton {
+    right: 0;
+    top: 275px;
+}
+#previousButton {
+    left: 0;
+    top: 225px;
+}
+#firstButton {
+    left: 0;
+    top: 275px;
+}
+#zoomButton {
+    right: 0;
+    bottom: 0;
+}
+
 .book * {
     padding: 0;
     margin: 0;
     border: 0;
+}
+#bookPages {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+    width: 780px;
 }
 #evenSide, #oddSide {
     position: relative;
@@ -157,22 +192,22 @@ img {
     <p> You are not identified. Please <a href="{% url django.contrib.auth.views.login %}?next={{ request.path }}">log in</a>.</p>
 {% endif %}
 <div class="book">
-    <div id="evenSide"></div><div id="oddSide"></div>
+    <div id="bookPages"><div id="evenSide"></div><div id="oddSide"></div></div>
     <a id="previousCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/left-corner.png"></a>
     <a id="nextCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/right-corner.png"></a>
+    <ul id="menu">
+        <li><a id="zoomButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-zoom.png" alt="Zoom" /></a></li>
+        <li><a id="firstButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-first.png" alt="First" /></a></li>
+        <li><a id="previousButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-prev.png" alt="Previous" /></a></li>
+        <li><a id="nextButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-next.png" alt="Next" /></a></li>
+        <li><a id="lastButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-last.png" alt="Last" /></a></li>
+    </ul>    
 </div>
 <div id="pagesSlider">
     <a href="#" id="sliderPrev" onclick="return false;">«</a>
     <div id="pagesList"></div>
     <a href="#" id="sliderNext" onclick="return false;">»</a>
 </div>
-<ul id="menu">
-<li><a id="zoomButton" href="#">Zoom</a></li>
-<li><a id="firstButton" href="#">First</a></li>
-<li><a id="previousButton" href="#">Previous</a></li>
-<li><a id="nextButton" href="#">Next</a></li>
-<li><a id="lastButton" href="#">Last</a></li>
-</ul>
 
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery-1.4.2.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery.DOMWindow.js"></script>
@@ -201,7 +236,7 @@ var contentmapping = {
 }
 
 jQuery(document).ready(function () {
-    iSlideSize = 200;
+    iSlideSize = 296;
     sSlideSpeed = 'slow';
     iPosition = 0;
 
