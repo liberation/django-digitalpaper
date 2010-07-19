@@ -59,6 +59,7 @@ img {
     margin-right: auto;
     margin-left: auto;
     width: 780px;
+    position: relative;
 }
 #evenSide, #oddSide {
     position: relative;
@@ -192,9 +193,12 @@ img {
     <p> You are not identified. Please <a href="{% url django.contrib.auth.views.login %}?next={{ request.path }}">log in</a>.</p>
 {% endif %}
 <div class="book">
-    <div id="bookPages"><div id="evenSide"></div><div id="oddSide"></div></div>
-    <a id="previousCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/left-corner.png"></a>
-    <a id="nextCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/right-corner.png"></a>
+    <div id="bookPages">{% spaceless %}
+        <div id="evenSide"></div><div id="oddSide"></div>
+        <a id="previousCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/left-corner.png"></a>
+        <a id="nextCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/right-corner.png"></a>
+    {% endspaceless %}</div>
+    
     <ul id="menu">
         <li><a id="zoomButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-zoom.png" alt="Zoom" /></a></li>
         <li><a id="firstButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-first.png" alt="First" /></a></li>
