@@ -226,7 +226,7 @@ $.noConflict();
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/page.js"></script>
 <script type="text/javascript">
 var publicationId = {{ publication.id }};
-var tokenUrl = {% if API_TOKEN_ALLOW_UNSECURE %}"http://"{% else %}"https://"{% endif %} + libeConfig.webservices.token
+var tokenUrl = "http://" + libeConfig.webservices.token
 tokenUrl = tokenUrl.replace('{emitter_format}', 'json');
 
 var accessLevels = {
