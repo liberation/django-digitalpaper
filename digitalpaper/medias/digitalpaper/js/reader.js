@@ -404,8 +404,12 @@ var libeReader = function() {
     function showSelectedPage(e) {
         e.preventDefault();
         var tmp = _parseHashtoGetParams(this.href.split('#')[1]);
+        var newDisplayedBook = tmp[0];
         var newDisplayedPage = tmp[1] - tmp[1] % 2;
-        if (newDisplayedPage != _displayedPage) {        
+        
+        if (newDisplayedBook != _displayedBook) {
+            showBook(newDisplayedBook, newDisplayedPage);
+        } else if (newDisplayedPage != _displayedPage) {        
             showPage(newDisplayedPage);
         }
     }
@@ -503,6 +507,7 @@ var libeReader = function() {
             tmp = _parseHashtoGetParams(location.hash.split('#')[1]);
         }
         showBook(tmp[0], tmp[1]);
+        showBookList();
     }
     
     function init(publicationId) {
@@ -512,7 +517,18 @@ var libeReader = function() {
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: defaultAjaxError});
         
         jQuery('#zoomButton').click(function () {zoomAtCoordinates(0, 0)});
-        jQuery('#previousCorner, #nextCorner').hover(showHoverCorner, hideHoverCorner)
+        jQuery('#previousCorner, #nextCorner').hover(showHoverCorner, hideHoverCorner);
+    }
+    
+    function showBookList() {
+        var len = _publication.books.length;
+        for (var i = 0; i < len; i++) {
+            var page = _publication.books[i].pages[0]
+            var obj = libePage(page.page_number, page.id, page.maps);
+            var a = jQuery('<a href="#' + i + '_' + 0 + '"><img src="' + obj.smallImageSource + ' /></a>');
+            jQuery('#bookSwitcher').append(a);
+            a.bind('click', showSelectedPage);
+        }
     }
     
     return {
@@ -521,6 +537,7 @@ var libeReader = function() {
         showPreviousPage: showPreviousPage,
         showNextPage: showNextPage,
         showSelectedPage: showSelectedPage,
-        showBook: showBook
+        showBook: showBook,
+        blah: _publication
     }
 }();
