@@ -260,15 +260,40 @@ var libeReader = function() {
         }
     }
     
-    function getZoomImage(xRow, yColumn) {
+    function getZoomImage(xRow, yColumn) {    
         if (xRow < 0 || yColumn < 0) {
             return;
         }
-        if (xRow >= _numberOfPages * libeConfig.imagesPerRow || yColumn >= libeConfig.imagesPerColumn) {
+        
+        if (yColumn >= libeConfig.imagesPerColumn) {
             return;
         }
 
-        var imgIndex = yColumn * libeConfig.imagesPerRow * _numberOfPages + xRow;
+        if (_displayedPage == 0) {
+            // If _displayedPage is 0, it means we are displaying the first page,
+            // which is alone on the *right* hand side.
+            // Constraints need to change in that case, to allow the coordinates 
+            // on the right (where the first page is) and disallow the ones on the left
+            // (where there isn't any page)
+            if (xRow >= 2 * libeConfig.imagesPerRow || xRow < libeConfig.imagesPerRow) {
+                return;
+            }
+        } else {
+            if (xRow >= _numberOfPages * libeConfig.imagesPerRow) {
+                return;
+            }
+        }
+
+        if (_displayedPage == 0) {
+            // Another hack for the first page: there are only half the number of images,
+            // the indexing need to be changed. (Note: we don't want to change xRow and yColumn
+            // directly, the web services expect x to be > imagesPerRow on the right page, 
+            // even if it's the first one!)
+            var imgIndex = yColumn * libeConfig.imagesPerRow + xRow - libeConfig.imagesPerRow;
+        } else {
+            var imgIndex = yColumn * libeConfig.imagesPerRow * _numberOfPages + xRow;
+        }
+        
         var img = _HDgridContainer.children().eq(imgIndex);
         if (!img) {
             return;
@@ -277,9 +302,9 @@ var libeReader = function() {
         if (img.attr('src')) {
             return;
         }
+        
         //img.css({'background-color': "yellow", 'border': "1 px solid black"});
         var currentPage = _pages[_displayedPage + Math.floor(xRow / libeConfig.imagesPerRow)];
-        
         if (!currentPage) {
             return;
         }
