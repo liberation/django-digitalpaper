@@ -1,6 +1,6 @@
 var libeReader = function() {
     var _publicationId, _bookName, _publication, _selectedBook, _pages, _displayedPage, _displayedBook,
-        _pageHeight, _pageWidth,_ratio, _zoomWindow, _docHeight, _docWidth, _numberOfPages, 
+        _pageHeight, _pageWidth,_ratio, _zoomWindow, _winHeight, _winWidth, _numberOfPages, 
         _zoomedPageHeight, _zoomedPageWidth, _zoomMouseInit, _zoomPosInit, _zoomedPages, _zoomMouseDown;
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
@@ -47,13 +47,12 @@ var libeReader = function() {
         
         jQuery(document.body).css('overflow', 'hidden');
         document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
         
         _zoomWindow = jQuery(document.createElement('div'));
         _zoomWindow.attr('id', 'zoomWindow');
 
-        var doc = jQuery(document);
-        _docHeight = doc.height();
-        _docWidth = doc.width();
+        zoomResize();
         
         _zoomedPages = jQuery(document.createElement('div'));
         _zoomedPages.attr('id', 'zoomedPages');
@@ -75,13 +74,13 @@ var libeReader = function() {
             _zoomedPages.children().first().css('width', '100%');
         }
         
-        var top = y - (_docHeight / 2);
+        var top = y - (_winHeight / 2);
         top = zoomTopInArea(top);
         
         if (_numberOfPages == 1 && x > _zoomedPageWidth) {
             x = x - _zoomedPageWidth;
         }
-        var left = x - (_docWidth / 2);
+        var left = x - (_winWidth / 2);
         left = zoomLeftInArea(left);
         _zoomedPages.css({'height': _zoomedPageHeight, 'width': _numberOfPages * _zoomedPageWidth, 'top': -top, 'left': -left});
         
@@ -132,9 +131,9 @@ var libeReader = function() {
         jQuery(document.body).css('overflow', 'visible');
     }
     function zoomResize() {
-        var doc = jQuery(document);
-        _docHeight = doc.height();
-        _docWidth = doc.width();
+        var win = jQuery(window);
+        _winHeight = win.height();
+        _winWidth = win.width();
     }
     
     function zoomKeypress(e) {
@@ -208,8 +207,9 @@ var libeReader = function() {
     
     function zoomBy(x, y) {
         var newLeft = _zoomPosInit.x + (x);
-        newLeft = zoomLeftInArea(newLeft)
         var newTop = _zoomPosInit.y + (y);
+        
+        newLeft = zoomLeftInArea(newLeft);
         newTop = zoomTopInArea(newTop);
         
         _zoomedPages.css({'left': -newLeft, 'top': -newTop});
@@ -220,8 +220,8 @@ var libeReader = function() {
         if (left < 0) {
             left = 0;
         }
-        if (left > _numberOfPages * _zoomedPageWidth - _docWidth) {
-            left = _numberOfPages * _zoomedPageWidth - _docWidth;
+        if (left > _numberOfPages * _zoomedPageWidth - _winWidth) {
+            left = _numberOfPages * _zoomedPageWidth - _winWidth;
         }
         
         return left;
@@ -230,16 +230,16 @@ var libeReader = function() {
         if (top < 0) {
             top = 0;
         }
-        if (top > _zoomedPageHeight - _docHeight)
+        if (top > _zoomedPageHeight - _winHeight)
         {
-            top = _zoomedPageHeight - _docHeight;
+            top = _zoomedPageHeight - _winHeight;
         }
         return top;
     }
     
     function zoomHighDefAtCoordinates(x, y) {
-        x = x + (_docWidth / 2);
-        y = y + (_docHeight / 2);
+        x = x + (_winWidth / 2);
+        y = y + (_winHeight / 2);
         
         var xRowSize = _zoomedPageWidth / libeConfig.imagesPerRow;
         var yColumnSize = _zoomedPageHeight / libeConfig.imagesPerColumn;
