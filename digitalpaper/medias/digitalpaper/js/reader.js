@@ -159,6 +159,7 @@ var libeReader = function() {
         }
         if (x || y) {
             zoomBy(x, y);
+            e.preventDefault();
         }
     }
     
