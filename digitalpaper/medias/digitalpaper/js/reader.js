@@ -93,7 +93,7 @@ var libeReader = function() {
         _zoomWindow.mousemove(zoomMouseMove);
         jQuery(document.body).mouseleave(zoomMouseUp);
         jQuery(window).bind('resize', zoomResize);
-        jQuery(window).bind('keypress', zoomKeypress);
+        jQuery(window).bind('keydown', zoomKeydown);
         
         jQuery(document.body).append(_zoomWindow);
         
@@ -128,7 +128,7 @@ var libeReader = function() {
     function quitZoom() {
         jQuery(_zoomWindow).detach();
         jQuery(window).unbind('resize', zoomResize);
-        jQuery(window).unbind('keypress', zoomKeypress);        
+        jQuery(window).unbind('keydown', zoomKeydown);        
         jQuery(document.body).css({'overflow': 'hidden', 'height': 'auto' });
     }
     function zoomResize() {
@@ -137,12 +137,16 @@ var libeReader = function() {
         _winWidth = win.width();
     }
     
-    function zoomKeypress(e) {
+    function zoomKeydown(e) {
         _zoomLoadPosInit();
         var x = 0;
         var y = 0;
         var step = 21;
         switch (e.keyCode) {
+            case 27: // esc
+                quitZoom();
+                e.preventDefault();
+                break;
             case 37: // left
                 x = -step;
                 break;
