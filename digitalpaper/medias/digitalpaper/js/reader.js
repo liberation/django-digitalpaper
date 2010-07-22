@@ -509,7 +509,7 @@ var libeReader = function() {
             if (!_pages[i]) {
                 _pages[i] = libePage(i, -1, []);
             }
-            var a = jQuery('<a href="#' + _displayedBook + '_' + i + '"><img src="' + _pages[i].smallImageSource + "' /></a>');
+            var a = jQuery('<a href="#' + _displayedBook + '_' + i + '"><img src="' + _pages[i].smallImageSource + '" /></a>');
             jQuery('#pagesList').append(a);
             a.bind('click', showSelectedPage);
         }
@@ -551,7 +551,7 @@ var libeReader = function() {
         for (var i = 0; i < len; i++) {
             var page = _publication.books[i].pages[0];
             var obj = libePage(page.page_number, page.id, page.maps);
-            var a = jQuery('<a href="#' + i + '_' + 0 + '"><img src="' + obj.smallImageSource + "' /></a>');
+            var a = jQuery('<a href="#' + i + '_' + 0 + '"><img src="' + obj.smallImageSource + '" /></a>');
             jQuery('#bookSwitcher').append(a);
             a.bind('click', showSelectedPage);
         }
