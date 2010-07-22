@@ -95,7 +95,7 @@ var libePage = function(pageNumber, pageId, pageMaps) {
     }
 
     function highlightArea() {
-        jQuery(this).clearQueue().animate({opacity: 0.3}, 300);
+        jQuery(this).clearQueue().animate({opacity: 0.1}, 300);
     }
     function unhighlightArea() {
         jQuery(this).clearQueue().animate({opacity: 0}, 300);
@@ -136,8 +136,10 @@ var libePage = function(pageNumber, pageId, pageMaps) {
         var tmp = libeConfig.webservices.paper_page.replace('{emitter_format}', 'jpg').replace('{id}', _pageId)
         jQuery(img).bind('load', function(e) {
             var w = jQuery(this).width();
+            var h = jQuery(this).height();
             if (w) {
                 libeConfig.pageWidth = w
+                libeConfig.pageHeight = h
                 handleMap(); // Just in case. showPage should do it, 
                              // but there might be a race condition
             }
