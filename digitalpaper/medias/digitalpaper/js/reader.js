@@ -157,6 +157,14 @@ var libeReader = function() {
     function normalKeyboardCallback(e) {
         if (e.ctrlKey) {
             switch (e.keyCode) {
+                case 109: // -
+                    e.preventDefault();
+                    break;
+                case 61:  // =
+                case 107: // +
+                    zoomAtCoordinates(10, 10);
+                    e.preventDefault();
+                    break;
                 case 35: // end
                     showLastPage(e);
                     break;
@@ -173,6 +181,8 @@ var libeReader = function() {
                     break;
             }
         }
+        
+        
     }
     
     function zoomedKeyboardCallback(e) {
@@ -181,7 +191,8 @@ var libeReader = function() {
         var y = 0;
         var step = 21;
         switch (e.keyCode) {
-             case 27: // esc
+             case 109: // -
+             case 27:  // esc
                 quitZoom();
                 e.preventDefault();
                 break;
