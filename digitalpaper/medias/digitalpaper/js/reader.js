@@ -45,7 +45,8 @@ var libeReader = function() {
         _zoomedPageHeight = _pageHeight * libeConfig.zoomFactor;
         _zoomedPageWidth = _pageWidth * libeConfig.zoomFactor;
         
-        jQuery(document.body).css('overflow', 'hidden');
+        height = jQuery(window).height()
+        jQuery(document.body).css({'overflow': 'hidden', 'height': height });
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
         
@@ -128,7 +129,7 @@ var libeReader = function() {
         jQuery(_zoomWindow).detach();
         jQuery(window).unbind('resize', zoomResize);
         jQuery(window).unbind('keypress', zoomKeypress);        
-        jQuery(document.body).css('overflow', 'visible');
+        jQuery(document.body).css({'overflow': 'hidden', 'height': 'auto' });
     }
     function zoomResize() {
         var win = jQuery(window);
