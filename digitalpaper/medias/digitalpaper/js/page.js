@@ -1,21 +1,26 @@
 var libePage = function(pageNumber, pageId, pageMaps) {
-    var _pageNumber, _pageId, _imageSource, _pageElement, _areasElement = [];
+    var _pageElement, _areasElement = [];
+    var map = {};
+    var _pageNumber, _pageId, _imageSource, _pageWidth = 0;
+    var _mapsLoaded = false;
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
         console.log(XMLHttpRequest, textStatus, errorThrown);
     }
     
-    function handleMap(data) {
-        if (!data.areas) {
+    function handleMap() {
+        _mapsLoaded = true;
+        if (!map || !map.areas || !map.areas.length || !map.width || !map.height) {
             return;
         }
-        var map = data;
-        
+        if (!libeConfig.pageWidth) {
+            _mapsLoaded = false;
+            return;
+        }
         var ratio = map.width / map.height
         jQuery(window).trigger('ratio-known', [ratio]);
         var reductionRatio = libeConfig.pageWidth / map.width;
-        
-        for (var i=0, il=map.areas.length; i < il; i++) {
+        for (var i = 0, il = map.areas.length; i < il; i++) {
             var area = map.areas[i];
             var coords = area.coords.split(",");
             var left = Math.ceil(coords[0] * reductionRatio);
@@ -125,13 +130,22 @@ var libePage = function(pageNumber, pageId, pageMaps) {
         img.src = _imageSource = _smallImageSource = libeConfig.pageLimitedAccessImage;
         _pageElement.appendChild(img);
     } else {
-        // normal page    
+        // normal page
+        map = pageMaps;
         var img = document.createElement("img");
         var tmp = libeConfig.webservices.paper_page.replace('{emitter_format}', 'jpg').replace('{id}', _pageId)
+        jQuery(img).bind('load', function(e) {
+            var w = jQuery(this).width();
+            if (w) {
+                libeConfig.pageWidth = w
+                handleMap(); // Just in case. showPage should do it, 
+                             // but there might be a race condition
+            }
+        });
         img.src = _imageSource = 'http://' + tmp.replace('{size}', 'x500');
         _smallImageSource = 'http://' + tmp.replace('{size}', 'x148');
-        handleMap(pageMaps);
         _pageElement.appendChild(img);
+        
     }
     
     if (_pageNumber % 2 == 0) {
@@ -140,14 +154,12 @@ var libePage = function(pageNumber, pageId, pageMaps) {
         libeConfig.oddSideElement.appendChild(_pageElement);
     }
     
-    //var url = libeConfig.apiRoot + "resources/page_map_" + _pageId + ".json";
-    //jQuery.ajax({url: url, dataType: "json", success: handleMap, error: defaultAjaxError});
-    
     return {
         show: show,
         hide: hide,
         imageSource: _imageSource,
         smallImageSource: _smallImageSource,
-        pageId: _pageId
+        pageId: _pageId,
+        handleMap: handleMap
     }
 }

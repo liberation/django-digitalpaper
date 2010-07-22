@@ -415,12 +415,14 @@ var libeReader = function() {
         leftPage.addClass('leftPage');
         if (_pages[newDisplayedPage]) {
             leftPage.css('background-image', 'url(' + _pages[newDisplayedPage].imageSource + ')');
+            _pages[newDisplayedPage].handleMap();
         }
         
         var rightPage = jQuery(document.createElement('div'));
         rightPage.addClass('rightPage');
         if (_pages[newDisplayedPage + 1]) {
             rightPage.css('background-image', 'url(' + _pages[newDisplayedPage + 1].imageSource + ')');
+            _pages[newDisplayedPage + 1].handleMap();
         }
         
         var transitionElement = jQuery(document.createElement('div'));
