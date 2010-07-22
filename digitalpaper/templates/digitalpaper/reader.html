@@ -49,7 +49,7 @@ img {
     bottom: 0;
 }
 
-body, html, .book * {
+body, html, .book *, p {
     padding: 0;
     margin: 0;
     border: 0;
@@ -186,14 +186,24 @@ body {
 #pagesList img {
     height: 148px;
 }
+
+p {
+    padding: 0.5em;
+}
+
+#hello_reader strong {
+    color: red;
+}
     </style>
 </head>
 <body>
+<div>
 {% if user.is_authenticated %}
     <p id="hello_reader">Hello, {{ user }} !</p>
 {% else %}
     <p> You are not identified. Please <a href="{% url django.contrib.auth.views.login %}?next={{ request.path }}">log in</a>.</p>
 {% endif %}
+</div>
 <div class="book">
     <div id="bookPages">{% spaceless %}
         <div id="evenSide"></div><div id="oddSide"></div>
@@ -265,22 +275,29 @@ jQuery(document).ready(function () {
             jQuery('#pagesList').animate({left: iPosition}, sSlideSpeed);
         }
     });
-
-    jQuery.ajax({
-        'url': tokenUrl,
-        'type': 'post',
-        'data' : {'use_session' : 1 },
-        'dataType': 'json',
-        'success': function(data, textStatus, xhrobject) {
+    
+    function readerInitCallback(data, textStatus, xhrobject) {
+        try {
             var level = accessLevels[data['access_level']];
             {% if debug %}
             if (level > 0) {
                 jQuery('#hello_reader').append(' Your access level is: ' + level);
             }
             {% endif %}
-            libeConfig.changeAccessLevel(level);
-            libeReader.init(publicationId);
+        } catch (e) {
+                jQuery('#hello_reader').append(' <strong>Cannot access token data! Check the host, it might be a crossdomain issue!</strong>');
         }
+        libeConfig.changeAccessLevel(level);
+        libeReader.init(publicationId);
+    }
+
+    jQuery.ajax({
+        'url': tokenUrl,
+        'type': 'post',
+        'data' : {'use_session' : 1 },
+        'dataType': 'json',
+        'success': readerInitCallback,
+        'error': readerInitCallback
     })
 });
 
