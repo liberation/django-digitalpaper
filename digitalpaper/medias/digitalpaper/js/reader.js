@@ -310,20 +310,24 @@ var libeReader = function() {
             return;
         }
         
-        var replaces = {
-            '{emitter_format}' : 'png',
-            '{id}' : currentPage.pageId,
-            '{perrow}' : libeConfig.imagesPerRow,
-            '{percol}' : libeConfig.imagesPerColumn,
-            '{x}' : xRow,
-            '{y}' : yColumn
+        if (currentPage.pageId <= 0) {
+            img.css({'visibility' : 'hidden'});
+        } else {
+            var replaces = {
+                '{emitter_format}' : 'png',
+                '{id}' : currentPage.pageId,
+                '{perrow}' : libeConfig.imagesPerRow,
+                '{percol}' : libeConfig.imagesPerColumn,
+                '{x}' : xRow,
+                '{y}' : yColumn
+            }
+            
+            var src = 'http://' + libeConfig.webservices.paper_page_crop;
+            for (key in replaces) {
+                src = src.replace(key, replaces[key]);
+            }
+            img.attr('src', src);
         }
-        
-        var src = 'http://' + libeConfig.webservices.paper_page_crop;
-        for (key in replaces) {
-            src = src.replace(key, replaces[key]);
-        }
-        img.attr('src', src);
     }
     
     function showHoverCorner() {
