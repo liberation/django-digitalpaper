@@ -551,7 +551,7 @@ var libeReader = function() {
         for (var i = 0; i < len; i++) {
             var page = _publication.books[i].pages[0];
             var obj = libePage(page.page_number, page.id, page.maps);
-            var a = jQuery('<a href="#' + i + '_' + 0 + '"><img src="' + obj.smallImageSource + ' /></a>');
+            var a = jQuery('<a href="#' + i + '_' + 0 + '"><img src="' + obj.smallImageSource + "' /></a>');
             jQuery('#bookSwitcher').append(a);
             a.bind('click', showSelectedPage);
         }
