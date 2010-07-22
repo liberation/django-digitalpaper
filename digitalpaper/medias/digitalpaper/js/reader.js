@@ -509,7 +509,7 @@ var libeReader = function() {
             if (!_pages[i]) {
                 _pages[i] = libePage(i, -1, []);
             }
-            var a = jQuery('<a href="#' + _displayedBook + '_' + i + '"><img src="' + _pages[i].smallImageSource + ' /></a>');
+            var a = jQuery('<a href="#' + _displayedBook + '_' + i + '"><img src="' + _pages[i].smallImageSource + "' /></a>');
             jQuery('#pagesList').append(a);
             a.bind('click', showSelectedPage);
         }
