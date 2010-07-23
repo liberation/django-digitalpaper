@@ -110,6 +110,9 @@ body {
     top: 0;
     opacity: 0;
     filter: alpha(opacity=0);
+    width: 30px;
+    height: 26px;
+    cursor: pointer;
 }
 #previousCorner:focus, #nextCorner:focus {
     outline: none;
@@ -210,8 +213,8 @@ p {
 <div class="book">
     <div id="bookPages">{% spaceless %}
         <div id="evenSide"></div><div id="oddSide"></div>
-        <a id="previousCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/left-corner.png"></a>
-        <a id="nextCorner" href="#"><img src="{{ MEDIA_URL }}digitalpaper/img/right-corner.png"></a>
+        <span id="previousCorner" href="#" style="background-image: url({{ MEDIA_URL }}digitalpaper/img/left-corner.png);"></span>
+        <span id="nextCorner" href="#" style="background-image: url({{ MEDIA_URL }}digitalpaper/img/right-corner.png);"></span>
     {% endspaceless %}</div>
     
     <ul id="menu">
