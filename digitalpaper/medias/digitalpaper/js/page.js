@@ -119,15 +119,15 @@ var libePage = function(pageNumber, pageId, pageMaps) {
     
     if (_pageNumber <= 0) {
         // non existant page, do nothing
-    } else if (_pageId < 0) {
-        // page not yet included in the book, but that should exist: display it as "in construction"
-        var img = document.createElement("img");
-        img.src = _imageSource = _smallImageSource = libeConfig.pageInConstructionImage;
-        _pageElement.appendChild(img);
     } else if (!libeConfig.canAccess(_pageNumber, _pageId)) {
         // page that the user isn't allowed to read
         var img = document.createElement("img");
         img.src = _imageSource = _smallImageSource = libeConfig.pageLimitedAccessImage;
+        _pageElement.appendChild(img);        
+    } else if (_pageId < 0) {
+        // page not yet included in the book, but that should exist: display it as "in construction"
+        var img = document.createElement("img");
+        img.src = _imageSource = _smallImageSource = libeConfig.pageInConstructionImage;
         _pageElement.appendChild(img);
     } else {
         // normal page
