@@ -111,7 +111,7 @@ var libeReader = function() {
         _zoomWindow.mouseup(zoomMouseUp);
         _zoomWindow.mousemove(zoomMouseMove);
         jQuery(document.body).mouseleave(zoomMouseUp);
-        jQuery(document.body).mousewheel(zoomMouseWheel);
+        jQuery(document.body).bind('mousewheel', zoomMouseWheel);
         jQuery(window).bind('resize', zoomResize);
         
         jQuery(document.body).append(_zoomWindow);
