@@ -151,14 +151,14 @@ body {
     overflow: visible !important;
 }
 
-#pagesSlider {
+#pagesSlider, #bookSwitcher {
     overflow: hidden;
     height: 150px;
     white-space: nowrap;
     position: relative;
 }
 
-#pagesList, #pagesList a {
+#pagesList, #pagesSlider a, #bookSwitcher a {
     display: inline-block;
     height: 148px;
 }
@@ -199,6 +199,13 @@ p {
 
 #hello_reader strong {
     color: red;
+}
+
+.loading {
+    background-image: url({{ MEDIA_URL }}digitalpaper/img/loading.gif);
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 115px;
 }
     </style>
 </head>

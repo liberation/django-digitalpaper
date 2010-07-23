@@ -22,7 +22,11 @@ var libeConfigFunc = function (data) {
         'canAccess': canAccess,
         'canZoom': canZoom,
         'evenSideElement' : evenSideElement,
-        'oddSideElement' : oddSideElement,        
+        'oddSideElement' : oddSideElement, 
+        'pageWidth': 0,
+        'pageHeight': 0,
+        'pageThumbnailWidth': 0,
+        'pageThumbnailHeight': 0
     };
     
     for (d in data) {

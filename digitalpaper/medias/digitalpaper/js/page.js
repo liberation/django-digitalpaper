@@ -1,8 +1,9 @@
 var libePage = function(pageNumber, pageId, pageMaps) {
     var _pageElement, _areasElement = [];
     var map = {};
-    var _pageNumber, _pageId, _imageSource, _pageWidth = 0;
+    var _pageNumber, _pageId, _pageWidth = 0;
     var _mapsLoaded = false;
+    var _smallImageSource, _imageSource = null;
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
         console.log(XMLHttpRequest, textStatus, errorThrown);
@@ -109,6 +110,16 @@ var libePage = function(pageNumber, pageId, pageMaps) {
         jQuery(_pageElement).hide();
     }
     
+    function getThumbnailForList(book) {
+        var a = jQuery('<a class="loading" href="#' + book + '_' + _pageNumber + '"></a>');
+        var img = jQuery('<img src="' + _smallImageSource + '" />');
+        img.bind('load', function(e) {
+            jQuery(this).parent().removeClass('loading');
+        });
+        a.append(img);
+        return a;
+    }
+    
     // Init Code
     
     _pageNumber = pageNumber;
@@ -139,7 +150,9 @@ var libePage = function(pageNumber, pageId, pageMaps) {
             var h = jQuery(this).height();
             if (w) {
                 libeConfig.pageWidth = w
-                libeConfig.pageHeight = h
+                // libeConfig.pageHeight = h
+                // libeConfig.pageThumbnailHeight = 
+                libeConfig.pageThumbnailWidth = parseInt(w * libeConfig.pageThumbnailHeight / libeConfig.pageHeight, 10);
                 handleMap(); // Just in case. showPage should do it, 
                              // but there might be a race condition
             }
@@ -162,6 +175,7 @@ var libePage = function(pageNumber, pageId, pageMaps) {
         imageSource: _imageSource,
         smallImageSource: _smallImageSource,
         pageId: _pageId,
-        handleMap: handleMap
+        handleMap: handleMap,
+        getThumbnailForList: getThumbnailForList
     }
 }
