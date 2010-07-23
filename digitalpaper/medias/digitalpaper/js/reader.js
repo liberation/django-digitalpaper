@@ -290,9 +290,9 @@ var libeReader = function() {
         zoomBy(_zoomMouseInit.x - e.clientX, _zoomMouseInit.y - e.clientY);
     }
     
-    function zoomMouseWheel(e) {
+    function zoomMouseWheel(e, delta) {
         _zoomLoadPosInit();
-        if (e.detail > 0) {
+        if (delta < 0) {
             zoomBy(0, _step);
         } else {
             zoomBy(0, -_step);
