@@ -33,6 +33,9 @@ var libeReader = function() {
     
     function zoom(event) {
         var offset = jQuery(this).offset()
+        if (!offset) {
+            offset = {'left': 0, 'top': 0};
+        }
         var x = event.pageX - offset.left;
         var y = event.pageY - offset.top;
         
@@ -158,11 +161,13 @@ var libeReader = function() {
         if (e.ctrlKey) {
             switch (e.keyCode) {
                 case 109: // -
+                case 40:  // bottom
                     e.preventDefault();
                     break;
                 case 61:  // =
                 case 107: // +
-                    zoomAtCoordinates(10, 10);
+                case 38:  // up
+                    zoom(e);
                     e.preventDefault();
                     break;
                 case 35: // end
@@ -190,26 +195,38 @@ var libeReader = function() {
         var x = 0;
         var y = 0;
         var step = 21;
-        switch (e.keyCode) {
-             case 109: // -
-             case 27:  // esc
-                quitZoom();
-                e.preventDefault();
-                break;
-            case 37: // left
-                x = -step;
-                break;
-            case 38: // up
-                y = -step;
-                break;
-            case 39: // right
-                x = step;
-                break;
-            case 40: // bottom
-                y = step;
-                break;
-            default:
-                break;
+        if (e.ctrlKey) {
+            switch (e.keyCode) {
+                case 27:  // esc
+                case 109: // -
+                case 40: // bottom
+                    quitZoom();
+                    e.preventDefault();
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            switch (e.keyCode) {
+                 case 27:  // esc
+                    quitZoom();
+                    e.preventDefault();
+                    break;
+                case 37: // left
+                    x = -step;
+                    break;
+                case 38: // up
+                    y = -step;
+                    break;
+                case 39: // right
+                    x = step;
+                    break;
+                case 40: // bottom
+                    y = step;
+                    break;
+                default:
+                    break;
+            }
         }
         if (x || y) {
             zoomBy(x, y);
