@@ -58,6 +58,9 @@ var libeReader = function() {
         _zoomedPageHeight = _pageHeight * libeConfig.zoomFactor;
         _zoomedPageWidth = _pageWidth * libeConfig.zoomFactor;
         
+        jQuery('#pagesSlider').hide();
+        jQuery('#bookSwitcher').hide();
+        
         height = jQuery(window).height()
         jQuery(document.body).css({'overflow': 'hidden', 'height': height });
         document.body.scrollTop = 0;
@@ -140,7 +143,9 @@ var libeReader = function() {
     function quitZoom() {
         jQuery(_zoomWindow).detach();
         jQuery(window).unbind('resize', zoomResize);
-        jQuery(document.body).css({'overflow': 'hidden', 'height': 'auto' });
+        jQuery('#pagesSlider').show();
+        jQuery('#bookSwitcher').show();
+        jQuery(document.body).css({'overflow': 'hidden', 'height': 'auto' });        
         _isZoomed = false;
     }
     function zoomResize() {
