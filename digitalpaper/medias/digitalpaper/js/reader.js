@@ -1,7 +1,10 @@
 var libeReader = function() {
     var _publicationId, _bookName, _publication, _selectedBook, _pages, _displayedPage, _displayedBook,
         _pageHeight, _pageWidth,_ratio, _zoomWindow, _winHeight, _winWidth, _numberOfPages, _isZoomed, 
-        _zoomedPageHeight, _zoomedPageWidth, _zoomMouseInit, _zoomPosInit, _zoomedPages, _zoomMouseDown;
+        _zoomedPageHeight, _zoomedPageWidth, _zoomMouseInit, _zoomPosInit, _zoomedPages, _zoomMouseDown,
+        _step;
+        
+    _step = 21;
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
         console.log(XMLHttpRequest, textStatus, errorThrown);
@@ -108,6 +111,7 @@ var libeReader = function() {
         _zoomWindow.mouseup(zoomMouseUp);
         _zoomWindow.mousemove(zoomMouseMove);
         jQuery(document.body).mouseleave(zoomMouseUp);
+        jQuery(document.body).mousewheel(zoomMouseWheel);
         jQuery(window).bind('resize', zoomResize);
         
         jQuery(document.body).append(_zoomWindow);
@@ -143,11 +147,13 @@ var libeReader = function() {
     function quitZoom() {
         jQuery(_zoomWindow).detach();
         jQuery(window).unbind('resize', zoomResize);
+        jQuery(window).unbind('mousewheel');        
         jQuery('#pagesSlider').show();
         jQuery('#bookSwitcher').show();
         jQuery(document.body).css({'overflow': 'hidden', 'height': 'auto' });        
         _isZoomed = false;
     }
+    
     function zoomResize() {
         var win = jQuery(window);
         _winHeight = win.height();
@@ -191,15 +197,12 @@ var libeReader = function() {
                     break;
             }
         }
-        
-        
     }
     
     function zoomedKeyboardCallback(e) {
         _zoomLoadPosInit();
         var x = 0;
         var y = 0;
-        var step = 21;
         if (e.ctrlKey) {
             switch (e.keyCode) {
                 case 27:  // esc
@@ -218,16 +221,16 @@ var libeReader = function() {
                     e.preventDefault();
                     break;
                 case 37: // left
-                    x = -step;
+                    x = -_step;
                     break;
                 case 38: // up
-                    y = -step;
+                    y = -_step;
                     break;
                 case 39: // right
-                    x = step;
+                    x = _step;
                     break;
                 case 40: // bottom
-                    y = step;
+                    y = _step;
                     break;
                 default:
                     break;
@@ -249,15 +252,19 @@ var libeReader = function() {
             e.preventDefault();
             e = e.touches[0];
         } else {
-            e.preventDefault();            
+            e.preventDefault();
+            if (e.button != 0) {
+                return;
+            }
         }
-        
+
         _zoomMouseDown = true;
         _zoomLoadPosInit();
         _zoomMouseInit = {x: e.clientX, y: e.clientY};
         _zoomWindow.css('cursor', '-webkit-grabbing');
         _zoomWindow.css('cursor', '-moz-grabbing');
     }
+    
     function zoomMouseUp(e) {
         _zoomMouseDown = false;
         _zoomWindow.css('cursor', '-webkit-grab');
@@ -266,6 +273,7 @@ var libeReader = function() {
         
         zoomHighDefAtCoordinates(-parseInt(_zoomedPages.css('left'), 10), -parseInt(_zoomedPages.css('top'), 10))
     }
+    
     function zoomMouseMove(e) {
         if (_zoomMouseDown != true) {
             return;
@@ -280,6 +288,16 @@ var libeReader = function() {
         }
 
         zoomBy(_zoomMouseInit.x - e.clientX, _zoomMouseInit.y - e.clientY);
+    }
+    
+    function zoomMouseWheel(e) {
+        _zoomLoadPosInit();
+        if (e.detail > 0) {
+            zoomBy(0, _step);
+        } else {
+            zoomBy(0, -_step);
+        }
+        e.preventDefault();
     }
     
     function zoomBy(x, y) {
