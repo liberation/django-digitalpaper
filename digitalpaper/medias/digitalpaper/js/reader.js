@@ -611,7 +611,7 @@ var libeReader = function() {
             if (!_pages[i]) {
                 _pages[i] = libePage(i, -1, []);
             }
-            var a = _pages[i].getThumbnailForList(_selectedBook);
+            var a = _pages[i].getThumbnailForList(_displayedBook);
             jQuery('#pagesList').append(a);
             a.bind('click', showSelectedPage);
         }
