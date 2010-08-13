@@ -211,11 +211,13 @@ p {
 </head>
 <body>
 <div>
+<p id="hello_reader">
 {% if user.is_authenticated %}
-    <p id="hello_reader">Hello, {{ user }} !</p>
+    Hello, {{ user }} !</p>
 {% else %}
-    <p> You are not identified. Please <a href="{% url django.contrib.auth.views.login %}?next={{ request.path }}">log in</a>.</p>
+    You are not identified. Please <a href="{% url django.contrib.auth.views.login %}?next={{ request.path }}">log in</a>.
 {% endif %}
+</p>
 </div>
 <div class="book">
     <div id="bookPages">{% spaceless %}
@@ -298,11 +300,11 @@ jQuery(document).ready(function () {
                 jQuery('#hello_reader').append(' Your access level is: ' + level);
             }
             {% endif %}
+            libeConfig.changeAccessLevel(level);
+            libeReader.init(publicationId);
         } catch (e) {
-                jQuery('#hello_reader').append(' <strong>Cannot access token data! Check the host, it might be a crossdomain issue!</strong>');
+            jQuery('#hello_reader').append(' <strong>Cannot access token data! Check the host, it might be a crossdomain issue!</strong>');
         }
-        libeConfig.changeAccessLevel(level);
-        libeReader.init(publicationId);
     }
 
     jQuery.ajax({
