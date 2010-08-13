@@ -10,13 +10,18 @@ var libePage = function(pageNumber, pageId, pageMaps) {
     }
     
     function handleMap() {
+        if (_mapsLoaded) {
+            return;
+        }
         _mapsLoaded = true;
         if (!map || !map.areas || !map.areas.length || !map.width || !map.height) {
             return;
-        }
+        }    
         if (!libeConfig.pageWidth) {
-            _mapsLoaded = false;
-            return;
+            if (!libeConfig.setSizeFromImage(_pageElement.children('img').first())) {
+                _mapsLoaded = false;
+                return;
+            }
         }
         var ratio = map.width / map.height
         jQuery(window).trigger('ratio-known', [ratio]);
@@ -146,13 +151,7 @@ var libePage = function(pageNumber, pageId, pageMaps) {
         var img = document.createElement("img");
         var tmp = libeConfig.webservices.paper_page.replace('{emitter_format}', 'jpg').replace('{id}', _pageId)
         jQuery(img).bind('load', function(e) {
-            var w = jQuery(this).width();
-            var h = jQuery(this).height();
-            if (w) {
-                libeConfig.pageWidth = w
-                // libeConfig.pageHeight = h
-                // libeConfig.pageThumbnailHeight = 
-                libeConfig.pageThumbnailWidth = parseInt(w * libeConfig.pageThumbnailHeight / libeConfig.pageHeight, 10);
+            if (libeConfig.setSizeFromImage(img)) {
                 handleMap(); // Just in case. showPage should do it, 
                              // but there might be a race condition
             }
