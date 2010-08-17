@@ -9,7 +9,7 @@ var libeConfigFunc = function (data) {
     };
     
     var canZoom = function() {
-        return settings.accessLevel > 0;
+        return settings.accessLevel > 0 && settings.pageWidth && settings.pageHeight;
     };
     
     var changeAccessLevel = function(newlevel) {

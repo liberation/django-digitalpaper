@@ -1,7 +1,7 @@
 var libePage = function(pageNumber, pageId, pageMaps) {
     var _pageElement, _areasElement = [];
     var map = {};
-    var _pageNumber, _pageId, _pageWidth = 0;
+    var _pageNumber, _pageId = 0;
     var _mapsLoaded = false;
     var _smallImageSource, _imageSource = null;
     

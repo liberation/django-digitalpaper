@@ -1,6 +1,6 @@
 var libeReader = function() {
     var _publicationId, _bookName, _publication, _selectedBook, _pages, _displayedPage, _displayedBook,
-        _pageHeight, _pageWidth,_ratio, _zoomWindow, _winHeight, _winWidth, _numberOfPages, _isZoomed, 
+        _zoomWindow, _winHeight, _winWidth, _numberOfPages, _isZoomed, 
         _zoomedPageHeight, _zoomedPageWidth, _zoomMouseInit, _zoomPosInit, _zoomedPages, _zoomMouseDown,
         _step;
         
@@ -58,8 +58,8 @@ var libeReader = function() {
         var x = x * libeConfig.zoomFactor;
         var y = y * libeConfig.zoomFactor;
 
-        _zoomedPageHeight = _pageHeight * libeConfig.zoomFactor;
-        _zoomedPageWidth = _pageWidth * libeConfig.zoomFactor;
+        _zoomedPageHeight = libeConfig.pageHeight * libeConfig.zoomFactor;
+        _zoomedPageWidth = libeConfig.pageWidth * libeConfig.zoomFactor;
         
         jQuery('#pagesSlider').hide();
         jQuery('#bookSwitcher').hide();
@@ -562,16 +562,9 @@ var libeReader = function() {
     
     function ratioKnown(e, ratio) {
         var sides = jQuery('#evenSide, #oddSide');
-        //var height = sides.height();
-        // If no image downloaded, leave and wait for the next event
-        //if (height < libeConfig.pageHeight) {
-        //    height= libeConfig.pageHeight;
-        //}
         if (ratio > 0)
         {
-            _pageHeight = libeConfig.pageHeight 
-            _pageWidth = libeConfig.pageHeight * ratio;
-            sides.width(_pageWidth);
+            sides.width(libeConfig.pageWidth);
             jQuery(window).unbind(e);
         }
     }
