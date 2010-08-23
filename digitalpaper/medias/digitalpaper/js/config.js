@@ -16,14 +16,14 @@ var libeConfigFunc = function (data) {
         settings.accessLevel = newlevel;
     };
 
-    var setSizeFromImage = function(elm) {
-        var w = jQuery(elm).width();
-        var h = jQuery(elm).height();
+    var setSize = function(w, h) {
+        // dynamic config should set height
         if (w) {
             libeConfig.pageWidth = w
             // libeConfig.pageHeight = h
             // libeConfig.pageThumbnailHeight = 
             libeConfig.pageThumbnailWidth = parseInt(w * libeConfig.pageThumbnailHeight / libeConfig.pageHeight, 10);
+            jQuery(window).trigger('size-known');
             return true;
         }
         return false;
@@ -34,7 +34,7 @@ var libeConfigFunc = function (data) {
         'changeAccessLevel' : changeAccessLevel,
         'canAccess': canAccess,
         'canZoom': canZoom,
-        'setSizeFromImage' : setSizeFromImage,
+        'setSize' : setSize,
         'evenSideElement' : evenSideElement,
         'oddSideElement' : oddSideElement, 
         'pageWidth': 0,

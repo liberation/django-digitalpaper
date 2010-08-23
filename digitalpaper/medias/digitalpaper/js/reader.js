@@ -466,14 +466,12 @@ var libeReader = function() {
         leftPage.addClass('leftPage');
         if (_pages[newDisplayedPage]) {
             leftPage.css('background-image', 'url(' + _pages[newDisplayedPage].imageSource + ')');
-            _pages[newDisplayedPage].handleMap();
         }
         
         var rightPage = jQuery(document.createElement('div'));
         rightPage.addClass('rightPage');
         if (_pages[newDisplayedPage + 1]) {
             rightPage.css('background-image', 'url(' + _pages[newDisplayedPage + 1].imageSource + ')');
-            _pages[newDisplayedPage + 1].handleMap();
         }
         
         var transitionElement = jQuery(document.createElement('div'));
@@ -560,13 +558,10 @@ var libeReader = function() {
         showPage(_selectedBook.total);
     }
     
-    function ratioKnown(e, ratio) {
+    function sizeKnown(e) {
         var sides = jQuery('#evenSide, #oddSide');
-        if (ratio > 0)
-        {
-            sides.width(libeConfig.pageWidth);
-            jQuery(window).unbind(e);
-        }
+        sides.width(libeConfig.pageWidth);
+        jQuery(window).unbind(e);
     }
     
     function _changeBook(newBook) {    
@@ -592,8 +587,7 @@ var libeReader = function() {
             pageToShow = possiblePage;
         }
 
-        // Hack to know the ratio of the pages for a publication
-        jQuery(window).bind('ratio-known', ratioKnown);
+        jQuery(window).bind('size-known', sizeKnown);
         
         _pages = new Array(parseInt(_selectedBook.total, 10));
         for (var i = 0, il = _selectedBook.pages.length; i < il ; i++) {
@@ -627,6 +621,7 @@ var libeReader = function() {
         if (location.hash != "") {
             tmp = _parseHashtoGetParams(location.hash.split('#')[1]);
         }
+        
         showBook(tmp[0], tmp[1]);
         showBookList();
     }

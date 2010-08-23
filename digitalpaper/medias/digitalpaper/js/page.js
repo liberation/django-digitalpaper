@@ -13,18 +13,14 @@ var libePage = function(pageNumber, pageId, pageMaps) {
         if (_mapsLoaded) {
             return;
         }
+        if (!libeConfig.pageWidth) {
+            // too soon! better luck next time.
+            return;
+        }
         _mapsLoaded = true;
         if (!map || !map.areas || !map.areas.length || !map.width || !map.height) {
             return;
-        }    
-        if (!libeConfig.pageWidth) {
-            if (!libeConfig.setSizeFromImage(jQuery(_pageElement).children('img').first())) {
-                _mapsLoaded = false;
-                return;
-            }
         }
-        var ratio = map.width / map.height
-        jQuery(window).trigger('ratio-known', [ratio]);
         var reductionRatio = libeConfig.pageWidth / map.width;
         for (var i = 0, il = map.areas.length; i < il; i++) {
             var area = map.areas[i];
@@ -151,9 +147,14 @@ var libePage = function(pageNumber, pageId, pageMaps) {
         var img = document.createElement("img");
         var tmp = libeConfig.webservices.paper_page.replace('{emitter_format}', 'jpg').replace('{id}', _pageId)
         jQuery(img).bind('load', function(e) {
-            if (libeConfig.setSizeFromImage(img)) {
-                handleMap(); // Just in case. showPage should do it, 
-                             // but there might be a race condition
+            // Little trick: use _pageElement and not the image to find out the dimensions of the 
+            // content, since the load event might occur at a time the image is hidden (if the user
+            // is flipping through pages very fast).
+            // In addition, 
+            if (libeConfig.setSize(jQuery(_pageElement).width(), jQuery(_pageElement).height())) {
+                // handleMap() would make more sense in showPage(), but we really need
+                // to know the right width before calling it, so we call it here.
+                handleMap();
             }
         });
         img.src = _imageSource = 'http://' + tmp.replace('{size}', 'x500');
