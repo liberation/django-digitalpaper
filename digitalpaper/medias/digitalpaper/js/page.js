@@ -18,7 +18,7 @@ var libePage = function(pageNumber, pageId, pageMaps) {
             return;
         }    
         if (!libeConfig.pageWidth) {
-            if (!libeConfig.setSizeFromImage(_pageElement.children('img').first())) {
+            if (!libeConfig.setSizeFromImage(jQuery(_pageElement).children('img').first())) {
                 _mapsLoaded = false;
                 return;
             }
