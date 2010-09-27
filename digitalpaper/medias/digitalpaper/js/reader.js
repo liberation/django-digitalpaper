@@ -50,11 +50,10 @@ var libeReader = function() {
     }
     
     function zoomAtCoordinates(x, y) {
-        if (!libeConfig.canZoom()) {
+        if (!libeConfig.canZoom() || _isZoomed) {
             return false;
         }
-        
-        _isZoomed = true;
+
         var x = x * libeConfig.zoomFactor;
         var y = y * libeConfig.zoomFactor;
 
@@ -122,6 +121,7 @@ var libeReader = function() {
         document.getElementById('zoomWindow').addEventListener('touchmove', zoomMouseMove, true);
         
         zoomInitHDGrid(top, left);
+        _isZoomed = true;
     }
     
     function zoomInitHDGrid(top, left) {
@@ -152,6 +152,7 @@ var libeReader = function() {
         jQuery('#bookSwitcher').show();
         jQuery(document.body).css({'overflow': 'hidden', 'height': 'auto' });        
         _isZoomed = false;
+        return false;
     }
     
     function zoomResize() {
@@ -653,7 +654,6 @@ var libeReader = function() {
         showPreviousPage: showPreviousPage,
         showNextPage: showNextPage,
         showSelectedPage: showSelectedPage,
-        showBook: showBook,
-        blah: _publication
+        showBook: showBook
     }
 }();
