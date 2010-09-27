@@ -641,7 +641,16 @@ var libeReader = function() {
         var len = _publication.books.length;
         for (var i = 0; i < len; i++) {
             var page = _publication.books[i].pages[0];
-            var obj = libePage(page.page_number, page.id, page.maps);
+            var obj;
+            if (page.page_number > 1) {
+                // First page should always be numbered 1, so
+                // it means the first page of this book is in
+                // construction
+                obj = libePage(1, -1, []);
+            } else {
+                obj = libePage(page.page_number, page.id, page.maps);
+            }
+            
             var a = obj.getThumbnailForList(i);            
             jQuery('#bookSwitcher').append(a);
             a.bind('click', showSelectedPage);
