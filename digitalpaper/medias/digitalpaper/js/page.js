@@ -1,9 +1,10 @@
-var libePage = function(pageNumber, pageId, pageMaps) {
+var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     var _pageElement, _areasElement = [];
     var map = {};
-    var _pageNumber, _pageId = 0;
+    var _pageNumber, _pageId = -1;
     var _mapsLoaded = false;
     var _smallImageSource, _imageSource = null;
+    var _pageChannel = "";
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
         console.log(XMLHttpRequest, textStatus, errorThrown);
@@ -112,11 +113,13 @@ var libePage = function(pageNumber, pageId, pageMaps) {
     }
     
     function getThumbnailForList(book) {
-        var a = jQuery('<a class="loading" href="#' + book + '_' + _pageNumber + '"></a>');
+        var a = jQuery('<a class="loading ' + (_pageNumber % 2 ? 'odd' : 'even') + '" href="#' + book + '_' + _pageNumber + '"></a>');
         var img = jQuery('<img src="' + _smallImageSource + '" />');
         img.bind('load', function(e) {
             jQuery(this).parent().removeClass('loading');
         });
+        a.append('<span class="page_infos"><span class="page_number">' + _pageNumber + '</span>' + 
+                 '<span class="page_channel">' + _pageChannel + '</span></span>')
         a.append(img);
         return a;
     }
@@ -124,7 +127,13 @@ var libePage = function(pageNumber, pageId, pageMaps) {
     // Init Code
     
     _pageNumber = pageNumber;
-    _pageId = pageId;
+
+    if (typeof(pageId) !== 'undefined') {
+        _pageId = pageId;
+    }
+    if (typeof(pageChannel) !== 'undefined') {
+        _pageChannel = pageChannel;
+    }
     
     _pageElement = document.createElement("div");
     _pageElement.className = "page";

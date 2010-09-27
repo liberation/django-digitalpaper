@@ -163,6 +163,37 @@ body {
     position: relative;
 }
 
+#bookSwitcher .page_infos {
+    display: none;
+}
+
+#pagesList a {
+    position: relative;
+}
+
+#pagesList .page_infos {
+    position: absolute;
+    color: #666;
+    font-size: 10px;
+    top: 0;
+    text-align: left;
+    left: 0;
+    text-transform: uppercase;
+}
+
+#pagesList .odd .page_infos {
+    text-align: right;
+    top: auto;
+    left: auto;
+    right: 0;
+    bottom: 0;
+}
+
+#pagesList .page_number {
+    border-right: 1px solid;
+    margin-right: 0.5em;
+}
+
 /* FIXME: absolute height */
 #pagesList, #pagesSlider a, #bookSwitcher a, #pagesList img, #bookSwitcher img {
     display: inline-block;

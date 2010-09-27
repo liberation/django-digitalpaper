@@ -593,11 +593,11 @@ var libeReader = function() {
         _pages = new Array(parseInt(_selectedBook.total, 10));
         for (var i = 0, il = _selectedBook.pages.length; i < il ; i++) {
             var page = _selectedBook.pages[i];
-            _pages[page.page_number] = libePage(page.page_number, page.id, page.maps);
+            _pages[page.page_number] = libePage(page.page_number, page.id, page.paper_channel, page.maps);
         }
         for (var i = 1; i <= _selectedBook.total; i++) {
             if (!_pages[i]) {
-                _pages[i] = libePage(i, -1, []);
+                _pages[i] = libePage(i);
             }
             var a = _pages[i].getThumbnailForList(_displayedBook);
             jQuery('#pagesList').append(a);
@@ -646,12 +646,12 @@ var libeReader = function() {
                 // First page should always be numbered 1, so
                 // it means the first page of this book is in
                 // construction
-                obj = libePage(1, -1, []);
+                obj = libePage(1);
             } else {
-                obj = libePage(page.page_number, page.id, page.maps);
+                obj = libePage(page.page_number, page.id, page.paper_channel, page.maps);
             }
             
-            var a = obj.getThumbnailForList(i);            
+            var a = obj.getThumbnailForList(i);
             jQuery('#bookSwitcher').append(a);
             a.bind('click', showSelectedPage);
         }
