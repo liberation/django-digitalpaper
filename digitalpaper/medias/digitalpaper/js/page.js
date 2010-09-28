@@ -3,7 +3,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     var map = {};
     var _pageNumber, _pageId = -1;
     var _mapsLoaded = false;
-    var _smallImageSource, _imageSource = null;
+    var _smallImageSource, _smallestImageSource, _imageSource = null;
     var _pageChannel = "";
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
@@ -112,9 +112,16 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         jQuery(_pageElement).hide();
     }
     
-    function getThumbnailForList(book) {
-        var a = jQuery('<a class="loading ' + (_pageNumber % 2 ? 'odd' : 'even') + '" href="#' + book + '_' + _pageNumber + '"></a>');
-        var img = jQuery('<img src="' + _smallImageSource + '" />');
+    function getThumbnailForList(book, size) {
+        var src;
+        if (typeof size == 'undefined' || size != 'smallest') {
+            size = 'small';
+            src = _smallImageSource;
+        } else {
+            src = _smallestImageSource;
+        }
+        var a = jQuery('<a class="loading ' + size + ' ' + (_pageNumber % 2 ? 'odd' : 'even') + '" href="#' + book + '_' + _pageNumber + '"></a>');
+        var img = jQuery('<img src="' + src + '" />');
         img.bind('load', function(e) {
             jQuery(this).parent().removeClass('loading');
         });
@@ -136,19 +143,19 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     }
     
     _pageElement = document.createElement("div");
-    _pageElement.className = "page";
+    _pageElement.className = "page loading";
     
     if (_pageNumber <= 0) {
         // non existant page, do nothing
     } else if (!libeConfig.canAccess(_pageNumber, _pageId)) {
         // page that the user isn't allowed to read
         var img = document.createElement("img");
-        img.src = _imageSource = _smallImageSource = libeConfig.pageLimitedAccessImage;
+        img.src = _imageSource = _smallestImageSource = _smallImageSource = libeConfig.pageLimitedAccessImage;
         _pageElement.appendChild(img);        
     } else if (_pageId < 0) {
         // page not yet included in the book, but that should exist: display it as "in construction"
         var img = document.createElement("img");
-        img.src = _imageSource = _smallImageSource = libeConfig.pageInConstructionImage;
+        img.src = _imageSource = _smallestImageSource = _smallImageSource = libeConfig.pageInConstructionImage;
         _pageElement.appendChild(img);
     } else {
         // normal page
@@ -156,6 +163,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         var img = document.createElement("img");
         var tmp = libeConfig.webservices.paper_page.replace('{emitter_format}', 'jpg').replace('{id}', _pageId)
         jQuery(img).bind('load', function(e) {
+            jQuery(_pageElement).removeClass('loading');
             // Little trick: use _pageElement and not the image to find out the dimensions of the 
             // content, since the load event might occur at a time the image is hidden (if the user
             // is flipping through pages very fast).
@@ -166,8 +174,10 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                 handleMap();
             }
         });
+        // FIXME don't hardcore sizes, get them from config
         img.src = _imageSource = 'http://' + tmp.replace('{size}', 'x500');
-        _smallImageSource = 'http://' + tmp.replace('{size}', 'x148');
+        _smallestImageSource   = 'http://' + tmp.replace('{size}', 'x50');
+        _smallImageSource      = 'http://' + tmp.replace('{size}', 'x148');
         _pageElement.appendChild(img);
         
     }
@@ -182,7 +192,6 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         show: show,
         hide: hide,
         imageSource: _imageSource,
-        smallImageSource: _smallImageSource,
         pageId: _pageId,
         handleMap: handleMap,
         getThumbnailForList: getThumbnailForList

@@ -603,7 +603,7 @@ var libeReader = function() {
             if (!_pages[i]) {
                 _pages[i] = libePage(i);
             }
-            var a = _pages[i].getThumbnailForList(_displayedBook);
+            var a = _pages[i].getThumbnailForList(_displayedBook, 'smallest');
             jQuery('#pagesList').append(a);
             a.bind('click', showSelectedPage);
         }

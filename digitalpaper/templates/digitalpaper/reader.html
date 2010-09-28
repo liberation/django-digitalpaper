@@ -164,12 +164,25 @@ body {
     position: relative;
 }
 
+#pagesSlider {
+    height: 52px;
+}
+
 #bookSwitcher .page_infos {
     display: none;
 }
 
 #pagesList a {
     position: relative;
+    border: 1px solid #CCC;
+}
+
+#pagesList a .page_channel {
+    display: none;
+}
+
+#pagesList a:hover .page_channel {
+    display: inline;
 }
 
 #pagesList .page_infos {
@@ -177,13 +190,17 @@ body {
     color: #666;
     font-size: 10px;
     top: 0;
-    text-align: left;
     left: 0;
     text-transform: uppercase;
+    z-index: 42;
+}
+
+#pagesList .even {
+    margin-left: 10px;
+    border-right: none;
 }
 
 #pagesList .odd .page_infos {
-    text-align: right;
     top: auto;
     left: auto;
     right: 0;
@@ -196,9 +213,18 @@ body {
 }
 
 /* FIXME: absolute height */
-#pagesList, #pagesSlider a, #bookSwitcher a, #pagesList img, #bookSwitcher img {
+#pagesList, #bookSwitcher a, #pagesList img, #bookSwitcher img {
     display: inline-block;
     height: 148px;
+}
+
+#pagesList, #pagesList img, #pagesSlider a {
+    display: inline-block;
+    height: 50px;
+}
+
+#pagesList img {
+    display: block;
 }
 
 #pagesList {
@@ -239,7 +265,7 @@ p {
     background-image: url({{ MEDIA_URL }}digitalpaper/img/loading.gif);
     background-repeat: no-repeat;
     background-position: center center;
-    width: 115px;
+    min-width: 39px;
 }
     </style>
 </head>
