@@ -562,6 +562,10 @@ var libeReader = function() {
     function sizeKnown(e) {
         var sides = jQuery('#evenSide, #oddSide');
         sides.width(libeConfig.pageWidth);
+        var parent = sides.parent();
+        if (parent) {
+            parent.width(libeConfig.pageWidth * 2);
+        }
         jQuery(window).unbind(e);
     }
     
