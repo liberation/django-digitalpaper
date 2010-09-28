@@ -167,7 +167,6 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             // Little trick: use _pageElement and not the image to find out the dimensions of the 
             // content, since the load event might occur at a time the image is hidden (if the user
             // is flipping through pages very fast).
-            // In addition, 
             if (libeConfig.setSize(jQuery(_pageElement).width(), jQuery(_pageElement).height())) {
                 // handleMap() would make more sense in showPage(), but we really need
                 // to know the right width before calling it, so we call it here.
