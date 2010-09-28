@@ -75,6 +75,7 @@ body {
 .page {
     position: relative;
     display: none;
+    height: 100%;
 }
 .page .area {
     position: absolute;
@@ -324,6 +325,10 @@ jQuery(document).ready(function () {
             jQuery('#pagesList').animate({left: iPosition}, sSlideSpeed);
         }
     });
+    
+    if (libeConfig.pageHeight) {
+        jQuery('#bookPages').height(libeConfig.pageHeight);
+    }
     
     function readerInitCallback(data, textStatus, xhrobject) {
         try {
