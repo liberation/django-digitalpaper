@@ -147,10 +147,10 @@ var libeReader = function() {
     function quitZoom() {
         jQuery(_zoomWindow).detach();
         jQuery(window).unbind('resize', zoomResize);
-        jQuery(window).unbind('mousewheel');        
+        jQuery(document.body).unbind('mousewheel');
         jQuery('#pagesSlider').show();
         jQuery('#bookSwitcher').show();
-        jQuery(document.body).css({'overflow': 'hidden', 'height': 'auto' });        
+        jQuery(document.body).css({'overflow': 'visible', 'height': 'auto' });
         _isZoomed = false;
         return false;
     }
