@@ -16,11 +16,12 @@ def reader_date(request, date):
     manager = get_manager_method_for_publication(publication_model)
     filters = {}
     filters[get_publication_date_field()] = date
-    pub = get_object_or_404(publication_model, **filters)    
+    pub = get_object_or_404(manager, **filters)    
     return redirect('digitalpaper_reader', publication_id=pub.pk)    
 
 def reader(request, publication_id):
-    pub = get_object_or_404(publication_model, pk=int(publication_id))
+    manager = get_manager_method_for_publication(publication_model)
+    pub = get_object_or_404(manager, pk=int(publication_id))
     context = {
         'publication': pub,
     }
