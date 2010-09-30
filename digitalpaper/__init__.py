@@ -2,6 +2,9 @@
 from django.db.models import Model, loading
 from django.conf import settings
 
+def get_publication_date_field():
+    return settings.READER_PUBLICATION_DATE_FIELD
+
 def get_model_for_publication():
     return loading.get_model(settings.READER_PUBLICATION_APP_NAME, settings.READER_PUBLICATION_MODEL_NAME)
     
