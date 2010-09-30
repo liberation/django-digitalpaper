@@ -1,0 +1,261 @@
+img {
+    border: 0;
+}
+.book {
+    position: relative;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+}
+#menu {
+    display: block;
+}
+
+#menu li {
+    display: inline;
+}
+
+#menu li a {
+    position: absolute;
+}
+
+#nextButton {
+    right: 2px;
+    top: 225px;
+}
+#lastButton {
+    right: 2px;
+    top: 275px;
+}
+#previousButton {
+    left: 2px;
+    top: 225px;
+}
+#firstButton {
+    left: 2px;
+    top: 275px;
+}
+#zoomButton {
+    right: 2px;
+    bottom: 2px;
+}
+
+body, html, .book *, p {
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+body {
+    position: relative;
+}
+#bookPages {
+    display: inline-block;
+    margin-right: auto;
+    margin-left: auto;
+    position: relative;
+}
+#evenSide, #oddSide {
+    position: relative;
+    display: inline-block;
+    height: 100%;
+    max-height: 500px;
+}
+#evenSide {
+    text-align: right;
+}
+.page {
+    position: relative;
+    display: none;
+    height: 100%;
+}
+.page .area {
+    position: absolute;
+    display: block;
+    background-color: black;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+.page img {
+    display: block;
+}
+
+.leftPage, .rightPage {
+    background-color: white;
+    width: 50%;
+    height: 100%;
+    display: inline-block;
+}
+.leftPage {
+    background-position: left top;
+}
+.rightPage {
+    background-position: right top;
+}
+.transitionPage {
+    position: absolute;
+    width: 0;
+    top: 0;
+}
+.transitionContainer {
+    position: absolute;
+    top: 0;
+}
+#previousCorner, #nextCorner {
+    position: absolute;
+    top: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    width: 30px;
+    height: 26px;
+    cursor: pointer;
+}
+#previousCorner:focus, #nextCorner:focus {
+    outline: none;
+}
+#previousCorner {
+    left: 0;
+}
+#nextCorner {
+    right: 0;
+}
+#zoomWindow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: white;
+    overflow: hidden;
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+    z-index: 44;
+}
+#zoomedPages, #HDGrid {
+    position: absolute;
+}
+#leftPageZoomed, #rightPageZoomed {
+    display: inline-block;
+    width: 50%;
+    height: 100%;
+}
+.grid {
+    float: left;
+    margin: 0; padding: 0; border: 0;
+}
+#DOMWindow {
+    overflow: visible !important;
+}
+
+/* FIXME: absolute height */
+#pagesSlider, #bookSwitcher {
+    overflow: hidden;
+    height: 150px;
+    white-space: nowrap;
+    position: relative;
+}
+
+#pagesSlider {
+    height: 52px;
+}
+
+#bookSwitcher .page_infos {
+    display: none;
+}
+
+#pagesList a {
+    position: relative;
+    border: 1px solid #CCC;
+}
+
+#pagesList a .page_channel {
+    display: none;
+}
+
+#pagesList a:hover .page_channel {
+    display: inline;
+}
+
+#pagesList .page_infos {
+    position: absolute;
+    color: #666;
+    font-size: 10px;
+    top: 0;
+    left: 0;
+    text-transform: uppercase;
+    z-index: 42;
+}
+
+#pagesList .even {
+    margin-left: 10px;
+    border-right: none;
+}
+
+#pagesList .odd .page_infos {
+    top: auto;
+    left: auto;
+    right: 0;
+    bottom: 0;
+}
+
+#pagesList .page_number {
+    border-right: 1px solid;
+    margin-right: 0.5em;
+}
+
+/* FIXME: absolute height */
+#pagesList, #bookSwitcher a, #pagesList img, #bookSwitcher img {
+    display: inline-block;
+    height: 148px;
+}
+
+#pagesList, #pagesList img, #pagesSlider a {
+    display: inline-block;
+    height: 50px;
+}
+
+#pagesList img {
+    display: block;
+}
+
+#pagesList {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#sliderNext, #sliderPrev {
+    position: absolute;
+    border: 1px solid #333;
+    background-color: #999;
+    opacity: 0.7;
+    color: #333;
+    padding: 5px;
+    top: 5px;
+    height: 130px;
+    z-index: 42;
+}
+
+#sliderNext {
+    right: 0;
+}
+
+#sliderPrev {
+    left: 0;
+}
+
+p {
+    padding: 0.5em;
+}
+
+#hello_reader strong {
+    color: red;
+}
+
+.loading {
+    background-image: url({{ MEDIA_URL }}digitalpaper/img/loading.gif);
+    background-repeat: no-repeat;
+    background-position: center center;
+    min-width: 39px;
+}
