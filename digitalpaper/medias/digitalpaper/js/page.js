@@ -125,6 +125,10 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         img.bind('load', function(e) {
             jQuery(this).parent().removeClass('loading');
         });
+        img.bind('error', function(e) {
+            jQuery(this).parent().removeClass('loading');
+            jQuery(this).parent().addClass('warning');            
+        });
         a.append('<span class="page_infos"><span class="page_number">' + _pageNumber + '</span>' + 
                  '<span class="page_channel">' + _pageChannel + '</span></span>')
         a.append(img);
@@ -144,6 +148,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     
     _pageElement = document.createElement("div");
     _pageElement.className = "page loading";
+    _pageElement.id = 'page_' + _pageId;
     
     if (_pageNumber <= 0) {
         // non existant page, do nothing
@@ -172,6 +177,10 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                 // to know the right width before calling it, so we call it here.
                 handleMap();
             }
+        });
+        jQuery(img).bind('error', function(e) {
+            jQuery(_pageElement).removeClass('loading');
+            jQuery(_pageElement).addClass('warning');
         });
         // FIXME don't hardcore sizes, get them from config
         img.src = _imageSource = tmp.replace('{size}', 'x500');

@@ -259,3 +259,10 @@ p {
     background-position: center center;
     min-width: 39px;
 }
+
+.warning {
+    background-image: url(../img/warning.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 39px;
+}
