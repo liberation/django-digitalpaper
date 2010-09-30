@@ -63,7 +63,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     function openArea() {
         var data = jQuery(this).data('area');
         if (data.object_class == "article") {
-            var url = "http://" + libeConfig.webservices.contentmodel_content
+            var url = libeConfig.webservices.contentmodel_content
             var replaces = {
                 '{emitter_format}' : 'html',
                 '{id}' : data.object_id,
@@ -174,9 +174,9 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             }
         });
         // FIXME don't hardcore sizes, get them from config
-        img.src = _imageSource = 'http://' + tmp.replace('{size}', 'x500');
-        _smallestImageSource   = 'http://' + tmp.replace('{size}', 'x50');
-        _smallImageSource      = 'http://' + tmp.replace('{size}', 'x148');
+        img.src = _imageSource = tmp.replace('{size}', 'x500');
+        _smallestImageSource   = tmp.replace('{size}', 'x50');
+        _smallImageSource      = tmp.replace('{size}', 'x148');
         _pageElement.appendChild(img);
         
     }

@@ -43,6 +43,8 @@ var libeConfigFunc = function (data) {
         'pageThumbnailHeight': 0
     };
     
+    // The remaining settings need to be set using the arguments (use config.js
+    // as jsonp)
     for (d in data) {
         if (typeof d == 'string') {
             this.settings[d] = data[d];

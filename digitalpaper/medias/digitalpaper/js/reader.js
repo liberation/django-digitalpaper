@@ -416,7 +416,7 @@ var libeReader = function() {
                 '{y}' : yColumn
             }
             
-            var src = 'http://' + libeConfig.webservices.paper_page_crop;
+            var src = libeConfig.webservices.paper_page_crop;
             for (key in replaces) {
                 src = src.replace(key, replaces[key]);
             }
@@ -634,7 +634,7 @@ var libeReader = function() {
     function init(publicationId) {
         _publicationId = publicationId;
                 
-        var url = 'http://' + libeConfig.webservices['publication_structure'].replace('{emitter_format}', 'json').replace('{id}', publicationId);
+        var url = libeConfig.webservices['publication_structure'].replace('{emitter_format}', 'json').replace('{id}', publicationId);
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: defaultAjaxError});
         
         jQuery('#zoomButton').click(function () {zoomAtCoordinates(0, 0)});
