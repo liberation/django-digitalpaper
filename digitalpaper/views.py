@@ -7,7 +7,7 @@ from django.template import RequestContext
 from digitalpaper import publication_model, get_manager_method_for_publication
 
 def reader_latest(request):
-    pub = get_manager_method_for_publication(publication_model).latest('pk')
+    pub = get_manager_method_for_publication(publication_model).latest()
     return redirect('digitalpaper_reader', publication_id=pub.pk)
 
 def reader(request, publication_id):
