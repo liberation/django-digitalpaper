@@ -254,7 +254,7 @@ p {
 }
 
 .loading {
-    background-image: url({{ MEDIA_URL }}digitalpaper/img/loading.gif);
+    background-image: url(../img/loading.gif);
     background-repeat: no-repeat;
     background-position: center center;
     min-width: 39px;
