@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n reader_tags %}
 <!doctype html>
 <html>
 <head>
@@ -6,12 +6,18 @@
     <title>{% block title %}Web Reader Demo - {{ publication }}{% endblock %}</title>
     {% block readercss %}
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL}}digitalpaper/css/reader.css" />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL}}digitalpaper/css/jdpicker.css" />    
     {% endblock %}
 </head>
 <body>
 
 {% block content %}
-<div>
+<div id="menu">
+    <a id="zoomButton" href="#">Zoom</a>
+    <a id="calendarButton" href="#">Publication: {{ publication|get_publication_date|date:"SHORT_DATE_FORMAT" }}</a>
+</div>
+<div id="subnav"></div>
+<!--
 <p id="hello_reader">
 {% if user.is_authenticated %}
     Hello, {{ user }} !</p>
@@ -19,7 +25,7 @@
     You are not identified. Please <a href="{% url django.contrib.auth.views.login %}?next={{ request.path }}">log in</a>.
 {% endif %}
 </p>
-</div>
+-->
 <div class="book">
     <div id="bookPages">{% spaceless %}
         <div id="evenSide"></div><div id="oddSide"></div>
@@ -28,7 +34,6 @@
     {% endspaceless %}</div>
     
     <ul id="menu">
-        <li><a id="zoomButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-zoom.png" alt="Zoom" /></a></li>
         <li><a id="firstButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-first.png" alt="First" /></a></li>
         <li><a id="previousButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-prev.png" alt="Previous" /></a></li>
         <li><a id="nextButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-next.png" alt="Next" /></a></li>
@@ -45,6 +50,7 @@
 
 {% block jqueryjs %}
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery-1.4.2.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery.jdpicker.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery.mousewheel.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery.DOMWindow.js"></script>
 <script type="text/javascript">

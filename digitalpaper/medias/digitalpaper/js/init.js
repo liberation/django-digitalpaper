@@ -1,6 +1,3 @@
-var tokenUrl = libeConfig.webservices.token
-tokenUrl = tokenUrl.replace('{emitter_format}', 'json');
-
 var accessLevels = {
     'BAS' : 0,
     'ESS' : 10,
@@ -17,6 +14,14 @@ jQuery(document).ready(function () {
         jQuery('#bookPages').height(libeConfig.pageHeight);
     }
     
+    jQuery('#calendarButton').bind('change', function(e) {
+        var val = jQuery(this).val();
+        val = val.replace('/', '-', 'g');
+        location.href = libeConfig.webservices.reader_by_date.replace('{date}', val);
+    });
+    
+    jQuery('#calendarButton').jdPicker(); 
+    
     function readerInitCallback(data, textStatus, xhrobject) {
         try {
             var level = accessLevels[data['access_level']];
@@ -28,7 +33,7 @@ jQuery(document).ready(function () {
     }
 
     jQuery.ajax({
-        'url': tokenUrl,
+        'url': libeConfig.webservices.token.replace('{emitter_format}', 'json'),
         'type': 'post',
         'data' : {'use_session' : 1 },
         'dataType': 'json',

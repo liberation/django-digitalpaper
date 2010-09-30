@@ -253,6 +253,21 @@ p {
     color: red;
 }
 
+#menu {
+    height: 55px;
+    width: 100%;
+    border-bottom: 2px solid gray;
+    overflow: hidden;
+}
+
+#menu .date_clearer {
+    display: none;
+}
+
+#hello_reader {
+
+}
+
 .loading {
     background-image: url(../img/loading.gif);
     background-repeat: no-repeat;
