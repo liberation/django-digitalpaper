@@ -9,8 +9,38 @@
     {% endblock %}
 </head>
 <body>
-{% block content %}
 
+{% block content %}
+<div>
+<p id="hello_reader">
+{% if user.is_authenticated %}
+    Hello, {{ user }} !</p>
+{% else %}
+    You are not identified. Please <a href="{% url django.contrib.auth.views.login %}?next={{ request.path }}">log in</a>.
+{% endif %}
+</p>
+</div>
+<div class="book">
+    <div id="bookPages">{% spaceless %}
+        <div id="evenSide"></div><div id="oddSide"></div>
+        <span id="previousCorner" href="#" style="background-image: url({{ MEDIA_URL }}digitalpaper/img/left-corner.png);"></span>
+        <span id="nextCorner" href="#" style="background-image: url({{ MEDIA_URL }}digitalpaper/img/right-corner.png);"></span>
+    {% endspaceless %}</div>
+    
+    <ul id="menu">
+        <li><a id="zoomButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-zoom.png" alt="Zoom" /></a></li>
+        <li><a id="firstButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-first.png" alt="First" /></a></li>
+        <li><a id="previousButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-prev.png" alt="Previous" /></a></li>
+        <li><a id="nextButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-next.png" alt="Next" /></a></li>
+        <li><a id="lastButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-last.png" alt="Last" /></a></li>
+    </ul>
+</div>
+<div id="pagesSlider">
+    <a href="#" id="sliderPrev" onclick="return false;">«</a>
+    <div id="pagesList"></div>
+    <a href="#" id="sliderNext" onclick="return false;">»</a>
+</div>
+<div id="bookSwitcher"></div>
 {% endblock %}
 
 {% block jqueryjs %}
