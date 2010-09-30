@@ -1,0 +1,42 @@
+{% load i18n %}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>{% block title %}Web Reader Demo - {{ publication }}{% endblock %}</title>
+    {% block readercss %}
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL}}digitalpaper/css/reader.css" />
+    {% endblock %}
+</head>
+<body>
+{% block content %}
+
+{% endblock %}
+
+{% block jqueryjs %}
+<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery-1.4.2.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery.DOMWindow.js"></script>
+<script type="text/javascript">
+$.noConflict();
+</script>
+{% endblock %}
+
+<script type="text/javascript">
+var publicationId = {{ publication.id }};
+</script>
+
+{% block readerjsonp %}
+<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/config.js"></script>
+<script type="text/javascript" src="/{{ API_ROOT }}jsonp/reader/?jsonp=libeConfig=libeConfigFunc"></script>
+{% endblock %}
+
+{% block readerjs %}
+<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/reader.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/page.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/slideshow.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/init.js"></script>
+{% endblock %}
+
+</body>
+</html>
