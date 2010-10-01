@@ -432,16 +432,18 @@ var libeReader = function() {
     }
     
     function displayPagination() {
-        var previousButtons = jQuery('#previousCorner, #previousButton, #firstButton');
+        var previousButtons = jQuery('#previousCorner, #pagesBefore');
         if (_displayedPage -2 >= 0) {
             previousButtons.show();
+            _positionPagesMenu();
         } else {
             previousButtons.hide();
         }
         
-        var nextButtons = jQuery('#nextCorner, #nextButton, #lastButton');
+        var nextButtons = jQuery('#nextCorner, #pagesAfter');
         if (_displayedPage + 2 <= _selectedBook.total) {
             nextButtons.show();
+            _positionPagesMenu();
         } else {
             nextButtons.hide();
         }
@@ -459,6 +461,7 @@ var libeReader = function() {
         unbindKeyboard();
         
         var evenSide = jQuery('#evenSide');
+        var oddSide =  jQuery('#oddSide');
         var finalWidth = evenSide.width();
         var height = evenSide.parent().height();
         var position = evenSide.position();
@@ -466,13 +469,19 @@ var libeReader = function() {
         var leftPage = jQuery(document.createElement('div'));
         leftPage.addClass('leftPage');
         if (_pages[newDisplayedPage]) {
+            evenSide.css({'visibility' : 'visible'});
             leftPage.css('background-image', 'url(' + _pages[newDisplayedPage].imageSource + ')');
+        } else {
+            evenSide.css({'visibility' : 'hidden'});
         }
-        
+
         var rightPage = jQuery(document.createElement('div'));
         rightPage.addClass('rightPage');
         if (_pages[newDisplayedPage + 1]) {
+            oddSide.css({'visibility' : 'visible'});
             rightPage.css('background-image', 'url(' + _pages[newDisplayedPage + 1].imageSource + ')');
+        } else {
+            oddSide.css({'visibility' : 'hidden'});
         }
         
         var transitionElement = jQuery(document.createElement('div'));
@@ -536,7 +545,7 @@ var libeReader = function() {
         
         if (newDisplayedBook != _displayedBook) {
             showBook(newDisplayedBook, newDisplayedPage);
-        } else if (newDisplayedPage != _displayedPage) {        
+        } else if (newDisplayedPage != _displayedPage) {
             showPage(newDisplayedPage);
         }
     }
@@ -559,13 +568,29 @@ var libeReader = function() {
         showPage(_selectedBook.total);
     }
     
+    function _positionPagesMenu() {
+        jQuery('#pagesAfter').position({
+            of: jQuery('#oddSide'),
+            my: 'left center',
+            at: 'right center',
+            offset: '1',
+        });
+        jQuery('#pagesBefore').position({
+            of: jQuery('#evenSide'),
+            my: 'right center',
+            at: 'left center',
+            offset: '-1',
+        });
+    }
+    
     function sizeKnown(e) {
         var sides = jQuery('#evenSide, #oddSide');
         sides.width(libeConfig.pageWidth);
         var parent = sides.parent();
         if (parent) {
-            parent.width(libeConfig.pageWidth * 2);
+            parent.width(sides.outerWidth() * 2);
         }
+        _positionPagesMenu();
         jQuery(window).unbind(e);
     }
     

@@ -10,8 +10,8 @@
     {% endblock %}
 </head>
 <body>
-
 {% block content %}
+<div id="main">
 <div id="menu">
     <a id="zoomButton" href="#">Zoom</a>
     <a id="calendarButton" href="#">Publication: {{ publication|get_publication_date|date:"SHORT_DATE_FORMAT" }}</a>
@@ -33,11 +33,13 @@
         <span id="nextCorner" href="#" style="background-image: url({{ MEDIA_URL }}digitalpaper/img/right-corner.png);"></span>
     {% endspaceless %}</div>
     
-    <ul id="menu">
+    <ul id="pagesBefore">
         <li><a id="firstButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-first.png" alt="First" /></a></li>
         <li><a id="previousButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-prev.png" alt="Previous" /></a></li>
+    </ul>
+    <ul id="pagesAfter">
+        <li><a id="lastButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-last.png" alt="Last" /></a></li>    
         <li><a id="nextButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-next.png" alt="Next" /></a></li>
-        <li><a id="lastButton" href="#"><img src="{{ MEDIA_URL}}digitalpaper/img/button-last.png" alt="Last" /></a></li>
     </ul>
 </div>
 <div id="pagesSlider">
@@ -51,6 +53,7 @@
 {% block jqueryjs %}
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery-1.4.2.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery.jdpicker.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery.ui.position.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery.mousewheel.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/jquery.DOMWindow.js"></script>
 <script type="text/javascript">
@@ -74,6 +77,4 @@ var startDate = '{{ publication|get_publication_date|date:"Y/m/d" }}';
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/slideshow.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/init.js"></script>
 {% endblock %}
-
-</body>
-</html>
+</div></body></html>
