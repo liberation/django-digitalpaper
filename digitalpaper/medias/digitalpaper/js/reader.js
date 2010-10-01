@@ -607,7 +607,7 @@ var libeReader = function() {
             jQuery('#pagesList').append(a);
             a.bind('click', showSelectedPage);
         }
-        cleanAfterShowPage(pageToShow);
+        showPage(pageToShow);
     }
     
     function _parseHashtoGetParams(hash) {
