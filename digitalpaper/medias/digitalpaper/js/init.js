@@ -16,11 +16,11 @@ jQuery(document).ready(function () {
     
     jQuery('#calendarButton').bind('change', function(e) {
         var val = jQuery(this).val();
-        val = val.replace('/', '-', 'g');
+        val = val.replace(/\//gi, '-');
         location.href = libeConfig.webservices.reader_by_date.replace('{date}', val);
     });
     
-    jQuery('#calendarButton').jdPicker(); 
+    jQuery('#calendarButton').jdPicker();
     
     function readerInitCallback(data, textStatus, xhrobject) {
         try {
