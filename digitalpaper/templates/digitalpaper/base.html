@@ -60,6 +60,7 @@ $.noConflict();
 
 <script type="text/javascript">
 var publicationId = {{ publication.id }};
+var startDate = '{{ publication|get_publication_date|date:"Y/m/d" }}';
 </script>
 
 {% block readerjsonp %}

@@ -14,6 +14,7 @@ jQuery(document).ready(function () {
         jQuery('#bookPages').height(libeConfig.pageHeight);
     }
     
+    jQuery('#calendarButton').val(startDate);
     jQuery('#calendarButton').bind('change', function(e) {
         var val = jQuery(this).val();
         val = val.replace(/\//gi, '-');
