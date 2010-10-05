@@ -28,8 +28,11 @@ jQuery(document).ready(function () {
             var level = accessLevels[data['access_level']];
             libeConfig.changeAccessLevel(level);
             libeReader.init(publicationId);
+            if (typeof extraReaderInitCallback !== 'undefined') {
+                extraReaderInitCallback(data, textStatus, xhrobject, level, publicationId);
+            }
         } catch (e) {
-            jQuery('#hello_reader').append(' <strong>Cannot access token data! Check the host, it might be a crossdomain issue!</strong>');
+
         }
     }
 
