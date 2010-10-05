@@ -99,6 +99,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                 window.open(url); // FIXME
             }
         }
+        return false;
     }
 
     function highlightArea() {
