@@ -50,7 +50,11 @@ var libeReader = function() {
     }
     
     function zoomAtCoordinates(x, y) {
-        if (!libeConfig.canZoom() || _isZoomed) {
+        if (!libeConfig.canZoom()) {
+            libeConfig.restrictedAccess();
+            return false;
+        }
+        if (_isZoomed) {
             return false;
         }
 
@@ -664,7 +668,10 @@ var libeReader = function() {
         var url = libeConfig.webservices['publication_structure'].replace('{emitter_format}', 'json').replace('{id}', publicationId);
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: defaultAjaxError});
         
-        jQuery('#zoomButton').click(function () {zoomAtCoordinates(0, 0)});
+        jQuery('#zoomButton').click(function (e) {
+            zoomAtCoordinates(0, 0);
+            return false;
+        });
         jQuery('#previousCorner, #nextCorner').hover(showHoverCorner, hideHoverCorner);
     }
     

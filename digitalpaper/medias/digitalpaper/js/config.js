@@ -12,8 +12,20 @@ var libeConfigFunc = function (data) {
         return settings.accessLevel > 0 && settings.pageWidth && settings.pageHeight;
     };
     
+    var canUseMap = function(pageNumber, pageId) {
+        return settings.accessLevel > 0 && settings.pageWidth && settings.pageHeight;
+    };
+    
     var changeAccessLevel = function(newlevel) {
         settings.accessLevel = newlevel;
+    };
+       
+    var restrictedAccess = function() {
+        jQuery.openDOMWindow({
+            windowSourceID: '#restrictedAccess',
+            width: 700,
+            height: 450
+        });
     };
 
     var setSize = function(w, h) {
@@ -34,6 +46,8 @@ var libeConfigFunc = function (data) {
         'changeAccessLevel' : changeAccessLevel,
         'canAccess': canAccess,
         'canZoom': canZoom,
+        'canUseMap': canUseMap,
+        'restrictedAccess' : restrictedAccess,
         'setSize' : setSize,
         'evenSideElement' : evenSideElement,
         'oddSideElement' : oddSideElement, 

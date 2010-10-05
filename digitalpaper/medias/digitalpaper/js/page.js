@@ -61,6 +61,10 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     }
     
     function openArea() {
+        if (!libeConfig.canUseMap(_pageNumber, _pageId)) {
+            libeConfig.restrictedAccess();
+            return false;
+        }
         var data = jQuery(this).data('area');
         if (data.object_class == "article") {
             var url = libeConfig.webservices.contentmodel_content

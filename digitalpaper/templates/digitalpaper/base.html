@@ -79,4 +79,6 @@ var startDate = '{{ publication|get_publication_date|date:"Y/m/d" }}';
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/slideshow.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/init.js"></script>
 {% endblock %}
-</div></body></html>
+</div>
+<div id="restrictedAccess" style="display: none;">{% block restricted_access %}<p>Access to this functionality is restricted</p>{% endblock %}</div>
+</body></html>
