@@ -610,7 +610,7 @@ var libeReader = function() {
     }
     
     function showBook(bookToShow, possiblePage) {
-        
+
         _hideOldPages();
         _changeBook(bookToShow);
         
@@ -655,7 +655,7 @@ var libeReader = function() {
         }
         
         showBookList(); // call first, so that we can play with the list in showBook()
-        showBook(tmp[0], tmp[1]);
+        showBook((tmp[0] || 0), (tmp[1] || 0));
     }
     
     function init(publicationId) {
