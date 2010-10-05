@@ -13,10 +13,12 @@
 {% block content %}
 <div id="main">
 <div id="menu">
+{% block menu %}
     <a id="zoomButton" href="#">Zoom</a>
     <a id="calendarButton" href="#">Publication: {{ publication|get_publication_date|date:"SHORT_DATE_FORMAT" }}</a>
+{% endblock %}
 </div>
-<div id="subnav"></div>
+<div id="extra">{% block extra %}{% endblock %}</div>
 <!--
 <p id="hello_reader">
 {% if user.is_authenticated %}
