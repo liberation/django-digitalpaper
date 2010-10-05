@@ -50,6 +50,46 @@ html, body {
     display: block;
 }
 
+#pagesAfter a, #pagesBefore a {
+    background-repeat: no-repeat;
+    position: absolute;  
+}
+
+#firstButton, #lastButton {
+    width: 15px;
+    height: 15px;
+    top: 5px;
+    right: 7px;      
+}
+
+#nextButton, #previousButton {
+    width: 30px;
+    height: 40px;
+    top: 45px;
+    right: 7px;
+}
+
+#nextButton, #lastButton {
+    right: auto;
+    left: 7px;
+}
+
+#firstButton {
+    background-image: url(../img/button-first.png);
+}
+
+#lastButton {
+    background-image: url(../img/button-last.png);
+}
+
+#nextButton {
+    background-image: url(../img/button-next.png);
+}
+
+#previousButton {
+    background-image: url(../img/button-prev.png);
+}
+
 #bookPages {
     display: inline-block;
     margin-right: auto;
@@ -122,9 +162,11 @@ html, body {
 }
 #previousCorner {
     left: 0;
+    background-image: url(../img/left-corner.png);
 }
 #nextCorner {
     right: 0;
+    background-image: url(../img/right-corner.png);
 }
 #zoomWindow {
     position: absolute;
