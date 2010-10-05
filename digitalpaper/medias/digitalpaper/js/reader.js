@@ -594,7 +594,7 @@ var libeReader = function() {
         jQuery(window).unbind(e);
     }
     
-    function _changeBook(newBook) {    
+    function _changeBook(newBook) {
         if (newBook > _publication.books.length) {
             newBook = 0;
         }
@@ -602,6 +602,8 @@ var libeReader = function() {
             jQuery('#pagesList').empty()
             jQuery('#pagesList').css({'left' : 0 });
             iPosition = 0;
+            jQuery('#bookSwitcher a').removeClass('selected');
+            jQuery('#bookThumb-' + parseInt(newBook, 10)).addClass('selected');
         }
         _selectedBook = _publication.books[newBook];
         _displayedBook = newBook;
@@ -643,8 +645,8 @@ var libeReader = function() {
     
     function handlePublication(data) {
         /*
-        *   data is the publication json
-        */
+         *   data is the publication json
+         */
         _publication = data;
 
         var tmp = [0, 0];
@@ -652,8 +654,8 @@ var libeReader = function() {
             tmp = _parseHashtoGetParams(location.hash.split('#')[1]);
         }
         
+        showBookList(); // call first, so that we can play with the list in showBook()
         showBook(tmp[0], tmp[1]);
-        showBookList();
     }
     
     function init(publicationId) {
@@ -681,6 +683,7 @@ var libeReader = function() {
             }
             
             var a = obj.getThumbnailForList(i);
+            a.attr('id', "bookThumb-" + i);
             jQuery('#bookSwitcher').append(a);
             a.bind('click', showSelectedPage);
         }
