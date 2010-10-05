@@ -6,6 +6,7 @@ body, html, .book *, p {
 
 body {
     position: relative;
+    font-family: sans-serif;
 }
 
 img {
@@ -54,7 +55,7 @@ html, body {
     margin-right: auto;
     margin-left: auto;
     position: relative;
-    margin-top: 5px;
+    margin-top: 50px;
 }
 #evenSide, #oddSide {
     position: relative;
@@ -99,9 +100,11 @@ html, body {
     position: absolute;
     width: 0;
     top: 0;
+    z-index: 44;
 }
 .transitionContainer {
     position: absolute;
+    z-index: 44;
     top: 0;
 }
 #previousCorner, #nextCorner {
@@ -112,6 +115,7 @@ html, body {
     width: 30px;
     height: 26px;
     cursor: pointer;
+    z-index: 45;
 }
 #previousCorner:focus, #nextCorner:focus {
     outline: none;
@@ -132,7 +136,7 @@ html, body {
     overflow: hidden;
     cursor: -webkit-grab;
     cursor: -moz-grab;
-    z-index: 44;
+    z-index: 94;
 }
 #zoomedPages, #HDGrid {
     position: absolute;
@@ -159,7 +163,8 @@ html, body {
 }
 
 #pagesSlider {
-    height: 52px;
+    height: 70px;
+    margin: 25px 0;
 }
 
 #bookSwitcher .page_infos {
@@ -169,6 +174,7 @@ html, body {
 #pagesList a {
     position: relative;
     border: 1px solid #CCC;
+    margin: 10px 0;
 }
 
 #pagesList a .page_channel {
@@ -207,12 +213,12 @@ html, body {
 }
 
 /* FIXME: absolute height */
-#pagesList, #bookSwitcher a, #pagesList img, #bookSwitcher img {
+#bookSwitcher a, #pagesList img, #bookSwitcher img {
     display: inline-block;
     height: 148px;
 }
 
-#pagesList, #pagesList img, #pagesSlider a {
+#pagesList img, #pagesSlider a {
     display: inline-block;
     height: 50px;
 }
