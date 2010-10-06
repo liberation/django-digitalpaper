@@ -153,7 +153,9 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     
     _pageElement = document.createElement("div");
     _pageElement.className = "page loading";
-    _pageElement.id = 'page_' + _pageId;
+    if (_pageId > 0) {
+        _pageElement.id = 'page_' + _pageId;
+    }
     
     if (_pageNumber <= 0) {
         // non existant page, do nothing
