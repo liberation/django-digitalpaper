@@ -52,20 +52,21 @@ html, body {
 
 #pagesAfter a, #pagesBefore a {
     background-repeat: no-repeat;
-    position: absolute;  
+    position: absolute;
+    display: block;
 }
 
 #firstButton, #lastButton {
-    width: 15px;
-    height: 15px;
+    width: 48px;
+    height: 48px;
     top: 5px;
     right: 7px;      
 }
 
 #nextButton, #previousButton {
-    width: 30px;
-    height: 40px;
-    top: 45px;
+    width: 48px;
+    height: 48px;
+    top: 48px;
     right: 7px;
 }
 
