@@ -156,23 +156,32 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         _pageElement.id = 'page_' + _pageId;
     }
     
+    var baseSrc = "";
+    // Set thumbnails, they are always visible, unless the page is in construction
+    if (_pageId > 0) {
+        baseSrc = libeConfig.webservices.paper_page.replace('{emitter_format}', 'jpg').replace('{id}', _pageId)
+        _smallestImageSource = baseSrc.replace('{size}', 'x50');
+        _smallImageSource    = baseSrc.replace('{size}', 'x148');
+    } else {
+        _smallestImageSource = _smallImageSource = libeConfig.pageInConstructionImage;
+    }
+    
     if (_pageNumber <= 0) {
         // non existant page, do nothing
     } else if (!libeConfig.canAccess(_pageNumber, _pageId)) {
         // page that the user isn't allowed to read
         var img = document.createElement("img");
-        img.src = _imageSource = _smallestImageSource = _smallImageSource = libeConfig.pageLimitedAccessImage;
-        _pageElement.appendChild(img);        
-    } else if (_pageId < 0) {
+        img.src = _imageSource = libeConfig.pageLimitedAccessImage;
+        _pageElement.appendChild(img);
+    } else if (_pageId <= 0) {
         // page not yet included in the book, but that should exist: display it as "in construction"
         var img = document.createElement("img");
-        img.src = _imageSource = _smallestImageSource = _smallImageSource = libeConfig.pageInConstructionImage;
+        img.src = _imageSource = libeConfig.pageInConstructionImage;
         _pageElement.appendChild(img);
     } else {
         // normal page
         map = pageMaps;
         var img = document.createElement("img");
-        var tmp = libeConfig.webservices.paper_page.replace('{emitter_format}', 'jpg').replace('{id}', _pageId)
         jQuery(img).bind('load', function(e) {
             jQuery(_pageElement).removeClass('loading');
             // Little trick: use _pageElement and not the image to find out the dimensions of the 
@@ -189,11 +198,8 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             jQuery(_pageElement).addClass('warning');
         });
         // FIXME don't hardcore sizes, get them from config
-        img.src = _imageSource = tmp.replace('{size}', 'x500');
-        _smallestImageSource   = tmp.replace('{size}', 'x50');
-        _smallImageSource      = tmp.replace('{size}', 'x148');
+        img.src = _imageSource = baseSrc.replace('{size}', 'x500');
         _pageElement.appendChild(img);
-        
     }
     
     if (_pageNumber % 2 == 0) {
