@@ -13,7 +13,7 @@ jQuery(document).ready(function () {
     });
     jQuery('#sliderNext').bind('mousedown', function(e) {
         iPosition -= iSlideSize;
-        maxPosition = parseInt(jQuery('#pagesList').css('width'), 10) - parseInt(jQuery('#pagesSlider').css('width'), 10);
+        maxPosition = jQuery('#pagesList').outerWidth() - jQuery('#innerPagesSlider').outerWidth();
         if (maxPosition > 0) {
             if (iPosition < -maxPosition) {
                 iPosition = -maxPosition;
