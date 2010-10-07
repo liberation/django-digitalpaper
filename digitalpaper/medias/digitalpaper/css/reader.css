@@ -257,6 +257,10 @@ html, body {
     height: 148px;
 }
 
+#bookSwitcher .bookName {
+    display: none;
+}
+
 #pagesList img, #pagesList a {
     display: inline-block;
     height: 50px;

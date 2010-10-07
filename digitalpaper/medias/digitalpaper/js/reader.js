@@ -691,6 +691,7 @@ var libeReader = function() {
             
             var a = obj.getThumbnailForList(i);
             a.attr('id', "bookThumb-" + i);
+            a.append('<span class="bookName">' + _publication.books[i].name + '</span>');
             jQuery('#bookSwitcher').append(a);
             a.bind('click', showSelectedPage);
         }
