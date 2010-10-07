@@ -134,8 +134,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             jQuery(this).parent().removeClass('loading');
             jQuery(this).parent().addClass('warning');            
         });
-        a.append('<span class="page_infos"><span class="page_number">' + _pageNumber + '</span>' + 
-                 '<span class="page_channel">' + _pageChannel + '</span></span>')
+        a.append('<span class="page_number">' + _pageNumber + '</span>')
         a.append(img);
         return a;
     }

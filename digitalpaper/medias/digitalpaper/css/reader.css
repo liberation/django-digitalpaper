@@ -83,11 +83,11 @@ html, body {
     background-image: url(../img/button-last.png);
 }
 
-#nextButton {
+#nextButton, #sliderNext {
     background-image: url(../img/button-next.png);
 }
 
-#previousButton {
+#previousButton, #sliderPrev {
     background-image: url(../img/button-prev.png);
 }
 
@@ -198,19 +198,26 @@ html, body {
 }
 
 /* FIXME: absolute height */
-#pagesSlider, #bookSwitcher {
-    overflow: hidden;
+#bookSwitcher {
     height: 150px;
+}
+
+#pagesSlider {
+    margin: 15px 0;
+}
+
+#pagesSlider, #bookSwitcher, #innerPagesSlider {
+    overflow: hidden;
     white-space: nowrap;
     position: relative;
 }
 
-#pagesSlider {
-    height: 70px;
+#pagesSlider, #innerPagesSlider {
+    height: 50px; /* FIXME: absolute height */
     margin: 25px 0;
 }
 
-#bookSwitcher .page_infos {
+#bookSwitcher .page_number, #bookSwitcher .page_channel {
     display: none;
 }
 
@@ -220,22 +227,8 @@ html, body {
     margin: 10px 0;
 }
 
-#pagesList a .page_channel {
-    display: none;
-}
-
-#pagesList a:hover .page_channel {
-    display: inline;
-}
-
-#pagesList .page_infos {
-    position: absolute;
-    color: #666;
-    font-size: 10px;
-    top: 0;
-    left: 0;
-    text-transform: uppercase;
-    z-index: 42;
+#innerPagesSlider, #pagesSlider {
+    height: 75px;
 }
 
 #pagesList .even {
@@ -243,16 +236,19 @@ html, body {
     border-right: none;
 }
 
-#pagesList .odd .page_infos {
+#pagesList .page_number {
+    position: absolute;
     top: auto;
-    left: auto;
-    right: 0;
-    bottom: 0;
+    right: auto;
+    left: 4px;
+    bottom: -15px;
+    font-size: 10px;
+    color: #333;
 }
 
-#pagesList .page_number {
-    border-right: 1px solid;
-    margin-right: 0.5em;
+#pagesList .even .page_number {
+    right: 4px;
+    left: auto;
 }
 
 /* FIXME: absolute height */
@@ -261,7 +257,7 @@ html, body {
     height: 148px;
 }
 
-#pagesList img, #pagesSlider a {
+#pagesList img, #pagesList a {
     display: inline-block;
     height: 50px;
 }
@@ -276,16 +272,17 @@ html, body {
     left: 0;
 }
 
+#innerPagesSlider {
+    margin: 0 50px;
+    padding: 0 10px;
+}
+
 #sliderNext, #sliderPrev {
     position: absolute;
-    border: 1px solid #333;
-    background-color: #999;
-    opacity: 0.7;
-    color: #333;
-    padding: 5px;
-    top: 5px;
-    height: 130px;
-    z-index: 42;
+    width: 48px;
+    height: 48px;
+    top: 15px;
+    z-index: 2;
 }
 
 #sliderNext {
