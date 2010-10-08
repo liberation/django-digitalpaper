@@ -1,8 +1,9 @@
 var libeReader = function() {
-    var _publicationId, _bookName, _publication, _selectedBook, _pages, _displayedPage, _displayedBook,
-        _zoomWindow, _winHeight, _winWidth, _numberOfPages, _isZoomed, 
-        _zoomedPageHeight, _zoomedPageWidth, _zoomMouseInit, _zoomPosInit, _zoomedPages, _zoomMouseDown,
-        _step;
+    var _publicationId, _bookName, _publication, _selectedBook, _pages, 
+        _displayedPage, _displayedBook, _zoomWindow, _winHeight, _winWidth, 
+        _numberOfPages, _isZoomed, _zoomedPageHeight, _zoomedPageWidth, 
+        _zoomMouseInit, _zoomPosInit, _zoomedPages, _zoomMouseDown, _step,
+        _HDgridContainer;
         
     _step = 21;
     
