@@ -1,9 +1,9 @@
 var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
-    var _pageElement, _areasElement = [];
+    var _pageElement = [], _areasElement = [];
     var map = {};
-    var _pageNumber, _pageId = -1;
+    var _pageNumber = -1, _pageId = -1;
     var _mapsLoaded = false;
-    var _smallImageSource, _smallestImageSource, _imageSource = null;
+    var _smallImageSource = null, _smallestImageSource = null, _imageSource = null;
     var _pageChannel = "";
     
     function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
@@ -146,11 +146,14 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     
     // Init Code
     
-    _pageNumber = pageNumber;
+    if (typeof(pageNumber) !== 'undefined') {
+        _pageNumber = parseInt(pageNumber, 10);
+    }
 
     if (typeof(pageId) !== 'undefined') {
-        _pageId = pageId;
+        _pageId = parseInt(pageId, 10);
     }
+    
     if (typeof(pageChannel) !== 'undefined') {
         _pageChannel = pageChannel;
     }
@@ -162,15 +165,16 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     }
     
     var baseSrc = "";
-    // Set thumbnails, they are always visible, unless the page is in construction
+    // Set thumbnails, they are always visible, unless the page is under construction
     if (_pageId > 0) {
         baseSrc = libeConfig.webservices.paper_page.replace('{emitter_format}', 'jpg').replace('{id}', _pageId)
         _smallestImageSource = baseSrc.replace('{size}', 'x50');
         _smallImageSource    = baseSrc.replace('{size}', 'x148');
     } else {
-        _smallestImageSource = _smallImageSource = libeConfig.pageInConstructionImage;
+        _smallestImageSource = libeConfig.pageUnderConstructionImageSmallest;
+        _smallImageSource = libeConfig.pageUnderConstructionImage;
     }
-    
+
     if (_pageNumber <= 0) {
         // non existant page, do nothing
     } else if (!libeConfig.canAccess(_pageNumber, _pageId)) {
@@ -179,9 +183,9 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         img.src = _imageSource = libeConfig.pageLimitedAccessImage;
         _pageElement.appendChild(img);
     } else if (_pageId <= 0) {
-        // page not yet included in the book, but that should exist: display it as "in construction"
+        // page not yet included in the book, but that should exist: display it as "under construction"
         var img = document.createElement("img");
-        img.src = _imageSource = libeConfig.pageInConstructionImage;
+        img.src = _imageSource = libeConfig.pageUnderConstructionImage;
         _pageElement.appendChild(img);
     } else {
         // normal page
