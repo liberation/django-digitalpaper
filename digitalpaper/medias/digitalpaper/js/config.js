@@ -5,7 +5,7 @@ var libeConfigFunc = function (data) {
     var accessLevel = 0;
     
     var canAccess = function(pageNumber, pageId) {
-        return settings.accessLevel > 0 || settings.pagesFree.indexOf(pageNumber) >= 0;
+        return settings.accessLevel > 0 || jQuery.inArray(pageNumber, settings.pagesFree) >= 0;
     };
     
     var canZoom = function() {

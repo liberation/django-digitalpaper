@@ -71,7 +71,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             var replaces = {
                 '{emitter_format}' : 'html',
                 '{id}' : data.object_id,
-                '{type}' : 'article',
+                '{type}' : 'article'
             }
 
             for (key in replaces) {
@@ -93,7 +93,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                     positionTop:50, 
                     positionLeft:50, 
                     windowSource:'iframe', 
-                    loader:1, 
+                    loader:1
                 });
             } else {
                 window.open(url); // FIXME

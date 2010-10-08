@@ -583,13 +583,13 @@ var libeReader = function() {
             of: jQuery('#oddSide'),
             my: 'left center',
             at: 'right center',
-            offset: '1',
+            offset: '1'
         });
         jQuery('#pagesBefore').position({
             of: jQuery('#evenSide'),
             my: 'right center',
             at: 'left center',
-            offset: '-1',
+            offset: '-1'
         });
     }
     
