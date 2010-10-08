@@ -301,10 +301,6 @@ p {
     padding: 0.5em;
 }
 
-#hello_reader strong {
-    color: red;
-}
-
 #menu {
     height: 55px;
     width: 100%;
@@ -314,10 +310,6 @@ p {
 
 #menu .date_clearer {
     display: none;
-}
-
-#hello_reader {
-
 }
 
 .loading {

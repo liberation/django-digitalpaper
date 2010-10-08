@@ -19,15 +19,6 @@
 {% endblock %}
 </div>
 <div id="extra">{% block extra %}{% endblock %}</div>
-<!--
-<p id="hello_reader">
-{% if user.is_authenticated %}
-    Hello, {{ user }} !</p>
-{% else %}
-    You are not identified. Please <a href="{% url django.contrib.auth.views.login %}?next={{ request.path }}">log in</a>.
-{% endif %}
-</p>
--->
 <div class="book">
     <div id="bookPages">{% spaceless %}
         <div id="evenSide"></div><div id="oddSide"></div>
