@@ -520,6 +520,12 @@ var libeReader = function() {
         }
     }
     
+    function displayPage(number) {
+        var page = _pages[number];
+        page.show();
+        jQuery('#' + ((page.pageNumber % 2 == 0) ? 'even' : 'odd') + 'Side .pageInfo').html(page.getPageInfo());
+    }
+    
     function cleanAfterShowPage(number) {    
         _hideOldPages();
 
@@ -530,10 +536,10 @@ var libeReader = function() {
         }
 
         if (_pages[_displayedPage]) {
-            _pages[_displayedPage].show();
+            displayPage(_displayedPage)
         }
         if (_pages[_displayedPage + 1]) {
-            _pages[_displayedPage + 1].show();
+            displayPage(_displayedPage + 1)
         }
         
         displayPagination();

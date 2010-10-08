@@ -105,7 +105,15 @@ html, body {
     max-height: 500px;
     outline: 1px solid #CCC;
 }
-#evenSide {
+.pageInfo {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    z-index: 50;
+}
+#oddSide .pageInfo {
+    left: auto;
+    right: 0;
     text-align: right;
 }
 .page {
@@ -217,7 +225,7 @@ html, body {
     margin: 25px 0;
 }
 
-#bookSwitcher .page_number, #bookSwitcher .page_channel {
+#bookSwitcher .pageNumber, #bookSwitcher .pageChannel {
     display: none;
 }
 
@@ -236,7 +244,7 @@ html, body {
     border-right: none;
 }
 
-#pagesList .page_number {
+#pagesList .pageNumber {
     position: absolute;
     top: auto;
     right: auto;
@@ -246,7 +254,7 @@ html, body {
     color: #333;
 }
 
-#pagesList .even .page_number {
+#pagesList .even .pageNumber {
     right: 4px;
     left: auto;
 }

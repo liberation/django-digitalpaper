@@ -117,6 +117,11 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         jQuery(_pageElement).hide();
     }
     
+    function getPageInfo() {
+        return '<span class="pageNumber">' + _pageNumber + '</span>'
+             + '<span class="pageChannel">' + _pageChannel + '</span>';
+    }
+    
     function getThumbnailForList(book, size) {
         var src;
         if (typeof size == 'undefined' || size != 'smallest') {
@@ -134,7 +139,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             jQuery(this).parent().removeClass('loading');
             jQuery(this).parent().addClass('warning');            
         });
-        a.append('<span class="page_number">' + _pageNumber + '</span>')
+        a.append('<span class="pageNumber">' + _pageNumber + '</span>')
         a.append(img);
         return a;
     }
@@ -213,7 +218,9 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         hide: hide,
         imageSource: _imageSource,
         pageId: _pageId,
+        pageNumber: _pageNumber,
         handleMap: handleMap,
+        getPageInfo: getPageInfo,
         getThumbnailForList: getThumbnailForList
     }
 }
