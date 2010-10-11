@@ -421,7 +421,7 @@ var libeReader = function() {
                 '{y}' : yColumn
             }
             
-            var src = libeConfig.webservices.paper_page_crop;
+            var src = libeConfig.webservices.paper_page_cropped;
             for (key in replaces) {
                 src = src.replace(key, replaces[key]);
             }
