@@ -26,11 +26,9 @@ jQuery(document).ready(function () {
     function readerInitCallback(data, textStatus, xhrobject) {
         try {
             var level = accessLevels[data['access_level']];
+            libeConfig.changeAuthStatus(data['authenticated']);
             libeConfig.changeAccessLevel(level);
             libeReader.init(publicationId);
-            if (typeof extraReaderInitCallback !== 'undefined') {
-                extraReaderInitCallback(data, textStatus, xhrobject, level, publicationId);
-            }
         } catch (e) {
 
         }

@@ -3,21 +3,31 @@ var libeConfigFunc = function (data) {
     var evenSideElement = document.getElementById('evenSide');
     var oddSideElement = document.getElementById('oddSide');
     var accessLevel = 0;
+    var accessLevelNeeded = 20;    
+    var authenticated = false;
     
     var canAccess = function(pageNumber, pageId) {
-        return settings.accessLevel > 0 || jQuery.inArray(pageNumber, settings.pagesFree) >= 0;
+        return settings.accessLevel >= settings.accessLevelNeeded || jQuery.inArray(pageNumber, settings.pagesFree) >= 0;
     };
     
     var canZoom = function() {
-        return settings.accessLevel > 0 && settings.pageWidth && settings.pageHeight;
+        return settings.accessLevel >= settings.accessLevelNeeded && settings.pageWidth && settings.pageHeight;
     };
     
     var canUseMap = function(pageNumber, pageId) {
-        return settings.accessLevel > 0 && settings.pageWidth && settings.pageHeight;
+        return settings.accessLevel >= settings.accessLevelNeeded && settings.pageWidth && settings.pageHeight;
     };
+    
+    var changeAccessLevelNeeded = function(newneededlevel) {
+        settings.accessLevelNeeded = newneededlevel;
+    }
     
     var changeAccessLevel = function(newlevel) {
         settings.accessLevel = newlevel;
+    };
+    
+    var changeAuthStatus = function(newstatus) {
+        settings.authenticated = newstatus;
     };
        
     var restrictedAccess = function() {
@@ -43,8 +53,12 @@ var libeConfigFunc = function (data) {
     };
 
     this.settings = {
+        'authenticated' : authenticated,
         'accessLevel' : accessLevel,
+        'accessLevelNeeded' : accessLevelNeeded,
+        'changeAccessLevelNeeded' : changeAccessLevelNeeded,
         'changeAccessLevel' : changeAccessLevel,
+        'changeAuthStatus' : changeAuthStatus,
         'canAccess': canAccess,
         'canZoom': canZoom,
         'canUseMap': canUseMap,

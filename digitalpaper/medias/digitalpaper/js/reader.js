@@ -667,6 +667,10 @@ var libeReader = function() {
         
         showBookList(); // call first, so that we can play with the list in showBook()
         showBook((tmp[0] || 0), (tmp[1] || 0));
+        
+        if (typeof extraReaderPublicationHandleCallback !== 'undefined') {
+            extraReaderPublicationHandleCallback(data, _publicationId);
+        }
     }
     
     function init(publicationId) {
