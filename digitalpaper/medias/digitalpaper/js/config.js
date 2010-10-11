@@ -26,6 +26,7 @@ var libeConfigFunc = function (data) {
             width: 700,
             height: 450
         });
+        return false;
     };
 
     var setSize = function(w, h) {
