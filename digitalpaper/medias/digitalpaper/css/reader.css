@@ -150,11 +150,11 @@ html, body {
     position: absolute;
     width: 0;
     top: 0;
-    z-index: 44;
+    z-index: 42;
 }
 .transitionContainer {
     position: absolute;
-    z-index: 44;
+    z-index: 42;
     top: 0;
 }
 #previousCorner, #nextCorner {
