@@ -655,9 +655,14 @@ var libeReader = function() {
     }
     
     function handlePublication(data) {
-        /*
-         *   data is the publication json
-         */
+        // data is the publication json
+        // fire the extra callback as early as possible, before showing pages
+        // so that it can change access levels and whatnot. _publicationId was
+        // set in init(), so it's safe to use
+        if (typeof extraReaderPublicationHandleCallback !== 'undefined') {
+            extraReaderPublicationHandleCallback(data, _publicationId);
+        }
+         
         _publication = data;
 
         var tmp = [0, 0];
@@ -667,10 +672,6 @@ var libeReader = function() {
         
         showBookList(); // call first, so that we can play with the list in showBook()
         showBook((tmp[0] || 0), (tmp[1] || 0));
-        
-        if (typeof extraReaderPublicationHandleCallback !== 'undefined') {
-            extraReaderPublicationHandleCallback(data, _publicationId);
-        }
     }
     
     function init(publicationId) {
