@@ -87,11 +87,8 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                 jQuery(this).openDOMWindow({
                     windowSourceURL: url,
                     windowSourceID: 'reader_contentmodel_content', 
-                    height:400, 
-                    width:700, 
-                    positionType:'absolute', 
-                    positionTop:50, 
-                    positionLeft:50, 
+                    height:600, 
+                    width:770,
                     windowSource:'iframe', 
                     loader:1
                 });
