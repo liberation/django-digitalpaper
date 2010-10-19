@@ -167,10 +167,12 @@ var libeReader = function() {
     }
     
     function keyboardCallback(e) {
-        if (_isZoomed) {
-            return zoomedKeyboardCallback(e);
-        } else {
-            return normalKeyboardCallback(e);        
+        if (jQuery('#DOMWindow').length <= 0) {
+            if (_isZoomed) {
+                return zoomedKeyboardCallback(e);
+            } else {
+                return normalKeyboardCallback(e);        
+            }
         }
     }
     
