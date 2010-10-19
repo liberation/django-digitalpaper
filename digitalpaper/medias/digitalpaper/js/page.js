@@ -119,6 +119,10 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
              + '<span class="pageChannel">' + _pageChannel + '</span>';
     }
     
+    function canAccess() {
+        return libeConfig.canAccess(_pageNumber, _pageId);
+    }
+    
     function getThumbnailForList(book, size) {
         var src;
         if (typeof size == 'undefined' || size != 'smallest') {
@@ -174,7 +178,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
 
     if (_pageNumber <= 0) {
         // non existant page, do nothing
-    } else if (!libeConfig.canAccess(_pageNumber, _pageId)) {
+    } else if (!canAccess()) {
         // page that the user isn't allowed to read
         var img = document.createElement("img");
         img.src = _imageSource = libeConfig.pageLimitedAccessImage;
@@ -222,6 +226,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         pageNumber: _pageNumber,
         handleMap: handleMap,
         getPageInfo: getPageInfo,
-        getThumbnailForList: getThumbnailForList
+        getThumbnailForList: getThumbnailForList,
+        canAccess: canAccess
     }
 }

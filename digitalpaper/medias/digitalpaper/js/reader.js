@@ -535,14 +535,28 @@ var libeReader = function() {
         var newDisplayedPage = number - number % 2;
         if (_pages[newDisplayedPage] || _pages[newDisplayedPage + 1]) {
             _displayedPage = newDisplayedPage;
-            window.location.hash = "#" + _displayedBook + '_' + _displayedPage;
+            window.location.hash = "#" + _displayedBook + '_' + _displayedPage;               
         }
 
+        var showRestrictedAccess = false;
         if (_pages[_displayedPage]) {
-            displayPage(_displayedPage)
+            displayPage(_displayedPage);
+            if (!_pages[newDisplayedPage].canAccess()) {
+                showRestrictedAccess = true;
+            }
         }
         if (_pages[_displayedPage + 1]) {
-            displayPage(_displayedPage + 1)
+            displayPage(_displayedPage + 1);
+            if (!_pages[newDisplayedPage + 1].canAccess()) {
+                showRestrictedAccess = true;
+            }
+        }
+        
+        if (showRestrictedAccess) {
+            // show "access restricted" lightbox if the displayed page
+            // is restricted - the user will be able to close it, 
+            // it's just to remind him the page isn't free
+            libeConfig.restrictedAccess();
         }
         
         displayPagination();
