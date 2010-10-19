@@ -257,7 +257,10 @@
 					sizeOverlay();
 					var $DOMWindowOverlay = $('#DOMWindowOverlay');
 					$DOMWindowOverlay.fadeIn('fast');
-					if(!settings.modal){$DOMWindowOverlay.click(function(){$.closeDOMWindow();});}
+					if(!settings.modal) {
+					    $DOMWindowOverlay.click(function(){$.closeDOMWindow();});
+					    $(window).bind('keydown', function(e) { if (e.keyCode == 27) { $.closeDOMWindow(); } });
+					}
 				}
 				
 				//loader
