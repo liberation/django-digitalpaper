@@ -127,6 +127,7 @@ var libeReader = function() {
         
         zoomInitHDGrid(top, left);
         _isZoomed = true;
+        jQuery('#zoomButton').addClass('unzoom');
     }
     
     function zoomInitHDGrid(top, left) {
@@ -157,6 +158,7 @@ var libeReader = function() {
         jQuery('#bookSwitcher').show();
         jQuery(document.body).css({'overflow': 'visible', 'height': 'auto' });
         _isZoomed = false;
+        jQuery('#zoomButton').removeClass('unzoom');
         return false;
     }
     
@@ -697,7 +699,11 @@ var libeReader = function() {
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: defaultAjaxError});
         
         jQuery('#zoomButton').click(function (e) {
-            zoomAtCoordinates(0, 0);
+            if (_isZoomed) {
+                quitZoom();
+            } else {
+                zoomAtCoordinates(0, 0);
+            }
             return false;
         });
         jQuery('#previousCorner, #nextCorner').hover(showHoverCorner, hideHoverCorner);
