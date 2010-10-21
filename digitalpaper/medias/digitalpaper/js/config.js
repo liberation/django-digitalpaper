@@ -34,7 +34,7 @@ var libeConfigFunc = function (data) {
         jQuery.openDOMWindow({
             windowSourceID: '#restrictedAccess',
             width: 760,
-            height: 450,
+            height: 480,
             windowPadding: 0
         });
         return false;

@@ -83,17 +83,26 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                 key = data.object_class
             }
 
-            if (libeConfig.modelmapping[key] == 'iframe') {
-                jQuery(this).openDOMWindow({
+            if (libeConfig.modelmapping[key] == 'iframe' 
+             || libeConfig.modelmapping[key] == 'ajax'
+             || libeConfig.modelmapping[key] == 'inline') {
+                var dw = jQuery(this).openDOMWindow({
                     windowSourceURL: url,
-                    windowSourceID: 'reader_contentmodel_content', 
-                    height:600, 
-                    width:770,
-                    windowSource:'iframe', 
+                    windowSourceID: '#contentmodelContent', 
+                    width: 770,
+                    height: 600,
+                    windowSource: libeConfig.modelmapping[key],
                     loader:1
                 });
+                if (libeConfig.modelmapping[key] == 'inline') {
+                    // inline is interesting to add custom content, but
+                    // it doesn't load the URL, so we have to do it manually
+                    // Note: have a .inner element inside your #contentmodelContent
+                    // when you want to use this!
+                    jQuery('#DOMWindow .inner').load(url);
+                }
             } else {
-                window.open(url); // FIXME
+                window.open(url);
             }
         }
         return false;
