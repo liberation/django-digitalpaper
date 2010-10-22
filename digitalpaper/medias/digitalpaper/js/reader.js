@@ -466,6 +466,8 @@ var libeReader = function() {
             return;
         }
         
+        jQuery('#oddSide .pageInfo, #evenSide .pageInfo').fadeOut();
+        
         unbindButtons();
         unbindKeyboard();
         
@@ -523,12 +525,16 @@ var libeReader = function() {
                 _pages[_displayedPage + 1].hide();
             }
         }
+        unHighlightCurrentPages();
     }
     
     function displayPage(number) {
         var page = _pages[number];
         page.show();
-        jQuery('#' + ((page.pageNumber % 2 == 0) ? 'even' : 'odd') + 'Side .pageInfo').html(page.getPageInfo());
+        highlightCurrentPages(_displayedBook, number);
+        var elm = jQuery('#' + ((page.pageNumber % 2 == 0) ? 'even' : 'odd') + 'Side .pageInfo');
+        elm.html(page.getPageInfo());
+        elm.fadeIn();
     }
     
     function cleanAfterShowPage(number) {    
@@ -559,8 +565,7 @@ var libeReader = function() {
             // is restricted - the user will be able to close it, 
             // it's just to remind him the page isn't free
             libeConfig.restrictedAccess();
-        }
-        
+        }        
         displayPagination();
         bindButtons();
         bindKeyboard();
@@ -623,6 +628,40 @@ var libeReader = function() {
         jQuery(window).unbind(e);
     }
     
+    function unHighlightHoveredPages(e) {
+        jQuery('#pagesList a.hovered').removeClass('hovered');
+    }
+    
+    function unHighlightCurrentPages(e) {
+        jQuery('#pagesList a.current').removeClass('current');
+    }
+    
+    function highlightCurrentPages(book, page) {
+        var current = jQuery('#thumb_' + book + '_' + page);
+        current.addClass('current');        
+    }
+      
+    function highlightHoveredPages(e) {
+        // remove old highlight
+        unHighlightHoveredPages();
+
+        var hovered = jQuery(this);
+        var neighbour = jQuery();
+        
+        // if it's an even page, find the one on the right if it exists
+        if (hovered.hasClass('even')) {
+            neighbour = hovered.next();
+        }
+        // if it's an odd page, find the one on the left if it exists
+        if (hovered.hasClass('odd')) {
+            neighbour = hovered.prev();
+        }
+        
+        // highlight the relevant pages
+        hovered.addClass('hovered');        
+        neighbour.addClass('hovered');
+    }
+    
     function _changeBook(newBook) {
         if (newBook > _publication.books.length) {
             newBook = 0;
@@ -660,8 +699,10 @@ var libeReader = function() {
                 _pages[i] = libePage(i);
             }
             var a = _pages[i].getThumbnailForList(_displayedBook, 'smallest');
+            a.attr({'id' : 'thumb_' + _displayedBook + '_' + i});
             jQuery('#pagesList').append(a);
             a.bind('click', showSelectedPage);
+            a.bind('mouseover', highlightHoveredPages);
         }
         showPage(pageToShow);
     }
@@ -680,6 +721,8 @@ var libeReader = function() {
         if (typeof extraReaderPublicationHandleCallback !== 'undefined') {
             extraReaderPublicationHandleCallback(data, _publicationId);
         }
+        
+        jQuery('#pagesList').bind('mouseout', unHighlightHoveredPages);
          
         _publication = data;
 
