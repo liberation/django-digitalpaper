@@ -3,15 +3,16 @@ jQuery(document).ready(function () {
     sSlideSpeed = 'slow';
     iPosition = 0;
 
-    jQuery('#sliderPrev').bind('mousedown', function(e) {
+    jQuery('#sliderPrev').bind('click', function(e) {
         iPosition += iSlideSize;
         minPosition = 0
         if (iPosition > minPosition) {
             iPosition = minPosition;
         }
         jQuery('#pagesList').animate({left: iPosition}, sSlideSpeed);
+        return false;
     });
-    jQuery('#sliderNext').bind('mousedown', function(e) {
+    jQuery('#sliderNext').bind('click', function(e) {
         iPosition -= iSlideSize;
         maxPosition = jQuery('#pagesList').outerWidth() - jQuery('#innerPagesSlider').outerWidth();
         if (maxPosition > 0) {
@@ -20,5 +21,6 @@ jQuery(document).ready(function () {
             }
             jQuery('#pagesList').animate({left: iPosition}, sSlideSpeed);
         }
+        return false;
     });
 });

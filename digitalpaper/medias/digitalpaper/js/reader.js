@@ -28,11 +28,11 @@ var libeReader = function() {
     }
     
     function bindKeyboard() {
-        jQuery(window).bind('keydown', keyboardCallback);
+        jQuery('body').bind('keydown', keyboardCallback);
     }
     
     function unbindKeyboard() {
-        jQuery(window).unbind('keydown', keyboardCallback);
+        jQuery('body').unbind('keydown', keyboardCallback);
     }
     
     function zoom(event) {
@@ -121,9 +121,12 @@ var libeReader = function() {
         jQuery(document.body).append(_zoomWindow);
         
         // Just for Apple touch, jQuery suxx and delete e.touches
-        document.getElementById('zoomWindow').addEventListener('touchstart', zoomMouseDown, true);
-        document.getElementById('zoomWindow').addEventListener('touchend', zoomMouseUp, true);
-        document.getElementById('zoomWindow').addEventListener('touchmove', zoomMouseMove, true);
+        var zw = document.getElementById('zoomWindow');
+        if (zw && zw.addEventListener) {
+            zw.addEventListener('touchstart', zoomMouseDown, true);
+            zw.addEventListener('touchend', zoomMouseUp, true);
+            zw.addEventListener('touchmove', zoomMouseMove, true);
+        }
         
         zoomInitHDGrid(top, left);
         _isZoomed = true;
@@ -180,7 +183,7 @@ var libeReader = function() {
     
     function normalKeyboardCallback(e) {
         if (e.ctrlKey) {
-            switch (e.keyCode) {
+            switch (e.which) {
                 case 109: // -
                 case 40:  // bottom
                     e.preventDefault();
@@ -214,7 +217,7 @@ var libeReader = function() {
         var x = 0;
         var y = 0;
         if (e.ctrlKey) {
-            switch (e.keyCode) {
+            switch (e.which) {
                 case 27:  // esc
                 case 109: // -
                 case 40: // bottom
@@ -225,7 +228,7 @@ var libeReader = function() {
                     break;
             }
         } else {
-            switch (e.keyCode) {
+            switch (e.which) {
                  case 27:  // esc
                     quitZoom();
                     e.preventDefault();
@@ -256,17 +259,14 @@ var libeReader = function() {
         _zoomPosInit = {x: -parseInt(_zoomedPages.css('left'), 10), y: -parseInt(_zoomedPages.css('top'), 10)}
     }
     
-    function zoomMouseDown(e) {
+    function zoomMouseDown(e) {    
         // iPhone/iPad
         if (e.touches) {
             e.preventDefault();
             e = e.touches[0];
         } else {
             e.preventDefault();
-            if (e.button != 0) {
-                return;
-            }
-        }
+        }        
 
         _zoomMouseDown = true;
         _zoomLoadPosInit();
