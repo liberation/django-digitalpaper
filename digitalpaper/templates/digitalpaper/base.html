@@ -38,6 +38,7 @@
         <li><a id="nextButton" href="#"><!-- --></a></li>
     </ul>
 </div>
+{% block slider %}
 <div id="pagesSlider">
     <a href="#" id="sliderPrev" onclick="return false;"><!-- --></a>
     <div id="innerPagesSlider">
@@ -45,7 +46,10 @@
     </div>
     <a href="#" id="sliderNext" onclick="return false;"><!-- --></a>
 </div>
+{% endblock %}
+{% block switcher %}
 <div id="bookSwitcher"></div>
+{% endblock %}
 {% endblock %}
 
 {% block jqueryjs %}
