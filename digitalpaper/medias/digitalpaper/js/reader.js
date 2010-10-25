@@ -28,11 +28,11 @@ var libeReader = function() {
     }
     
     function bindKeyboard() {
-        jQuery('body').bind('keydown', keyboardCallback);
+        jQuery(document).bind('keydown', keyboardCallback);
     }
     
     function unbindKeyboard() {
-        jQuery('body').unbind('keydown', keyboardCallback);
+        jQuery(document).unbind('keydown', keyboardCallback);
     }
     
     function zoom(event) {
