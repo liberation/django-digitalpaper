@@ -229,8 +229,10 @@ html, body {
 
 #pagesList a {
     position: relative;
-    border: 1px solid #CCC;
     margin: 10px 0;
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
 }
 
 #innerPagesSlider, #pagesSlider {
@@ -243,11 +245,6 @@ html, body {
 }
 
 #pagesList .pageNumber {
-    position: absolute;
-    top: auto;
-    right: auto;
-    left: 4px;
-    bottom: -15px;
     font-size: 10px;
     color: #333;
 }
@@ -266,13 +263,10 @@ html, body {
     display: none;
 }
 
-#pagesList img, #pagesList a {
-    display: inline-block;
-    height: 50px;
-}
-
 #pagesList img {
     display: block;
+    height: 50px;
+    border: 1px solid #CCC;
 }
 
 #pagesList {
