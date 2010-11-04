@@ -470,8 +470,6 @@ var libeReader = function() {
             return;
         }
         
-        jQuery(document).trigger('page-beforeload', [newDisplayedPage]);
-        
         jQuery('#oddSide .pageInfo, #evenSide .pageInfo').fadeOut();
         
         unbindButtons();
@@ -543,6 +541,14 @@ var libeReader = function() {
         elm.fadeIn();
     }
     
+    function bookDisplayed() {
+        return _displayedBook;
+    }
+    
+    function pageDisplayed() {
+        return _displayedPage;
+    }
+    
     function cleanAfterShowPage(number) {
         _hideOldPages();
 
@@ -553,13 +559,16 @@ var libeReader = function() {
         }
 
         var showRestrictedAccess = false;
+        var shownPages = [];
         if (_pages[_displayedPage]) {
+            shownPages.push(_displayedPage);
             displayPage(_displayedPage);
             if (!_pages[newDisplayedPage].canAccess()) {
                 showRestrictedAccess = true;
             }
         }
         if (_pages[_displayedPage + 1]) {
+            shownPages.push(_displayedPage + 1);
             displayPage(_displayedPage + 1);
             if (!_pages[newDisplayedPage + 1].canAccess()) {
                 showRestrictedAccess = true;
@@ -575,7 +584,7 @@ var libeReader = function() {
         displayPagination();
         bindButtons();
         bindKeyboard();
-        jQuery(document).trigger('page-load', [_displayedPage, showRestrictedAccess]);        
+        jQuery(document).trigger('pages-shown', [_displayedBook, shownPages]);
     }
         
     function showSelectedPage(e) {
@@ -792,6 +801,8 @@ var libeReader = function() {
         showPreviousPage: showPreviousPage,
         showNextPage: showNextPage,
         showSelectedPage: showSelectedPage,
-        showBook: showBook
+        showBook: showBook,
+        bookDisplayed : bookDisplayed,
+        pageDisplayed: pageDisplayed
     }
 }();
