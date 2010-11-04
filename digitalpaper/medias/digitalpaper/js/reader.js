@@ -58,6 +58,8 @@ var libeReader = function() {
         if (_isZoomed) {
             return false;
         }
+        
+        jQuery(document).trigger('page-beforezoom', [_displayedPage]);
 
         var x = x * libeConfig.zoomFactor;
         var y = y * libeConfig.zoomFactor;
@@ -131,6 +133,7 @@ var libeReader = function() {
         zoomInitHDGrid(top, left);
         _isZoomed = true;
         jQuery('#zoomButton').addClass('unzoom');
+        jQuery(document).trigger('page-afterzoom', [_displayedPage]);
     }
     
     function zoomInitHDGrid(top, left) {
@@ -154,6 +157,7 @@ var libeReader = function() {
     }
     
     function quitZoom() {
+        jQuery(document).trigger('page-leavezoom', [_displayedPage]);
         jQuery(_zoomWindow).detach();
         jQuery(window).unbind('resize', zoomResize);
         jQuery(document.body).unbind('mousewheel');
@@ -458,13 +462,15 @@ var libeReader = function() {
         }
     }
     
-    function showPage(number) {    
+    function showPage(number) {
         var newDisplayedPage = number - number % 2;
         
         // Non-existant page, nothing to do
         if (!_pages[newDisplayedPage] && !_pages[newDisplayedPage + 1]) {
             return;
         }
+        
+        jQuery(document).trigger('page-beforeload', [newDisplayedPage]);
         
         jQuery('#oddSide .pageInfo, #evenSide .pageInfo').fadeOut();
         
@@ -537,7 +543,7 @@ var libeReader = function() {
         elm.fadeIn();
     }
     
-    function cleanAfterShowPage(number) {    
+    function cleanAfterShowPage(number) {
         _hideOldPages();
 
         var newDisplayedPage = number - number % 2;
@@ -569,6 +575,7 @@ var libeReader = function() {
         displayPagination();
         bindButtons();
         bindKeyboard();
+        jQuery(document).trigger('page-load', [_displayedPage, showRestrictedAccess]);        
     }
         
     function showSelectedPage(e) {
@@ -704,6 +711,7 @@ var libeReader = function() {
             a.bind('click', showSelectedPage);
             a.bind('mouseover', highlightHoveredPages);
         }
+        jQuery(document).trigger('book-load', [_selectedBook, _displayedBook]);
         showPage(pageToShow);
     }
     
@@ -714,18 +722,20 @@ var libeReader = function() {
     }
     
     function handlePublication(data) {
-        // data is the publication json
-        // fire the extra callback as early as possible, before showing pages
-        // so that it can change access levels and whatnot. _publicationId was
-        // set in init(), so it's safe to use
-        if (typeof extraReaderPublicationHandleCallback !== 'undefined') {
-            extraReaderPublicationHandleCallback(data, _publicationId);
+        _publication = data;
+        
+        // If the publication data contains an access level, use it as the new
+        // access level needed.
+        if (typeof data.access !== 'undefined') {
+            libeConfig.changeAccessLevelNeeded(parseInt(data.access, 10));
         }
         
         jQuery('#pagesList').bind('mouseout', unHighlightHoveredPages);
-         
-        _publication = data;
-
+        
+        // Trigger a first event before showing any pages
+        jQuery(document).trigger('publication-beforeload', [data, _publicationId]);
+             
+        
         var tmp = [0, 0];
         if (location.hash != "") {
             tmp = _parseHashtoGetParams(location.hash.split('#')[1]);
@@ -733,6 +743,8 @@ var libeReader = function() {
         
         showBookList(); // call first, so that we can play with the list in showBook()
         showBook((tmp[0] || 0), (tmp[1] || 0));
+        
+        jQuery(document).trigger('publication-load', [data, _publicationId]);
     }
     
     function init(publicationId) {
