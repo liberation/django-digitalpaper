@@ -21,7 +21,10 @@ jQuery(document).ready(function () {
         location.href = libeConfig.webservices.reader_by_date.replace('{date}', val);
     });
 
-    jQuery('#calendarButton').jdPicker({'date_max' : lastDate});
+    jQuery('#calendarButton').jdPicker({
+        'date_max' : lastDate,
+        'date_min' : firstDate
+    });
     
     function readerInitCallback(data, textStatus, xhrobject) {
         try {

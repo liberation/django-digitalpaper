@@ -30,6 +30,7 @@ def reader(request, publication_id):
     pub = get_object_or_404(manager, pk=int(publication_id))
     context = {
         'publication': pub,
-        'latest_publication' : get_manager_for_publication(publication_model).latest()
+        'latest_publication' : get_manager_for_publication(publication_model).latest(),
+        'first_publication'  : get_manager_for_publication(publication_model).reverse().latest()
     }
     return render_to_response('digitalpaper/reader.html', context, context_instance=RequestContext(request))
