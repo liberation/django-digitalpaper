@@ -460,6 +460,7 @@ var libeReader = function() {
         } else {
             nextButtons.hide();
         }
+        readerSlider.moveIntoView(_displayedPage);
     }
     
     function showPage(number) {
@@ -742,7 +743,7 @@ var libeReader = function() {
         jQuery('#pagesList').bind('mouseout', unHighlightHoveredPages);
         
         // Trigger a first event before showing any pages
-        jQuery(document).trigger('publication-beforeload', [data, _publicationId]);
+        jQuery(document).trigger('publication-beforeload', [_publication, _publicationId]);
              
         
         var tmp = [0, 0];
