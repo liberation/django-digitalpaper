@@ -61,7 +61,7 @@
 var publicationId = {{ publication.id }};
 var startDate = '{{ publication|get_publication_date|date:"Y/m/d" }}';
 var lastDate  = '{{ latest_publication|get_publication_date|date:"Y/m/d" }}';
-var firstDate  = '{{ first_publication|get_publication_date|date:"Y/m/d" }}';
+var firstDate = '{{ first_publication|get_publication_date|date:"Y/m/d" }}';
 </script>
 {% endblock %}
 
