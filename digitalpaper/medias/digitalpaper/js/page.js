@@ -92,7 +92,14 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                     width: 770,
                     height: 600,
                     windowSource: libeConfig.modelmapping[key],
-                    loader:1
+                    loader:1,
+                    functionCallOnClose: function() {
+                        alert('close');
+                        jQuery('body').css({'overflow': 'auto'});
+                    },
+                    functionCallOnOpen: function() {
+                        jQuery('body').css({'overflow': 'hidden'});
+                    }
                 });
                 if (libeConfig.modelmapping[key] == 'inline') {
                     // inline is interesting to add custom content, but
