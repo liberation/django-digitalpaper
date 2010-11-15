@@ -6,7 +6,7 @@
 		if(!settings){settings={};}
 		
 		var run = function(passingThis){
-			
+
 			if(settings.anchoredClassName){
 				var $anchorClassName = $('.'+settings.anchoredClassName);
 				$anchorClassName.fadeOut('fast',function(){
@@ -16,7 +16,7 @@
 						$anchorClassName.trigger("unload").remove();
 					}
 				});
-				if(settings.functionCallOnClose){settings.functionCallAfterClose();}
+				if(settings.functionCallOnClose){settings.functionCallOnClose();}
 			}else{
 				var $DOMWindowOverlay = $('#DOMWindowOverlay');
 				var $DOMWindow = $('#DOMWindow');
@@ -35,7 +35,7 @@
 				$(window).unbind('resize.DOMWindow');
 				
 				if($.fn.openDOMWindow.isIE6){$('#DOMWindowIE6FixIframe').remove();}
-				if(settings.functionCallOnClose){settings.functionCallAfterClose();}
+				if(settings.functionCallOnClose){settings.functionCallOnClose();}
 			}	
 		};
 		
@@ -152,22 +152,21 @@
 		};
 		
 		var showDOMWindow = function(instance){
-			if(arguments[0]){
+			if(instance){
 				$('.'+instance+' #DOMWindowLoader').remove();
 				$('.'+instance+' #DOMWindowContent').fadeIn('fast',function(){if(settings.functionCallOnOpen){settings.functionCallOnOpen();}});
 				$('.'+instance+ '.closeDOMWindow').click(function(){
-					$.closeDOMWindow();	
+					$.closeDOMWindow(settings);	
 					return false;
 				});
 			}else{
 				$('#DOMWindowLoader').remove();
 				$('#DOMWindow').fadeIn('fast',function(){if(settings.functionCallOnOpen){settings.functionCallOnOpen();}});
 				$('#DOMWindow .closeDOMWindow').click(function(){						
-					$.closeDOMWindow();
+					$.closeDOMWindow(settings);
 					return false;
 				});
 			}
-			
 		};
 		
 		var urlQueryToObject = function(s){
@@ -258,8 +257,8 @@
 					var $DOMWindowOverlay = $('#DOMWindowOverlay');
 					$DOMWindowOverlay.fadeIn('fast');
 					if(!settings.modal) {
-					    $DOMWindowOverlay.click(function(){$.closeDOMWindow();});
-					    $(window).bind('keydown', function(e) { if (e.keyCode == 27) { $.closeDOMWindow(); } });
+					    $DOMWindowOverlay.click(function(){$.closeDOMWindow(settings);});
+					    $(window).bind('keydown', function(e) { if (e.keyCode == 27) { $.closeDOMWindow(settings); } });
 					}
 				}
 				
