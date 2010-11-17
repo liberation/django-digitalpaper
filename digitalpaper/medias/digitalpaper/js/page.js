@@ -33,7 +33,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             
             var areaElement = document.createElement('a');
             areaElement.className = "area";
-            areaElement.href = "#";
+            areaElement.href = "#!/a" + area.object_id;
             areaElement.style.left = left + "px";
             areaElement.style.top = top + "px";
             areaElement.style.width = width + "px";
@@ -146,7 +146,8 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         } else {
             src = _smallestImageSource;
         }
-        var a = jQuery('<a class="loading ' + size + ' ' + (_pageNumber % 2 ? 'odd' : 'even') + '" href="#' + book + '_' + _pageNumber + '"></a>');
+        var href = '#!/' + book + '_' + _pageNumber;
+        var a = jQuery('<a class="loading ' + size + ' ' + (_pageNumber % 2 ? 'odd' : 'even') + '" href="' + href + '"></a>');
         var img = jQuery('<img src="' + src + '" />');
         img.bind('load', function(e) {
             jQuery(this).parent().removeClass('loading');

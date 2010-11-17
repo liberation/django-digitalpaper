@@ -556,7 +556,7 @@ var libeReader = function() {
         var newDisplayedPage = number - number % 2;
         if (_pages[newDisplayedPage] || _pages[newDisplayedPage + 1]) {
             _displayedPage = newDisplayedPage;
-            window.location.hash = "#" + _displayedBook + '_' + _displayedPage;               
+            window.location.hash = "#!/" + _displayedBook + '_' + _displayedPage;               
         }
 
         var showRestrictedAccess = false;
@@ -748,7 +748,7 @@ var libeReader = function() {
         
         var tmp = [0, 0];
         if (location.hash != "") {
-            tmp = _parseHashtoGetParams(location.hash.split('#')[1]);
+            tmp = _parseHashtoGetParams(location.hash.split('#!/')[1]);
         }
         
         showBookList(); // call first, so that we can play with the list in showBook()
