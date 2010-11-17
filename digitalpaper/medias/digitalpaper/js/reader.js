@@ -729,7 +729,7 @@ var libeReader = function() {
         var len = _publication.books.length;
         for (var i = 0; i < len; i++) {
             var book = _publication.books[i];
-            var plen = book.pages.length
+            var plen = book.pages.length;
             for (var j = 0; j < plen; j++) {
                 var page = book.pages[j];
                 if (page.id == id) {
