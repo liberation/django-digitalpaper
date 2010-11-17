@@ -741,6 +741,9 @@ var libeReader = function() {
     }
     
     function _parseHashtoGetParams(hash) {
+        if (!hash) {
+            return [0, 0];
+        }
         if (hash[0] == 'p') {
             // if hash starts with "p", try to find a page with this id
             var result = findPageFromId(parseInt(hash.substr(1), 10));
