@@ -115,10 +115,10 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     }
 
     function highlightArea() {
-        jQuery(this).clearQueue().animate({opacity: 0.1}, 300);
+        jQuery(this).clearQueue().animate({opacity: 0.1}, 250);
     }
     function unhighlightArea() {
-        jQuery(this).clearQueue().animate({opacity: 0}, 300);
+        jQuery(this).clearQueue().animate({opacity: 0}, 250);
     }
         
     function show() {
