@@ -590,7 +590,7 @@ var libeReader = function() {
         
     function showSelectedPage(e) {
         e.preventDefault();
-        var tmp = _parseHashtoGetParams(this.href.split('#')[1]);
+        var tmp = _parseHashtoGetParams(this.href.split('#!/')[1]);
         var newDisplayedBook = tmp[0];
         var newDisplayedPage = tmp[1] - tmp[1] % 2;
         
@@ -751,8 +751,8 @@ var libeReader = function() {
                 return result;
             }
         }
-        var bookToShow = parseInt(hash.split('_')[0])
-        var possiblePage = parseInt(hash.split('_')[1])
+        var bookToShow = parseInt(hash.split('_')[0], 10);
+        var possiblePage = parseInt(hash.split('_')[1], 10);
         return [bookToShow, possiblePage]
     }
     
