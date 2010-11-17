@@ -94,7 +94,6 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                     windowSource: libeConfig.modelmapping[key],
                     loader:1,
                     functionCallOnClose: function() {
-                        alert('close');
                         jQuery('body').css({'overflow': 'auto'});
                     },
                     functionCallOnOpen: function() {
