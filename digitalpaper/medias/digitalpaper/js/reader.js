@@ -725,7 +725,29 @@ var libeReader = function() {
         showPage(pageToShow);
     }
     
+    function findPageFromId(id) {
+        var len = _publication.books.length;
+        for (var i = 0; i < len; i++) {
+            var book = _publication.books[i];
+            var plen = book.pages.length
+            for (var j = 0; j < plen; j++) {
+                var page = book.pages[j];
+                if (page.id == id) {
+                    return [i, page.page_number]; // don't trust j! book might be incomplete
+                }
+            }
+        }
+        return null;
+    }
+    
     function _parseHashtoGetParams(hash) {
+        if (hash[0] == 'p') {
+            // if hash starts with "p", try to find a page with this id
+            var result = findPageFromId(parseInt(hash.substr(1), 10));
+            if (result) {
+                return result;
+            }
+        }
         var bookToShow = parseInt(hash.split('_')[0])
         var possiblePage = parseInt(hash.split('_')[1])
         return [bookToShow, possiblePage]
