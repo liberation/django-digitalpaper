@@ -90,9 +90,10 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                     windowSourceURL: url,
                     windowSourceID: '#contentmodelContent', 
                     width: 770,
-                    height: 600,
+                    height: 570,
+                    fixedWindowY: 0,
                     windowSource: libeConfig.modelmapping[key],
-                    loader:1,
+                    loader: 1,
                     functionCallOnClose: function() {
                         jQuery('body').css({'overflow': 'auto'});
                     },
