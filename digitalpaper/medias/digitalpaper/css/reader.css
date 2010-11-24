@@ -239,9 +239,9 @@ html, body {
     height: 75px;
 }
 
-#pagesList .even {
-    margin-left: 10px;
-    border-right: none;
+#pagesList a.odd {
+    margin-right: 10px;
+    border-left: none;
 }
 
 #pagesList .pageNumber {
@@ -273,11 +273,12 @@ html, body {
     position: absolute;
     top: 0;
     left: 0;
+    min-width: 812px;
 }
 
 #innerPagesSlider {
     margin: 0 50px;
-    padding: 0 10px;
+    padding: 0;
 }
 
 #sliderNext, #sliderPrev {
