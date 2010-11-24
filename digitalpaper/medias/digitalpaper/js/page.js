@@ -185,7 +185,8 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     var baseSrc = "";
     // Set thumbnails, they are always visible, unless the page is under construction
     if (_pageId > 0) {
-        baseSrc = libeConfig.webservices.paper_page_resized.replace('{emitter_format}', 'jpg').replace('{id}', _pageId)
+        baseSrc = libeConfig.webservices.paper_page_resized.replace('{emitter_format}', 'jpg');
+        baseSrc = baseSrc.replace('{id}', _pageId).replace('{page_id}', _pageId); // Replace both (compatibility with old API)
         _smallestImageSource = baseSrc.replace('{size}', 'x50');
         _smallImageSource    = baseSrc.replace('{size}', 'x148');
     } else {

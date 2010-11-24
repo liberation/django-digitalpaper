@@ -423,8 +423,9 @@ var libeReader = function() {
             var replaces = {
                 '{emitter_format}' : 'png',
                 '{id}' : currentPage.pageId,
-                '{perrow}' : libeConfig.imagesPerRow,
-                '{percol}' : libeConfig.imagesPerColumn,
+                '{perrow}' : libeConfig.imagesPerRow,    // Compatibility with old API
+                '{percol}' : libeConfig.imagesPerColumn, // Compatibility with old API
+                '{crop}'   : libeConfig.imagesPerRow + 'x' + libeConfig.imagesPerColumn,
                 '{x}' : xRow,
                 '{y}' : yColumn
             }
