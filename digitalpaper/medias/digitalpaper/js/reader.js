@@ -422,7 +422,8 @@ var libeReader = function() {
         } else {
             var replaces = {
                 '{emitter_format}' : 'png',
-                '{id}' : currentPage.pageId,
+                '{page_id}' : currentPage.pageId,
+                '{id}' : currentPage.pageId,             // Compatibility with old API
                 '{perrow}' : libeConfig.imagesPerRow,    // Compatibility with old API
                 '{percol}' : libeConfig.imagesPerColumn, // Compatibility with old API
                 '{crop}'   : libeConfig.imagesPerRow + 'x' + libeConfig.imagesPerColumn,
