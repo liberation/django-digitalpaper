@@ -16,7 +16,7 @@ var libeReader = function() {
         jQuery('#nextButton, #nextCorner').click(showNextPage);
         jQuery('#firstButton').click(showFirstPage);
         jQuery('#lastButton').click(showLastPage);
-        jQuery('#evenSide, #oddSide').dblclick(zoom);
+        jQuery('#evenSide, #oddSide').click(zoom);
     }
     
     function unbindButtons() {
@@ -24,7 +24,7 @@ var libeReader = function() {
         jQuery('#nextButton, #nextCorner').unbind("click", showNextPage);
         jQuery('#firstButton').unbind("click", showFirstPage);
         jQuery('#lastButton').unbind("click", showLastPage);
-        jQuery('#evenSide, #oddSide').unbind("dblclick");
+        jQuery('#evenSide, #oddSide').unbind("click");
     }
     
     function bindKeyboard() {
@@ -48,6 +48,7 @@ var libeReader = function() {
             x = x + previousElement.width();
         }
         zoomAtCoordinates(x, y);
+        return false;
     }
     
     function zoomAtCoordinates(x, y) {
@@ -77,6 +78,7 @@ var libeReader = function() {
         
         _zoomWindow = jQuery(document.createElement('div'));
         _zoomWindow.attr('id', 'zoomWindow');
+        _zoomWindow.addClass('grab');
 
         zoomResize();
         
@@ -118,6 +120,7 @@ var libeReader = function() {
         _zoomWindow.mousemove(zoomMouseMove);
         jQuery(document.body).mouseleave(zoomMouseUp);
         jQuery(document.body).bind('mousewheel', zoomMouseWheel);
+        jQuery(document.body).addClass('zoomed');
         jQuery(window).bind('resize', zoomResize);
         
         jQuery(document.body).append(_zoomWindow);
@@ -161,6 +164,7 @@ var libeReader = function() {
         jQuery(_zoomWindow).detach();
         jQuery(window).unbind('resize', zoomResize);
         jQuery(document.body).unbind('mousewheel');
+        jQuery(document.body).removeClass('zoomed');        
         jQuery('#pagesSlider').show();
         jQuery('#bookSwitcher').show();
         jQuery(document.body).css({'overflow': 'visible', 'height': 'auto' });
@@ -275,14 +279,14 @@ var libeReader = function() {
         _zoomMouseDown = true;
         _zoomLoadPosInit();
         _zoomMouseInit = {x: e.clientX, y: e.clientY};
-        _zoomWindow.css('cursor', '-webkit-grabbing');
-        _zoomWindow.css('cursor', '-moz-grabbing');
+        _zoomWindow.addClass('grabbing');
+        _zoomWindow.removeClass('grab');        
     }
     
     function zoomMouseUp(e) {
         _zoomMouseDown = false;
-        _zoomWindow.css('cursor', '-webkit-grab');
-        _zoomWindow.css('cursor', '-moz-grab');
+        _zoomWindow.addClass('grab');
+        _zoomWindow.removeClass('grabbing');
         e.preventDefault();
         
         zoomHighDefAtCoordinates(-parseInt(_zoomedPages.css('left'), 10), -parseInt(_zoomedPages.css('top'), 10))
@@ -304,13 +308,9 @@ var libeReader = function() {
         zoomBy(_zoomMouseInit.x - e.clientX, _zoomMouseInit.y - e.clientY);
     }
     
-    function zoomMouseWheel(e, delta) {
+    function zoomMouseWheel(e, deltaX, deltaY) {
         _zoomLoadPosInit();
-        if (delta < 0) {
-            zoomBy(0, _step);
-        } else {
-            zoomBy(0, -_step);
-        }
+        zoomBy(-_step * deltaX, -_step * deltaY);
         e.preventDefault();
     }
     

@@ -104,6 +104,8 @@ html, body {
     height: 100%;
     max-height: 500px;
     outline: 1px solid #CCC;
+    cursor: -moz-zoom-in;
+    cursor: -webkit-zoom-in;    
 }
 .pageInfo {
     position: absolute;
@@ -186,9 +188,16 @@ html, body {
     width: 100%;
     background: white;
     overflow: hidden;
-    cursor: -webkit-grab;
-    cursor: -moz-grab;
     z-index: 94;
+}
+.grab {
+    cursor: move;
+    cursor: -moz-grab;
+}
+
+.grabbing {
+    cursor: move;
+    cursor: -moz-grabbing;
 }
 #zoomedPages, #HDGrid {
     position: absolute;
