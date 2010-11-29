@@ -71,7 +71,8 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             var replaces = {
                 '{emitter_format}' : 'html',
                 '{id}' : data.object_id,
-                '{type}' : 'article'
+                '{type}' : 'article', // Compatibility with old API
+                '{classname}' : 'article'
             }
 
             for (key in replaces) {
