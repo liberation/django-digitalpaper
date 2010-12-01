@@ -334,3 +334,15 @@ p {
     background-position: center center;
     width: 39px;
 }
+
+#errorPopin {
+    background: black;
+    color: #f6f6f6;
+    position: absolute;
+    padding: 10px;
+    z-index: 155;
+    width: 450px;
+    top: 200px;
+    left: 260px;
+    display: none;
+}

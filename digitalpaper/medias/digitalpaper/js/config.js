@@ -53,6 +53,15 @@ var libeConfigFunc = function (data) {
         return false;
     };
 
+    var defaultError = function(xhr, status) {
+        if (jQuery('#errorPopin').length <= 0) {
+            jQuery('#main').append('<div id="errorPopin"></div>');
+        }
+        jQuery('#errorPopin').text(libeConfig.error_message + ' (Err. ' + xhr.status + ')');
+        jQuery('#bookPages, #pagesBefore, #pagesAfter, #pagesSlider').hide();
+        jQuery('#errorPopin').show();
+    };
+
     this.settings = {
         'authenticated' : authenticated,
         'accessLevel' : accessLevel,
@@ -67,6 +76,7 @@ var libeConfigFunc = function (data) {
         'setSize' : setSize,
         'evenSideElement' : evenSideElement,
         'oddSideElement' : oddSideElement, 
+        'defaultError' : defaultError,
         'pageWidth': 0,
         'pageHeight': 0,
         'pageThumbnailWidth': 0,

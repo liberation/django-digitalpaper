@@ -5,11 +5,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     var _mapsLoaded = false;
     var _smallImageSource = null, _smallestImageSource = null, _imageSource = null;
     var _pageChannel = "";
-    
-    function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
-        console.log(XMLHttpRequest, textStatus, errorThrown);
-    }
-    
+
     function handleMap() {
         if (_mapsLoaded) {
             return;

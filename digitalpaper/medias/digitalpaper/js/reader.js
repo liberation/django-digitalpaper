@@ -7,10 +7,6 @@ var libeReader = function() {
         
     _step = 21;
     
-    function defaultAjaxError(XMLHttpRequest, textStatus, errorThrown) {
-        console.log(XMLHttpRequest, textStatus, errorThrown);
-    }
-    
     function bindButtons() {
         jQuery('#previousButton, #previousCorner').click(showPreviousPage);
         jQuery('#nextButton, #nextCorner').click(showNextPage);
@@ -694,12 +690,20 @@ var libeReader = function() {
         }
         _selectedBook = _publication.books[newBook];
         _displayedBook = newBook;
+        
+        if (typeof _selectedBook == 'undefined' || !_selectedBook['total']) {
+            libeConfig.defaultError({'status' : 418});
+            return false;
+        }
+        return true;
     }
     
     function showBook(bookToShow, possiblePage) {
 
         _hideOldPages();
-        _changeBook(bookToShow);
+        if (!_changeBook(bookToShow)) {
+            return false;
+        }
         
         var pageToShow = 0;
         if (possiblePage >= 0 && possiblePage <= _selectedBook.total) {
@@ -771,7 +775,6 @@ var libeReader = function() {
         
         // Trigger a first event before showing any pages
         jQuery(document).trigger('publication-beforeload', [_publication, _publicationId]);
-             
         
         var tmp = [0, 0];
         if (location.hash != "") {
@@ -788,7 +791,7 @@ var libeReader = function() {
         _publicationId = publicationId;
                 
         var url = libeConfig.webservices['publication_structure'].replace('{emitter_format}', 'json').replace('{id}', publicationId);
-        jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: defaultAjaxError});
+        jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: libeConfig.defaultError});
         
         jQuery('#zoomButton').click(function (e) {
             if (_isZoomed) {
