@@ -5,6 +5,18 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     var _mapsLoaded = false;
     var _smallImageSource = null, _smallestImageSource = null, _imageSource = null;
     var _pageChannel = "";
+    
+    function hoverArea() {
+        var target = jQuery(this);
+        var objectId = target.data('area').object_id;
+        jQuery('.area').trigger("highlight-area-" + objectId);
+    }
+    
+    function unhoverArea() {
+        var target = jQuery(this);
+        var objectId = target.data('area').object_id;
+        jQuery('.area').trigger("unhighlight-area-" + objectId);    
+    }
 
     function handleMap() {
         if (_mapsLoaded) {
@@ -24,8 +36,8 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             var coords = area.coords.split(",");
             var left = Math.ceil(coords[0] * reductionRatio);
             var top = Math.ceil(coords[1] * reductionRatio);
-            var width = Math.ceil( (coords[2] - coords[0]) * reductionRatio );
-            var height = Math.ceil( (coords[3] - coords[1]) * reductionRatio );
+            var width = Math.ceil((coords[2] - coords[0]) * reductionRatio);
+            var height = Math.ceil((coords[3] - coords[1]) * reductionRatio);
             
             var areaElement = document.createElement('a');
             areaElement.className = "area";
@@ -41,15 +53,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             jQuery(_pageElement).append(areaElement);
             
             areaElement.data('area', area);
-            areaElement.hover(function() {
-                var target = jQuery(this);
-                var objectId = target.data('area').object_id;
-                jQuery('.area').trigger("highlight-area-" + objectId);
-            }, function() {
-                var target = jQuery(this);
-                var objectId = target.data('area').object_id;
-                jQuery('.area').trigger("unhighlight-area-" + objectId);
-            });
+            areaElement.hover(hoverArea, unhoverArea);
             
             areaElement.bind('highlight-area-' + area.object_id, highlightArea);
             areaElement.bind('unhighlight-area-' + area.object_id, unhighlightArea);
@@ -63,7 +67,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         }
         var data = jQuery(this).data('area');
         if (data.object_class == "article") {
-            var url = libeConfig.webservices.contentmodel_content
+            var url = libeConfig.webservices.contentmodel_content;
             var replaces = {
                 '{emitter_format}' : 'html',
                 '{id}' : data.object_id,
@@ -71,25 +75,26 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                 '{classname}' : 'article'
             }
 
-            for (key in replaces) {
-                url = url.replace(key, replaces[key]);
+            var k;
+            for (k in replaces) {
+                url = url.replace(k, replaces[k]);
             }
             
-            var key = 'default'
+            k = 'default'
             if (typeof libeConfig.modelmapping[data.object_class] !== 'undefined') {
-                key = data.object_class
+                k = data.object_class
             }
 
-            if (libeConfig.modelmapping[key] == 'iframe' 
-             || libeConfig.modelmapping[key] == 'ajax'
-             || libeConfig.modelmapping[key] == 'inline') {
+            if (libeConfig.modelmapping[k] == 'iframe' 
+             || libeConfig.modelmapping[k] == 'ajax'
+             || libeConfig.modelmapping[k] == 'inline') {
                 var dw = jQuery(this).openDOMWindow({
                     windowSourceURL: url,
                     windowSourceID: '#contentmodelContent', 
                     width: 770,
                     height: 570,
                     fixedWindowY: 0,
-                    windowSource: libeConfig.modelmapping[key],
+                    windowSource: libeConfig.modelmapping[k],
                     loader: 1,
                     functionCallOnClose: function() {
                         jQuery('body').css({'overflow': 'auto'});
@@ -98,7 +103,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                         jQuery('body').css({'overflow': 'hidden'});
                     }
                 });
-                if (libeConfig.modelmapping[key] == 'inline') {
+                if (libeConfig.modelmapping[k] == 'inline') {
                     // inline is interesting to add custom content, but
                     // it doesn't load the URL, so we have to do it manually
                     // Note: have a .inner element inside your #contentmodelContent

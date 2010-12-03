@@ -90,6 +90,5 @@ var libeConfigFunc = function (data) {
             this.settings[d] = data[d];
         }
     }    
-    
     return this.settings;
-}
+};

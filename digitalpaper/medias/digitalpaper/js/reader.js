@@ -32,9 +32,12 @@ var libeReader = function() {
     }
     
     function zoom(event) {
-        var offset = jQuery(this).offset()
+        var offset = jQuery(this).offset();
         if (!offset) {
-            offset = {'left': 0, 'top': 0};
+            offset = {
+                'left': 0, 
+                'top': 0
+            };
         }
         var x = event.pageX - offset.left;
         var y = event.pageY - offset.top;
@@ -58,8 +61,8 @@ var libeReader = function() {
         
         jQuery(document).trigger('page-beforezoom', [_displayedPage]);
 
-        var x = x * libeConfig.zoomFactor;
-        var y = y * libeConfig.zoomFactor;
+        x = x * libeConfig.zoomFactor;
+        y = y * libeConfig.zoomFactor;
 
         _zoomedPageHeight = libeConfig.pageHeight * libeConfig.zoomFactor;
         _zoomedPageWidth = libeConfig.pageWidth * libeConfig.zoomFactor;
@@ -67,7 +70,7 @@ var libeReader = function() {
         jQuery('#pagesSlider').hide();
         jQuery('#bookSwitcher').hide();
         
-        height = jQuery(window).height()
+        var height = jQuery(window).height();
         jQuery(document.body).css({'overflow': 'hidden', 'height': height });
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
@@ -260,7 +263,7 @@ var libeReader = function() {
     }
     
     function _zoomLoadPosInit() {
-        _zoomPosInit = {x: -parseInt(_zoomedPages.css('left'), 10), y: -parseInt(_zoomedPages.css('top'), 10)}
+        _zoomPosInit = {x: -parseInt(_zoomedPages.css('left'), 10), y: -parseInt(_zoomedPages.css('top'), 10)};
     }
     
     function zoomMouseDown(e) {    
@@ -285,11 +288,11 @@ var libeReader = function() {
         _zoomWindow.removeClass('grabbing');
         e.preventDefault();
         
-        zoomHighDefAtCoordinates(-parseInt(_zoomedPages.css('left'), 10), -parseInt(_zoomedPages.css('top'), 10))
+        zoomHighDefAtCoordinates(-parseInt(_zoomedPages.css('left'), 10), -parseInt(_zoomedPages.css('top'), 10));
     }
     
     function zoomMouseMove(e) {
-        if (_zoomMouseDown != true) {
+        if (_zoomMouseDown !== true) {
             return;
         }
         
@@ -349,8 +352,8 @@ var libeReader = function() {
         var xRowSize = _zoomedPageWidth / libeConfig.imagesPerRow;
         var yColumnSize = _zoomedPageHeight / libeConfig.imagesPerColumn;
             
-        var xRow = Math.floor( x / xRowSize);
-        var yColumn = Math.floor( y / yColumnSize);
+        var xRow = Math.floor(x / xRowSize);
+        var yColumn = Math.floor(y / yColumnSize);
         getZoomImage(xRow, yColumn);
         
         for (var i = 0; i < _numberOfPages * libeConfig.imagesPerRow + libeConfig.imagesPerColumn; i++) {
@@ -373,7 +376,7 @@ var libeReader = function() {
             return;
         }
 
-        if (_displayedPage == 0) {
+        if (_displayedPage === 0) {
             // If _displayedPage is 0, it means we are displaying the first page,
             // which is alone on the *right* hand side.
             // Constraints need to change in that case, to allow the coordinates 
@@ -388,14 +391,15 @@ var libeReader = function() {
             }
         }
 
-        if (_displayedPage == 0) {
+        var imgIndex = 0;
+        if (_displayedPage === 0) {
             // Another hack for the first page: there are only half the number of images,
             // the indexing need to be changed. (Note: we don't want to change xRow and yColumn
             // directly, the web services expect x to be > imagesPerRow on the right page, 
             // even if it's the first one!)
-            var imgIndex = yColumn * libeConfig.imagesPerRow + xRow - libeConfig.imagesPerRow;
+            imgIndex = yColumn * libeConfig.imagesPerRow + xRow - libeConfig.imagesPerRow;
         } else {
-            var imgIndex = yColumn * libeConfig.imagesPerRow * _numberOfPages + xRow;
+            imgIndex = yColumn * libeConfig.imagesPerRow * _numberOfPages + xRow;
         }
         
         var img = _HDgridContainer.children().eq(imgIndex);
@@ -425,11 +429,12 @@ var libeReader = function() {
                 '{crop}'   : libeConfig.imagesPerRow + 'x' + libeConfig.imagesPerColumn,
                 '{x}' : xRow,
                 '{y}' : yColumn
-            }
+            };
             
             var src = libeConfig.webservices.paper_page_cropped;
-            for (key in replaces) {
-                src = src.replace(key, replaces[key]);
+            var k;
+            for (k in replaces) {
+                src = src.replace(k, replaces[k]);
             }
             img.attr('src', src);
         }
@@ -444,7 +449,7 @@ var libeReader = function() {
     
     function displayPagination() {
         var previousButtons = jQuery('#previousCorner, #pagesBefore');
-        if (_displayedPage -2 >= 0) {
+        if (_displayedPage - 2 >= 0) {
             previousButtons.show();
             _positionPagesMenu();
         } else {
@@ -516,7 +521,10 @@ var libeReader = function() {
         transitionContainerElement.append(transitionElement);
         evenSide.parent().append(transitionContainerElement);
         
-        transitionElement.animate({'width': 2 * finalWidth}, function() { cleanAfterShowPage(number); jQuery(this).parent().detach()});
+        transitionElement.animate({'width': 2 * finalWidth}, function() { 
+            cleanAfterShowPage(number); 
+            jQuery(this).parent().detach();
+        });
     }
     
     function _hideOldPages() {
@@ -535,7 +543,7 @@ var libeReader = function() {
         var page = _pages[number];
         page.show();
         highlightCurrentPages(_displayedBook, number);
-        var elm = jQuery('#' + ((page.pageNumber % 2 == 0) ? 'even' : 'odd') + 'Side .pageInfo');
+        var elm = jQuery('#' + ((page.pageNumber % 2 === 0) ? 'even' : 'odd') + 'Side .pageInfo');
         elm.html(page.getPageInfo());
         elm.fadeIn();
     }
@@ -682,16 +690,15 @@ var libeReader = function() {
             newBook = 0;
         }
         if (_displayedBook != newBook) {
-            jQuery('#pagesList').empty()
+            jQuery('#pagesList').empty();
             jQuery('#pagesList').css({'left' : 0 });
-            iPosition = 0;
             jQuery('#bookSwitcher a').removeClass('selected');
             jQuery('#bookThumb-' + parseInt(newBook, 10)).addClass('selected');
         }
         _selectedBook = _publication.books[newBook];
         _displayedBook = newBook;
         
-        if (typeof _selectedBook == 'undefined' || !_selectedBook['total']) {
+        if (typeof _selectedBook == 'undefined' || !_selectedBook.total) {
             libeConfig.defaultError({'status' : 418});
             return false;
         }
