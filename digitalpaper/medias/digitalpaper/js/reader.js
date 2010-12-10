@@ -816,10 +816,10 @@ var libeReader = function() {
         for (var i = 0; i < len; i++) {
             var page = _publication.books[i].pages[0];
             var obj;
-            if (page.page_number > 1) {
-                // First page should always be numbered 1, so
-                // it means the first page of this book is in
-                // construction
+            if (typeof page == 'undefined' || !page || page.page_number > 1) {
+                // First page should always be numbered 1. If it's non existant
+                // or if it's not numbered 1, then the first page is still in
+                // construction... Fake it.
                 obj = libePage(1);
             } else {
                 obj = libePage(page.page_number, page.id, page.paper_channel, page.maps);
