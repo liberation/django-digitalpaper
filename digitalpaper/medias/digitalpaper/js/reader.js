@@ -797,7 +797,8 @@ var libeReader = function() {
     function init(publicationId) {
         _publicationId = publicationId;
                 
-        var url = libeConfig.webservices['publication_structure'].replace('{emitter_format}', 'json').replace('{id}', publicationId);
+        var url = libeConfig.webservices['publication_structure'].replace('{emitter_format}', 'json');
+        url = url.replace('{id}', publicationId).replace('{publication_id}', publicationId); // replace both, for compatibility
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: libeConfig.defaultError});
         
         jQuery('#zoomButton').click(function (e) {
