@@ -422,6 +422,7 @@ var libeReader = function() {
         } else {
             var replaces = {
                 '{emitter_format}' : 'png',
+                '{format}' : 'png',                      // Compatibility with old API
                 '{page_id}' : currentPage.pageId,
                 '{id}' : currentPage.pageId,             // Compatibility with old API
                 '{perrow}' : libeConfig.imagesPerRow,    // Compatibility with old API
@@ -797,7 +798,7 @@ var libeReader = function() {
     function init(publicationId) {
         _publicationId = publicationId;
                 
-        var url = libeConfig.webservices['publication_structure'].replace('{emitter_format}', 'json').replace('{id}', publicationId);
+        var url = libeConfig.webservices['publication_structure'].replace('{emitter_format}', 'json').replace('{format}', 'json').replace('{id}', publicationId); // Replace both format and emitter_format for compatibility with old API
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: libeConfig.defaultError});
         
         jQuery('#zoomButton').click(function (e) {
