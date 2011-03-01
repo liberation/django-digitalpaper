@@ -458,7 +458,7 @@ var libeReader = function() {
         }
         
         var nextButtons = jQuery('#nextCorner, #pagesAfter');
-        if (_displayedPage + 2 <= _selectedBook.total) {
+        if (_displayedPage + 2 <= _selectedBook.pagination) {
             nextButtons.show();
             _positionPagesMenu();
         } else {
@@ -623,7 +623,7 @@ var libeReader = function() {
     }
     function showLastPage(e) {
         e.preventDefault();
-        showPage(_selectedBook.total);
+        showPage(_selectedBook.pagination);
     }
     
     function _positionPagesMenu() {
@@ -699,7 +699,7 @@ var libeReader = function() {
         _selectedBook = _publication.books[newBook];
         _displayedBook = newBook;
         
-        if (typeof _selectedBook == 'undefined' || !_selectedBook.total) {
+        if (typeof _selectedBook == 'undefined' || !_selectedBook.pagination) {
             libeConfig.defaultError({'status' : 418});
             return false;
         }
@@ -714,18 +714,18 @@ var libeReader = function() {
         }
         
         var pageToShow = 0;
-        if (possiblePage >= 0 && possiblePage <= _selectedBook.total) {
+        if (possiblePage >= 0 && possiblePage <= _selectedBook.pagination) {
             pageToShow = possiblePage;
         }
 
         jQuery(window).bind('size-known', sizeKnown);
         
-        _pages = new Array(parseInt(_selectedBook.total, 10));
+        _pages = new Array(parseInt(_selectedBook.pagination, 10));
         for (var i = 0, il = _selectedBook.pages.length; i < il ; i++) {
             var page = _selectedBook.pages[i];
             _pages[page.page_number] = libePage(page.page_number, page.id, page.paper_channel, page.maps);
         }
-        for (var i = 1; i <= _selectedBook.total; i++) {
+        for (var i = 1; i <= _selectedBook.pagination; i++) {
             if (!_pages[i]) {
                 _pages[i] = libePage(i);
             }
