@@ -253,7 +253,7 @@ jdPicker.prototype = {
 			  }));
 		  }
 		  
-		  $("td[date=" + this.dateToString(new Date()) + "]", this.tbody).addClass("today");
+		  $("td[date=\"" + this.dateToString(new Date()) + "\"]", this.tbody).addClass("today");
 		  if(this.select_week == 1){
 			  $("tr", this.tbody).mouseover(function() { $(this).addClass("hover"); });
 			  $("tr", this.tbody).mouseout(function() { $(this).removeClass("hover"); });
@@ -264,7 +264,7 @@ jdPicker.prototype = {
 		};
 		
 		$('.selected', this.tbody).removeClass("selected");
-		$('td[date=' + this.selectedDateString + '], tr[date=' + this.selectedDateString + ']', this.tbody).addClass("selected");
+		$('td[date="' + this.selectedDateString + '"], tr[date="' + this.selectedDateString + '"]', this.tbody).addClass("selected");
 	}else
 		this.show_error(this.error_out_of_range);
   },
