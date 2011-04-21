@@ -308,7 +308,7 @@ jdPicker.prototype = {
   
   show: function() {
 	$('.error_msg', this.rootLayers).css('display', 'none');
-    this.rootLayers.slideDown();
+    this.rootLayers.fadeIn();
     $([window, document.body]).click(this.hideIfClickOutside);
     this.input.unbind("click", this.show);
 	this.input.attr('readonly', true);
@@ -320,7 +320,7 @@ jdPicker.prototype = {
   hide: function() {
 	if(this.input.context.type!="hidden"){
 		this.input.removeAttr('readonly');
-		this.rootLayers.slideUp();
+		this.rootLayers.fadeOut();
 		$([window, document.body]).unbind("click", this.hideIfClickOutside);
 		this.input.click(this.show);
 		$(document.body).unbind("keydown", this.keydownHandler);
@@ -520,8 +520,8 @@ jdPicker.prototype = {
   
   show_error: function(error){
 	$('.error_msg', this.rootLayers).html(error);
-	$('.error_msg', this.rootLayers).slideDown(400, function(){
-		setTimeout("$('.error_msg', this.rootLayers).slideUp(200);", 2000);
+	$('.error_msg', this.rootLayers).fadeIn(400, function(){
+		setTimeout("$('.error_msg', this.rootLayers).fadeOut(200);", 2000);
 	});
   },
   
