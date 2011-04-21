@@ -314,6 +314,7 @@ jdPicker.prototype = {
 	this.input.attr('readonly', true);
     $(document.body).keydown(this.keydownHandler);
     this.setPosition();
+    return false;
   },
   
   hide: function() {
@@ -401,10 +402,10 @@ jdPicker.prototype = {
   },
   
   setPosition: function() {
-    var offset = this.input.offset();
+    var position = this.input.position();
     this.rootLayers.css({
-      top: offset.top + this.input.outerHeight(),
-      left: offset.left
+      top: position.top + this.input.outerHeight(),
+      left: position.left
     });
     
     if (this.ieframe) {
