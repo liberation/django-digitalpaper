@@ -310,7 +310,7 @@ jdPicker.prototype = {
 	$('.error_msg', this.rootLayers).css('display', 'none');
     this.rootLayers.slideDown();
     $([window, document.body]).click(this.hideIfClickOutside);
-    this.input.unbind("focus", this.show);
+    this.input.unbind("click", this.show);
 	this.input.attr('readonly', true);
     $(document.body).keydown(this.keydownHandler);
     this.setPosition();
@@ -321,7 +321,7 @@ jdPicker.prototype = {
 		this.input.removeAttr('readonly');
 		this.rootLayers.slideUp();
 		$([window, document.body]).unbind("click", this.hideIfClickOutside);
-		this.input.focus(this.show);
+		this.input.click(this.show);
 		$(document.body).unbind("keydown", this.keydownHandler);
 	}
   },
