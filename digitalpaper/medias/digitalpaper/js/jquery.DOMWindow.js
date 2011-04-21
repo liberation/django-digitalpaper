@@ -60,7 +60,7 @@
 		
 		var shortcut =  $.fn.openDOMWindow;
 	
-		//default settings combined with callerSettings////////////////////////////////////////////////////////////////////////
+		//default settings combined with callerSettings
 		
 		shortcut.defaultsSettings = {
 			anchoredClassName:'',
@@ -105,7 +105,7 @@
 		shortcut.scrollOffsetWidth = function(){ return self.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;};
 		shortcut.isIE6 = typeof document.body.style.maxHeight === "undefined";
 		
-		//Private Functions/////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//Private Functions
 		
 		var sizeOverlay = function(){
 			var $DOMWindowOverlay = $('#DOMWindowOverlay');
@@ -181,7 +181,7 @@
 			  return query;
 		};
 			
-		//Run Routine ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//Run Routine
 		var run = function(passingThis){
 			
 			//get values from element clicked, or assume its passed as an option
@@ -208,18 +208,18 @@
 				}
 				
 				switch(settings.windowSource){
-					case 'inline'://////////////////////////////// inline //////////////////////////////////////////
+					case 'inline':
 						$('.' + settings.anchoredClassName+" #DOMWindowContent").append($(settings.windowSourceID).children());
 						$('.' + settings.anchoredClassName).unload(function(){// move elements back when you're finished
 							$('.' + settings.windowSourceID).append( $('.' + settings.anchoredClassName+" #DOMWindowContent").children());				
 						});
 						showDOMWindow(settings.anchoredClassName);
 					break;
-					case 'iframe'://////////////////////////////// iframe //////////////////////////////////////////
+					case 'iframe':
 						$('.' + settings.anchoredClassName+" #DOMWindowContent").append('<iframe frameborder="0" hspace="0" wspace="0" src="'+settings.windowSourceURL+'" name="DOMWindowIframe'+Math.round(Math.random()*1000)+'" style="width:100%;height:100%;border:none;background-color:#fff;" class="'+settings.anchoredClassName+'Iframe" ></iframe>');
 						$('.'+settings.anchoredClassName+'Iframe').load(showDOMWindow(settings.anchoredClassName));
 					break;
-					case 'ajax'://////////////////////////////// ajax //////////////////////////////////////////	
+					case 'ajax':	
 						if(settings.windowHTTPType == 'post'){
 							
 							if(settings.windowSourceURL.indexOf("?") !== -1){//has a query string
@@ -312,18 +312,18 @@
 				});
 				
 				switch(settings.windowSource){
-					case 'inline'://////////////////////////////// inline //////////////////////////////////////////
+					case 'inline':
 						$DOMWindow.append($(settings.windowSourceID).children());
 						$DOMWindow.unload(function(){// move elements back when you're finished
 							$(settings.windowSourceID).append($DOMWindow.children());				
 						});
 						showDOMWindow();
 					break;
-					case 'iframe'://////////////////////////////// iframe //////////////////////////////////////////
+					case 'iframe':
 						$DOMWindow.append('<iframe frameborder="0" hspace="0" wspace="0" src="'+settings.windowSourceURL+'" name="DOMWindowIframe'+Math.round(Math.random()*1000)+'" style="width:100%;height:100%;border:none;background-color:#fff;" id="DOMWindowIframe" ></iframe>');
 						$('#DOMWindowIframe').load(showDOMWindow());
 					break;
-					case 'ajax'://////////////////////////////// ajax //////////////////////////////////////////
+					case 'ajax':
 						if(settings.windowHTTPType == 'post'){
 							
 							if(settings.windowSourceURL.indexOf("?") !== -1){//has a query string
