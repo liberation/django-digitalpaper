@@ -5,15 +5,15 @@
     <meta charset="utf-8" />
     <title>{% block title %}Web Reader Demo - {{ publication }}{% endblock %}</title>
     {% block readercss %}
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL}}digitalpaper/css/reader.css" />
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL}}digitalpaper/css/jdpicker.css" />    
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL}}digitalpaper/css/reader.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL}}digitalpaper/css/jdpicker.css" />    
     {% endblock %}
     <!--[if lt IE 8]>
     <style type="text/css">#evenSide, #oddSide { display: inline; zoom: 1; } </style>
     <![endif]-->
     <!--[if IE ]>
     <style type="text/css">
-    #evenSide, #oddSide { cursor: url({{ MEDIA_URL }}digitalpaper/img/zoom.cur); }
+    #evenSide, #oddSide { cursor: url({{ STATIC_URL }}digitalpaper/img/zoom.cur); }
     .grab, .grabbing { cursor: move; }
     </style>
     <![endif]-->
@@ -73,15 +73,15 @@ var firstDate = '{{ first_publication|get_publication_date|date:"Y/m/d" }}';
 {% endblock %}
 
 {% block readerjsonp %}
-<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/config.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/config.js"></script>
 <script type="text/javascript" src="/{{ API_ROOT }}jsonp/reader/?jsonp=libeConfig=libeConfigFunc"></script>
 {% endblock %}
 
 {% block readerjs %}
-<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/reader.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/page.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/slideshow.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}digitalpaper/js/init.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/reader.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/page.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/slideshow.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/init.js"></script>
 {% endblock %}
 </div>
 <div id="restrictedAccess" style="display: none;"><div>{% block restricted_access %}<p>Access to this functionality is restricted</p>{% endblock %}</div></div>
