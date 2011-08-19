@@ -70,7 +70,7 @@ var readerSlider = function() {
         'next' : next,
         'cancel' : cancel,
         'moveIntoView' : moveIntoView
-    }
+    };
 }();
 
 jQuery(document).ready(function() {

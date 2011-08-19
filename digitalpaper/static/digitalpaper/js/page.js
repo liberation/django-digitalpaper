@@ -74,21 +74,21 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                 '{id}' : data.object_id,
                 '{type}' : 'article', // Compatibility with old API
                 '{classname}' : 'article'
-            }
+            };
 
             var k;
             for (k in replaces) {
                 url = url.replace(k, replaces[k]);
             }
             
-            k = 'default'
+            k = 'default';
             if (typeof libeConfig.modelmapping[data.object_class] !== 'undefined') {
-                k = data.object_class
+                k = data.object_class;
             }
 
-            if (libeConfig.modelmapping[k] == 'iframe' 
-             || libeConfig.modelmapping[k] == 'ajax'
-             || libeConfig.modelmapping[k] == 'inline') {
+            if (libeConfig.modelmapping[k] == 'iframe' ||
+                libeConfig.modelmapping[k] == 'ajax'   ||
+                libeConfig.modelmapping[k] == 'inline') {
                 var dw = jQuery(this).openDOMWindow({
                     windowSourceURL: url,
                     windowSourceID: '#contentmodelContent', 
@@ -134,8 +134,8 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     }
     
     function getPageInfo() {
-        return '<span class="pageNumber">' + _pageNumber + '</span>'
-             + '<span class="pageChannel">' + _pageChannel + '</span>';
+        return '<span class="pageNumber">' + _pageNumber + '</span>' +
+               '<span class="pageChannel">' + _pageChannel + '</span>';
     }
     
     function canAccess() {
@@ -161,7 +161,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             jQuery(this).parent().addClass('warning');            
         });
         a.append(img);
-        a.append('<span class="pageNumber">' + _pageNumber + '</span>')
+        a.append('<span class="pageNumber">' + _pageNumber + '</span>');
         return a;
     }
     
@@ -197,22 +197,23 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         _smallImageSource = libeConfig.pageUnderConstructionImage;
     }
 
+    var img;
     if (_pageNumber <= 0) {
         // non existant page, do nothing
     } else if (!canAccess()) {
         // page that the user isn't allowed to read
-        var img = document.createElement("img");
+        img = document.createElement("img");
         img.src = _imageSource = libeConfig.pageLimitedAccessImage;
         _pageElement.appendChild(img);
     } else if (_pageId <= 0) {
         // page not yet included in the book, but that should exist: display it as "under construction"
-        var img = document.createElement("img");
+        img = document.createElement("img");
         img.src = _imageSource = libeConfig.pageUnderConstructionImage;
         _pageElement.appendChild(img);
     } else {
         // normal page
         map = pageMaps;
-        var img = document.createElement("img");
+        img = document.createElement("img");
         jQuery(img).bind('load', function(e) {
             jQuery(_pageElement).removeClass('loading');
             // Little trick: use _pageElement and not the image to find out the dimensions of the 
@@ -233,7 +234,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         _pageElement.appendChild(img);
     }
     
-    if (_pageNumber % 2 == 0) {
+    if (_pageNumber % 2 === 0) {
         libeConfig.evenSideElement.appendChild(_pageElement);
     } else {
         libeConfig.oddSideElement.appendChild(_pageElement);
@@ -249,5 +250,5 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         getPageInfo: getPageInfo,
         getThumbnailForList: getThumbnailForList,
         canAccess: canAccess
-    }
-}
+    };
+};

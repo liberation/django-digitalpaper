@@ -2,12 +2,12 @@ var accessLevels = {
     'BAS' : 0,
     'ESS' : 10,
     'PRE' : 20
-}
+};
 
 var contentmapping = {
     'default' : 'iframe',
     'paperad' : 'link'
-}
+};
 
 jQuery(document).ready(function () {    
     if (libeConfig.pageHeight) {
@@ -44,5 +44,5 @@ jQuery(document).ready(function () {
         'dataType': 'json',
         'success': readerInitCallback,
         'error': readerInitCallback
-    })
+    });
 });

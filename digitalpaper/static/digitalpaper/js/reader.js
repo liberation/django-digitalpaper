@@ -721,11 +721,12 @@ var libeReader = function() {
         jQuery(window).bind('size-known', sizeKnown);
         
         _pages = new Array(parseInt(_selectedBook.pagination, 10));
-        for (var i = 0, il = _selectedBook.pages.length; i < il ; i++) {
+        var i;
+        for (i = 0, il = _selectedBook.pages.length; i < il ; i++) {
             var page = _selectedBook.pages[i];
             _pages[page.page_number] = libePage(page.page_number, page.id, page.paper_channel, page.maps);
         }
-        for (var i = 1; i <= _selectedBook.pagination; i++) {
+        for (i = 1; i <= _selectedBook.pagination; i++) {
             if (!_pages[i]) {
                 _pages[i] = libePage(i);
             }
@@ -767,7 +768,7 @@ var libeReader = function() {
         }
         var bookToShow = parseInt(hash.split('_')[0], 10);
         var possiblePage = parseInt(hash.split('_')[1], 10);
-        return [bookToShow, possiblePage]
+        return [bookToShow, possiblePage];
     }
     
     function handlePublication(data) {
@@ -785,7 +786,7 @@ var libeReader = function() {
         jQuery(document).trigger('publication-beforeload', [_publication, _publicationId]);
         
         var tmp = [0, 0];
-        if (location.hash != "") {
+        if (location.hash !== "") {
             tmp = _parseHashtoGetParams(location.hash.split('#!/')[1]);
         }
         
@@ -845,5 +846,5 @@ var libeReader = function() {
         showBook: showBook,
         bookDisplayed : bookDisplayed,
         pageDisplayed: pageDisplayed
-    }
+    };
 }();

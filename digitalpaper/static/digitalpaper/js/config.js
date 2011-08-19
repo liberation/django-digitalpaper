@@ -20,7 +20,7 @@ var libeConfigFunc = function (data) {
     
     var changeAccessLevelNeeded = function(newneededlevel) {
         settings.accessLevelNeeded = newneededlevel;
-    }
+    };
     
     var changeAccessLevel = function(newlevel) {
         settings.accessLevel = newlevel;
@@ -44,7 +44,7 @@ var libeConfigFunc = function (data) {
     var setSize = function(w, h) {
         // dynamic config should set height
         if (w) {
-            libeConfig.pageWidth = w
+            libeConfig.pageWidth = w;
             // libeConfig.pageHeight = h
             // libeConfig.pageThumbnailHeight = 
             libeConfig.pageThumbnailWidth = parseInt(w * libeConfig.pageThumbnailHeight / libeConfig.pageHeight, 10);
@@ -86,6 +86,7 @@ var libeConfigFunc = function (data) {
     
     // The remaining settings need to be set using the arguments (use config.js
     // as jsonp)
+    var d;
     for (d in data) {
         if (typeof d == 'string') {
             this.settings[d] = data[d];
