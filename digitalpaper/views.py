@@ -6,10 +6,10 @@ from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from datetime import datetime
 
-from digitalpaper import get_model_for_publication, \
-                         get_manager_for_publication, \
-                         get_manager_method_for_publication_by_date, \
-                         get_publication_date_field \
+from digitalpaper.utils import get_model_for_publication, \
+                               get_manager_for_publication, \
+                               get_manager_method_for_publication_by_date, \
+                               get_publication_date_field \
 
 def reader_latest(request):
     publication_model = get_model_for_publication()

@@ -11,17 +11,29 @@ from urllib2 import quote
 
 from django.http import HttpResponse
 from django.conf import settings
+from django.db.models import Model, loading
+
 
 from digitalpaper.constants import (ACCEPTED_THUMB_SIZE, PAPERPAGE_IMAGE_HEIGHT,
                                     PAPERPAGE_CROP_IMAGES_PER_COLUMN,
                                     PAPERPAGE_CROP_IMAGES_PER_ROW)
 
 
-def get_manager(thing, manager_name, request):
-    manager = getattr(thing, manager_name)
-    if callable(manager):
-        manager = manager(request)
+def get_publication_date_field():
+    return settings.READER_PUBLICATION_DATE_FIELD
+
+def get_model_for_publication():
+    return loading.get_model(settings.READER_PUBLICATION_APP_NAME, settings.READER_PUBLICATION_MODEL_NAME)
+   
+def get_manager_for_publication(inst):
+    name = getattr(settings, 'READER_PUBLICATION_MANAGER_NAME', 'objects')
+    manager = getattr(get_model_for_publication(), name)
     return manager
+   
+def get_manager_method_for_publication_by_date(inst):
+    manager = get_manager_for_publication(inst)
+    method = getattr(manager, settings.READER_PUBLICATION_MANAGER_METHOD_BYDATE_NAME)
+    return method
 
 
 class HttpResponseXFile(HttpResponse):
