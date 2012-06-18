@@ -6,16 +6,18 @@ from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from datetime import datetime
 
-from digitalpaper import publication_model, \
+from digitalpaper import get_model_for_publication, \
                          get_manager_for_publication, \
                          get_manager_method_for_publication_by_date, \
                          get_publication_date_field \
 
 def reader_latest(request):
+    publication_model = get_model_for_publication()
     pub = get_manager_for_publication(publication_model).latest()
     return redirect('digitalpaper_reader', publication_id=pub.pk)
     
 def reader_date(request, date):
+    publication_model = get_model_for_publication()
     method = get_manager_method_for_publication_by_date(publication_model)
     filters = {}
     filters[get_publication_date_field()] = datetime.strptime(date, '%Y-%m-%d')
@@ -26,6 +28,7 @@ def reader_date(request, date):
     return redirect('digitalpaper_reader', publication_id=pub.pk)
 
 def reader(request, publication_id):
+    publication_model = get_model_for_publication()
     manager = get_manager_for_publication(publication_model)
     pub = get_object_or_404(manager, pk=int(publication_id))
     context = {

@@ -17,6 +17,3 @@ def get_manager_method_for_publication_by_date(inst):
     manager = get_manager_for_publication(inst)
     method = getattr(manager, settings.READER_PUBLICATION_MANAGER_METHOD_BYDATE_NAME)
     return method
-    
-publication_model = get_model_for_publication()
-
