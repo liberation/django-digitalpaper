@@ -12,6 +12,10 @@ from urllib2 import quote
 from django.http import HttpResponse
 from django.conf import settings
 
+from digitalpaper.constants import (ACCEPTED_THUMB_SIZE, PAPERPAGE_IMAGE_HEIGHT,
+                                    PAPERPAGE_CROP_IMAGES_PER_COLUMN,
+                                    PAPERPAGE_CROP_IMAGES_PER_ROW)
+
 
 def get_manager(thing, manager_name, request):
     manager = getattr(thing, manager_name)
@@ -101,9 +105,9 @@ class PaperPageThumbnail(object):
         pdf = PdfFileReader(file(self.paperpage.original_file.path, "rb"))
         x1, y1, width, height = pdf.getPage(0).cropBox
         self.height = int(height)
-        self.width = int(width) * settings.API_PAPERPAGE_IMAGE_HEIGHT / self.height
-        self.resolution = 72.0 * settings.API_PAPERPAGE_IMAGE_HEIGHT / self.height
-        self.height = settings.API_PAPERPAGE_IMAGE_HEIGHT
+        self.width = int(width) * PAPERPAGE_IMAGE_HEIGHT / self.height
+        self.resolution = 72.0 * PAPERPAGE_IMAGE_HEIGHT / self.height
+        self.height = PAPERPAGE_IMAGE_HEIGHT
 
     def _get_paths(self, size=None, format=None):
         filename = self.paperpage.original_file.name.replace('.pdf', '_%s.%s' % (size, format))
@@ -145,7 +149,7 @@ class PaperPageThumbnail(object):
                 raise Exception('File `%s` does not exist, but it should' % filename)
 
     def _generate_big_image_from_pdf(self):
-        pdf_filename, img_filename = self._get_paths(size=settings.API_PAPERPAGE_IMAGE_HEIGHT, format='png')
+        pdf_filename, img_filename = self._get_paths(size=PAPERPAGE_IMAGE_HEIGHT, format='png')
 
         if self.check_file_freshness(pdf_filename, img_filename):
             return PaperPageThumbnail.P_SUCCESS, img_filename
@@ -173,7 +177,7 @@ class PaperPageThumbnail(object):
 
     @classmethod
     def validate_size(cls, size):
-        if size not in settings.API_ACCEPTED_THUMB_SIZE:
+        if size not in ACCEPTED_THUMB_SIZE:
             return False
         return True
 
@@ -205,13 +209,13 @@ class PaperPageThumbnail(object):
     def crop(self, x, y):
         import Image
         x = int(x)
-        if x >= settings.API_PAPERPAGE_CROP_IMAGES_PER_ROW:
+        if x >= PAPERPAGE_CROP_IMAGES_PER_ROW:
             # The js is sending us coordinates starting from the page on the
             # left, so we need to adjust them to the current page only.
-            x = x - settings.API_PAPERPAGE_CROP_IMAGES_PER_ROW
+            x = x - PAPERPAGE_CROP_IMAGES_PER_ROW
         y = int(y)
 
-        pdf_filename, img_filename = self._get_paths(size=settings.API_PAPERPAGE_IMAGE_HEIGHT, format='png')
+        pdf_filename, img_filename = self._get_paths(size=PAPERPAGE_IMAGE_HEIGHT, format='png')
         rval, detail = self._generate_big_image_from_pdf()
         if rval != PaperPageThumbnail.P_SUCCESS:
             return rval, detail
@@ -220,15 +224,15 @@ class PaperPageThumbnail(object):
 
         # ImageMagick will automatically generate a file named like name-0.ext, name-1.ext, etc.
         # We need that name.
-        ord_img = y * settings.API_PAPERPAGE_CROP_IMAGES_PER_ROW + x
+        ord_img = y * PAPERPAGE_CROP_IMAGES_PER_ROW + x
         cropped_filename = img_filename.replace('.png', '-%d.png' % (ord_img, ))
 
         if self.check_file_freshness(pdf_filename, cropped_filename):
             return PaperPageThumbnail.P_SUCCESS, cropped_filename
 
         size = Image.open(open(img_filename)).size
-        width = math.ceil(float(size[0]) / settings.API_PAPERPAGE_CROP_IMAGES_PER_COLUMN)
-        height = math.ceil(float(size[1]) / settings.API_PAPERPAGE_CROP_IMAGES_PER_ROW)
+        width = math.ceil(float(size[0]) / PAPERPAGE_CROP_IMAGES_PER_COLUMN)
+        height = math.ceil(float(size[1]) / PAPERPAGE_CROP_IMAGES_PER_ROW)
 
         args = ('/usr/bin/convert',
                 img_filename,
