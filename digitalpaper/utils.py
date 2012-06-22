@@ -24,6 +24,9 @@ def get_publication_date_field():
 
 def get_model_for_publication():
     return loading.get_model(settings.READER_PUBLICATION_APP_NAME, settings.READER_PUBLICATION_MODEL_NAME)
+
+def get_model_for_paperpage():
+    return loading.get_model(settings.READER_PAPERPAGE_APP_NAME, settings.READER_PAPERPAGE_MODEL_NAME)
    
 def get_manager_for_publication(inst):
     name = getattr(settings, 'READER_PUBLICATION_MANAGER_NAME', 'objects')
