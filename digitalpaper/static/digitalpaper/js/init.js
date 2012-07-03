@@ -2,7 +2,7 @@ var accessLevels = {
     'BAS' : 0,
     'ESS' : 10,
     'PRE' : 20
-};
+}; // FIXME: those level names shouldn't exist, shouldn't be hardcoded in the app
 
 var contentmapping = {
     'default' : 'iframe',

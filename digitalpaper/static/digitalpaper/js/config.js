@@ -81,7 +81,11 @@ var libeConfigFunc = function (data) {
         'pageWidth': 0,
         'pageHeight': 0,
         'pageThumbnailWidth': 0,
-        'pageThumbnailHeight': 0
+        'pageThumbnailHeight': 0,
+        'pagesFree': [],
+        'modelmapping': {
+          'default': 'iframe',
+         },
     };
     
     // The remaining settings need to be set using the arguments (use config.js
