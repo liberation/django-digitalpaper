@@ -74,7 +74,7 @@ var firstDate = '{{ first_publication|get_publication_date|date:"Y/m/d" }}';
 
 {% block readerjsonp %}
 <script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/config.js"></script>
-<script type="text/javascript" src="/{{ API_ROOT }}jsonp/reader/?jsonp=libeConfig=libeConfigFunc"></script>
+<script type="text/javascript" src="{% url reader_settings %}?format=jsonp&amp;jsonp=libeConfig=libeConfigFunc"></script>
 {% endblock %}
 
 {% block readerjs %}
