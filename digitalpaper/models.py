@@ -5,6 +5,7 @@ from django.db import models
 class AbstractDigitalPaperPage(models.Model):
     class Meta:
         abstract = True
+        get_latest_by = ('id')
 
 
     def get_preview_absolute_url(self, size='x148'):
@@ -37,6 +38,7 @@ class AbstractDigitalPaperPage(models.Model):
 class AbstractDigitalPublication(models.Model):
     class Meta:
         abstract = True
+        get_latest_by = ('id')
 
 
     def get_preview_absolute_url(self, size='x250'):
