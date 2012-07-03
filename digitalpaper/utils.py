@@ -7,12 +7,12 @@ import stat
 import subprocess
 import time
 import unicodedata
-from urllib2 import quote
+from urllib import quote, quote_plus
 
 from django.http import HttpResponse
 from django.conf import settings
 from django.db.models import Model, loading
-
+from django.core.urlresolvers import resolve, Resolver404, get_resolver
 
 from digitalpaper.constants import (ACCEPTED_THUMB_SIZE, PAPERPAGE_IMAGE_HEIGHT,
                                     PAPERPAGE_CROP_IMAGES_PER_COLUMN,
@@ -38,6 +38,97 @@ def get_manager_method_for_publication_by_date(inst):
     method = getattr(manager, settings.READER_PUBLICATION_MANAGER_METHOD_BYDATE_NAME)
     return method
 
+def build_parameters(*args, **kwargs):
+    '''
+    Utility function to build a list of parameters for an URI template
+    args are used to build parameters without values like this: a={a}&b={b}...
+    kwargs are used to build parameters with values like this: a=42&b=56&...
+    '''
+    def _urlencode_custom(d):
+        rval = []
+        for k, v in d.items():
+            k = quote_plus(str(k))
+            v = quote_plus(str(v), safe='{}') # To allow {} in uri templates without escaping
+            rval.append('%s=%s' % (k, v))
+        return "&".join(rval)
+
+    d = dict(zip(args, ['{%s}' % (str(a), ) for a in args]))
+    d.update(kwargs)
+    return _urlencode_custom(d)
+
+def get_uris_templates_for_settings(urlnames, prefix=""):
+    '''
+    Utility function to return a dict mapping urlnames to URI Templates
+    See get_uri_template() for how it works
+    '''
+    rval = {}
+    for urlname in urlnames:
+        rval[urlname.split(':')[-1]] = get_uri_template(urlname, prefix=prefix)
+    return rval
+
+def get_uris_templates_for_settings_with_params(urlnamesandargs, prefix=""):
+    '''
+    Utility function to return a dict mapping urlnames to URI Templates,
+    adding specific GET params to each one.
+    See get_uri_template() for how it works
+    '''
+    rval = {}
+    for urlname, args in urlnamesandargs:
+        rval[urlname.split(':')[-1]] = get_uri_template(urlname, prefix=prefix) + '?' + build_parameters(*args)
+    return rval
+
+def get_uri_template(urlname, args=None, prefix=""):
+    '''
+    Utility function to return an URI Template from a named URL in django
+    Copy from piston doc.py, added namespacing support and removing args
+    checks.
+
+    Restrictions:
+    - Only supports named urls! i.e. url(... name="toto")
+    - Only support one namespace level
+    - Only returns the first URL possibility. Don't re-use the same urlname multiple times!
+    - Supports multiple pattern possibilities (i.e., patterns with non-capturing parenthesis in them)
+      by trying to find a pattern whose optional parameters match those you specified
+      (a parameter is considered optional if it doesn't appear in every pattern possibility)
+    '''
+    def _convert(template, args=None):
+        """URI template converter"""
+        if not args:
+            args = []
+        paths = template % dict([p, "{%s}" % p] for p in args)
+        return u'%s/%s' % (prefix, paths)
+
+    resolver = get_resolver(None)
+    parts = urlname.split(':')
+    if len(parts) > 1 and resolver.namespace_dict.has_key(parts[0]):
+        namespace = parts[0]
+        urlname = parts[1]
+        nprefix, resolver = resolver.namespace_dict[namespace]
+        prefix = prefix + '/' + nprefix.rstrip('/')
+    possibilities = resolver.reverse_dict.getlist(urlname)
+    for possibility, pattern in possibilities:
+        if not args:
+            # If not args are specified, we only consider the first pattern
+            # django gives us
+            result, params = possibility[0]
+            return _convert(result, params)
+        else:
+            # If there are optionnal arguments passed, use them to try to find
+            # the correct pattern.
+            # First, we need to build a list with all the arguments
+            seen_params = []
+            for result, params in possibility:
+                seen_params.append(params)
+            # Then build a set to find the common ones, and use it to build the
+            # list of all the expected params
+            common_params = reduce(lambda x, y: set(x) & set(y), seen_params)
+            expected_params = sorted(common_params.union(args))
+            # Then finally, loop again over the pattern possibilities and return
+            # the first one that strictly match expected params
+            for result, params in possibility:
+                if sorted(params) == expected_params:
+                    return _convert(result, params)
+    return None
 
 class HttpResponseXFile(HttpResponse):
     def __init__(self, filename, *args, **kwargs):
