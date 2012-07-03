@@ -84,6 +84,7 @@ var firstDate = '{{ first_publication|get_publication_date|date:"Y/m/d" }}';
 <script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/init.js"></script>
 {% endblock %}
 </div>
-<div id="restrictedAccess" style="display: none;"><div>{% block restricted_access %}<p>Access to this functionality is restricted</p>{% endblock %}</div></div>
+<div id="restrictedAccess" style="display: none;"><div>{% block restricted_access %}<p>Access to this functionality is restricted, please 
+    <a href="{% url django.contrib.auth.views.login %}">log in</a> and try again</p>{% endblock %}</div></div>
 <div id="contentmodelContent" style="display: none;"><div>{% block contentmodel_content %}{% endblock %}</div></div>
 </body></html>
