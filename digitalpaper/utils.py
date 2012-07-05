@@ -106,7 +106,8 @@ def get_uri_template(urlname, args=None, prefix=""):
         nprefix, resolver = resolver.namespace_dict[namespace]
         prefix = prefix + '/' + nprefix.rstrip('/')
     possibilities = resolver.reverse_dict.getlist(urlname)
-    for possibility, pattern in possibilities:
+    for tmp in possibilities:
+        possibility, pattern = tmp[:2]
         if not args:
             # If not args are specified, we only consider the first pattern
             # django gives us
