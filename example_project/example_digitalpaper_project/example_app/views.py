@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
-import digitalpaper.constants
+from digitalpaper import constants
 from digitalpaper.utils import (get_model_for_paperpage, 
                                 get_model_for_publication, 
                                 get_manager_for_publication,
