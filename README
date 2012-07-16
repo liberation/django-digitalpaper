@@ -1,11 +1,19 @@
 Django Digitalpaper is a newspaper viewer in Django, JavaScript, CSS and HTML5.
 
-It needs a better README to explain how it works, what you need to get it to
-run, etc. The few things you should know:
+It needs better documentation to explain how it works, what you need to get it
+to run, etc. The few things you should know:
 
 - Its goal is to emulate the look & feel of a newspaper on the web.
-- It can run without django. Replace the views and template, there is very 
-  little django code at the moment.
+- Although it's not meant to, it can easily run without django. Simply 
+  replace the views and template by your own. What's really important is giving
+  it access to an API that follows the same principles the app is expecting.
 - It should be compatible with all modern browsers, and some older ones (IE7).
 - It was initially developped by and for Liberation.fr , and you can find it in
   production at http://journal.liberation.fr/publication/liberation/
+
+The toplevel directory of the repository contains an example_project which 
+implements the basic views you need to use the app. There is a preloaded 
+sqlite db (*) in it containing basic data, as well as some medias, but you
+can also use your own if you want.
+
+(*) Should you want to log in, use demo/demo or change that user using a shell.
