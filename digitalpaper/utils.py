@@ -341,7 +341,7 @@ class PaperPageThumbnail(object):
         width = math.ceil(float(size[0]) / PAPERPAGE_CROP_IMAGES_PER_COLUMN)
         height = math.ceil(float(size[1]) / PAPERPAGE_CROP_IMAGES_PER_ROW)
 
-        args = ('/usr/bin/convert',
+        args = ('convert',
                 img_filename,
                 '-colorspace', 'rgb',
                 '-crop', '%dx%d' % (width, height),
