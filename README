@@ -17,3 +17,9 @@ sqlite db (*) in it containing basic data, as well as some medias, but you
 can also use your own if you want.
 
 (*) Should you want to log in, use demo/demo or change that user using a shell.
+
+If you want to use the python code in utils.py (or the example_project, which
+depends on it), you'll need to install the python requirements by doing 
+pip install -r requirements.txt and have the following binaries in your PATH:
+- convert (from imagemagick)
+- gs (from ghostscript)
