@@ -411,7 +411,6 @@ var libeReader = function() {
             return;
         }
         
-        //img.css({'background-color': "yellow", 'border': "1 px solid black"});
         var currentPage = _pages[_displayedPage + Math.floor(xRow / libeConfig.imagesPerRow)];
         if (!currentPage) {
             return;
@@ -421,15 +420,11 @@ var libeReader = function() {
             img.css({'visibility' : 'hidden'});
         } else {
             var replaces = {
-                '{emitter_format}' : 'png',
-                '{format}' : 'png',                      // Compatibility with old API
-                '{page_id}' : currentPage.pageId,
-                '{id}' : currentPage.pageId,             // Compatibility with old API
-                '{perrow}' : libeConfig.imagesPerRow,    // Compatibility with old API
-                '{percol}' : libeConfig.imagesPerColumn, // Compatibility with old API
-                '{crop}'   : libeConfig.imagesPerRow + 'x' + libeConfig.imagesPerColumn,
-                '{x}' : xRow,
-                '{y}' : yColumn
+                '{format}': 'png',
+                '{id}': currentPage.pageId,
+                '{crop}': libeConfig.imagesPerRow + 'x' + libeConfig.imagesPerColumn,
+                '{x}': xRow,
+                '{y}': yColumn
             };
             
             var src = libeConfig.webservices.paper_page_cropped;
@@ -799,8 +794,7 @@ var libeReader = function() {
     function init(publicationId) {
         _publicationId = publicationId;
 
-        var url = libeConfig.webservices['publication_structure'].replace('{emitter_format}', 'json').replace('{format}', 'json'); // Replace both for compatibility with old API
-        url = url.replace('{id}', publicationId).replace('{publication_id}', publicationId); // replace both, for compatibility
+        var url = libeConfig.webservices.publication.replace('{format}', 'json').replace('{id}', publicationId);
 
         jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: libeConfig.defaultError});
         

@@ -38,7 +38,7 @@ jQuery(document).ready(function () {
     }
 
     jQuery.ajax({
-        'url': libeConfig.webservices.token.replace('{emitter_format}', 'json').replace('{format}', 'json'), // Replace both for compatibility with old API
+        'url': libeConfig.webservices.token.replace('{format}', 'json'),
         'type': 'post',
         'data' : {'use_session' : 1 },
         'dataType': 'json',

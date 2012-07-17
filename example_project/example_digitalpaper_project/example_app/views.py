@@ -26,11 +26,11 @@ def reader_settings(request, *args, **kwargs):
         "pageUnderConstructionImageSmallest": "%sdigitalpaper/img/page-under-construction_smallest.png" % (settings.STATIC_URL), 
         "webservices": {
             "token": reverse("reader_token"),
-            "publication_structure": get_uri_template("reader_publication"),
+            "publication": get_uri_template("reader_publication"),
             "reader_by_date": get_uri_template("digitalpaper_reader_date"),
             "paper_page_resized": get_uri_template("reader_page_resized"),
             "paper_page_cropped": "", # FIXME
-            "contentmodel_content": "", # FIXME
+            "contentmodel": "", # FIXME
         }
     }
     result = json.dumps(data, cls=DateTimeAwareJSONEncoder, indent=1)
