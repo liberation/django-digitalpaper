@@ -67,7 +67,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         }
         var data = jQuery(this).data('area');
         if (data.object_class == "article") {
-            var url = libeConfig.webservices.contentmodel_content;
+            var url = libeConfig.webservices.contentmodel;
             var replaces = {
                 '{format}' : 'html',
                 '{id}' : data.object_id,
