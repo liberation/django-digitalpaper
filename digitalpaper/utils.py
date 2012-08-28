@@ -207,12 +207,15 @@ class PaperPageThumbnail(object):
         self.paperpage = paperpage
 
     def _load_pdf_infos(self):
-        # Read the pdf to find the correct ration to use
+        # Read the pdf to find the correct ratio to use
         from pyPdf import PdfFileReader
         pdf = PdfFileReader(file(self.paperpage.original_file.path, "rb"))
-        x1, y1, width, height = pdf.getPage(0).cropBox
-        self.height = int(height)
-        self.width = int(width) * PAPERPAGE_IMAGE_HEIGHT / self.height
+        box = pdf.getPage(0).cropBox
+        topleft = box.getUpperLeft()
+        bottomright = box.getLowerRight()
+        self.width = round(abs(topleft[0] - bottomright[0]))
+        self.height = round(abs(topleft[1] - bottomright[1]))
+        self.width = int(round(self.width * PAPERPAGE_IMAGE_HEIGHT / self.height))
         self.resolution = 72.0 * PAPERPAGE_IMAGE_HEIGHT / self.height
         self.height = PAPERPAGE_IMAGE_HEIGHT
 
