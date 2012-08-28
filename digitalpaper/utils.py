@@ -261,15 +261,23 @@ class PaperPageThumbnail(object):
         if self.check_file_freshness(pdf_filename, img_filename):
             return PaperPageThumbnail.P_SUCCESS, img_filename
 
-        self._load_pdf_infos()
+        # pyPDF raise when opening some bad constructed PDFs, so instead of not
+        # having any image at all, simply tell gs about the wanted resolution
+        try:
+            self._load_pdf_infos()
+            size_arg = '-g%sx%s' % (self.width, self.height)
+        except TypeError:  # TypeError 'NumberObject' object has no attribute '__getitem__'
+            self.resolution = 72.0
+            size_arg = '-dDEVICEHEIGHT=%s' % PAPERPAGE_IMAGE_HEIGHT  # may not be used
+                                                                     # without width
         args = ('gs',
                 '-dBATCH',
                 '-dNOPAUSE',
                 '-sDEVICE=png16m',
                 '-dTextAlphaBits=4',
-                '-dGraphicsAlphaBits=4',
+                '-r72.',
                 '-sOutputFile=%s' % img_filename,
-                '-g%sx%s' % (self.width, self.height),
+                size_arg,
                 '-r%s' % self.resolution,
                 pdf_filename
         )
