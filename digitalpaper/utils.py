@@ -269,7 +269,8 @@ class PaperPageThumbnail(object):
         try:
             self._load_pdf_infos()
             size_arg = '-g%sx%s' % (self.width, self.height)
-        except TypeError:  # TypeError 'NumberObject' object has no attribute '__getitem__'
+        except (TypeError,        # bad xfer resulting in TypeError 'NumberObject' object has no attribute '__getitem__'
+                AssertionError):  # "raise False" in pyPDF if no xfer
             self.resolution = 72.0
             size_arg = '-dDEVICEHEIGHT=%s' % PAPERPAGE_IMAGE_HEIGHT  # may not be used
                                                                      # without width
