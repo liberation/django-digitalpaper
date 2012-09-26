@@ -29,6 +29,11 @@ var readerSlider = function() {
     }
     
     function moveIntoView(itemNumber) {
+        if (itemNumber < 1) {
+            // The page "0" doesn't exist, but can be passed as an argument when
+            // we are viewing the first page
+            itemNumber = 1;
+        }
         var child = jQuery('#pagesList').children()[itemNumber - 1];
         if (child) {
             var childPosition = jQuery(child).position()['left'];
