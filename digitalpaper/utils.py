@@ -207,12 +207,15 @@ class PaperPageThumbnail(object):
         self.paperpage = paperpage
 
     def _load_pdf_infos(self):
-        # Read the pdf to find the correct ration to use
+        # Read the pdf to find the correct ratio to use
         from pyPdf import PdfFileReader
         pdf = PdfFileReader(file(self.paperpage.original_file.path, "rb"))
-        x1, y1, width, height = pdf.getPage(0).cropBox
-        self.height = int(height)
-        self.width = int(width) * PAPERPAGE_IMAGE_HEIGHT / self.height
+        box = pdf.getPage(0).cropBox
+        topleft = box.getUpperLeft()
+        bottomright = box.getLowerRight()
+        self.width = round(abs(topleft[0] - bottomright[0]))
+        self.height = round(abs(topleft[1] - bottomright[1]))
+        self.width = int(round(self.width * PAPERPAGE_IMAGE_HEIGHT / self.height))
         self.resolution = 72.0 * PAPERPAGE_IMAGE_HEIGHT / self.height
         self.height = PAPERPAGE_IMAGE_HEIGHT
 
@@ -261,15 +264,25 @@ class PaperPageThumbnail(object):
         if self.check_file_freshness(pdf_filename, img_filename):
             return PaperPageThumbnail.P_SUCCESS, img_filename
 
-        self._load_pdf_infos()
+        # pyPDF raise when opening some bad constructed PDFs, so instead of not
+        # having any image at all, simply tell gs about the wanted resolution
+        try:
+            self._load_pdf_infos()
+            size_arg = '-g%sx%s' % (self.width, self.height)
+        except (TypeError,        # bad xfer resulting in "TypeError 'NumberObject' object has no attribute '__getitem__'"
+                AssertionError,   # no xfer resulting in "raise False" in pyPDF if no xfer
+                ValueError):      # bad xfer can also result in "ValueError invalid literal for int() with base 10: 'f'"
+            self.resolution = 72.0
+            size_arg = '-dDEVICEHEIGHT=%s' % PAPERPAGE_IMAGE_HEIGHT  # may not be used
+                                                                     # without width
         args = ('gs',
                 '-dBATCH',
                 '-dNOPAUSE',
                 '-sDEVICE=png16m',
                 '-dTextAlphaBits=4',
-                '-dGraphicsAlphaBits=4',
+                '-r72.',
                 '-sOutputFile=%s' % img_filename,
-                '-g%sx%s' % (self.width, self.height),
+                size_arg,
                 '-r%s' % self.resolution,
                 pdf_filename
         )
