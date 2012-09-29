@@ -143,10 +143,10 @@ class HttpResponseXFile(HttpResponse):
         super(HttpResponseXFile, self).__init__(*args, **kwargs)
         self['X-Sendfile'] = quote(filename.encode('utf8'))
         self['Content-Type'] = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
-        self['Content-Length'] = os.path.getsize(filename)
 
         # Content-encoding is here to make sure gzip middleware is not triggered.
         # It should not be sent back to the user, mod_xsendfile will intercept it
+        # and remove it.
         self['Content-Encoding'] = 'x-send-file'
 
         if not settings.DEBUG and attachment_filename:
