@@ -280,7 +280,6 @@ class PaperPageThumbnail(object):
                 '-dNOPAUSE',
                 '-sDEVICE=png16m',
                 '-dTextAlphaBits=4',
-                '-r72.',
                 '-sOutputFile=%s' % img_filename,
                 size_arg,
                 '-r%s' % self.resolution,
@@ -361,3 +360,40 @@ class PaperPageThumbnail(object):
                 img_filename
         )
         return self._subprocess_action(args=args, filename=cropped_filename)
+
+
+def split_multipage_pdf(filename, destination=None):
+    """
+    Split a PDF with many pages into many PDFs, one per page.
+    `filename` is the absolute path of the pdf to split.
+    New PDFs will be saved in the desination path provided, or in the same
+    directory as the original. "-%03d" is added to new PDFs before the extension.
+    This function returns a list of the absolute file names of the new PDFs.
+    If no PDF was generated, the returned list is empty.
+    This method DO NOT manage any exception raised by pyPdf
+    """
+    from pyPdf import PdfFileReader, PdfFileWriter
+
+    if not destination:
+        destination = os.path.dirname(filename)
+
+    basename = os.path.splitext(os.path.basename(filename))[0]
+
+    input_pdf = PdfFileReader(file(filename, "rb"))
+    if input_pdf.numPages < 2:
+        return []
+
+    output_names = []
+    for num, page in enumerate(input_pdf.pages):
+        output_name = os.path.join(destination, '%s-%03d.pdf' % (basename, num + 1))
+
+        output_pdf = PdfFileWriter()
+        output_pdf.addPage(page)
+
+        output_stream = file(output_name, "wb")
+        output_pdf.write(output_stream)
+        output_stream.close()
+
+        output_names.append(output_name)
+
+    return output_names
