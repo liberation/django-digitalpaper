@@ -203,13 +203,18 @@ class PaperPageThumbnail(object):
     P_ERROR_OS = 2
     P_SUCCESS = 3
 
-    def __init__(self, paperpage):
+    def __init__(self, paperpage, field="original_file"):
+        self._infos_loaded = False
         self.paperpage = paperpage
+        self.file_field = getattr(paperpage, field)
 
     def _load_pdf_infos(self):
+        if self._infos_loaded:
+            return
+
         # Read the pdf to find the correct ratio to use
         from pyPdf import PdfFileReader
-        pdf = PdfFileReader(file(self.paperpage.original_file.path, "rb"))
+        pdf = PdfFileReader(file(self.file_field.path, "rb"))
         box = pdf.getPage(0).cropBox
         topleft = box.getUpperLeft()
         bottomright = box.getLowerRight()
@@ -218,9 +223,10 @@ class PaperPageThumbnail(object):
         self.width = int(round(self.width * PAPERPAGE_IMAGE_HEIGHT / self.height))
         self.resolution = 72.0 * PAPERPAGE_IMAGE_HEIGHT / self.height
         self.height = PAPERPAGE_IMAGE_HEIGHT
+        self._infos_loaded = True
 
     def _get_paths(self, size=None, format=None):
-        filename = self.paperpage.original_file.name.replace('.pdf', '_%s.%s' % (size, format))
+        filename = self.file_field.name.replace('.pdf', '_%s.%s' % (size, format))
         filename = os.path.join(settings.MEDIA_ROOT, 'cache', filename)
 
         dirname = os.path.dirname(filename)
@@ -228,22 +234,30 @@ class PaperPageThumbnail(object):
             # Create directory structure if necessary
             os.makedirs(dirname)
 
-        return self.paperpage.original_file.path, filename
+        return self.file_field.path, filename
 
     def _subprocess_action(self, args=None, filename=None):
+        # TODO: analyse and rewrote this function, see why in comments below
         lock = FileLock(filename)
         if lock.acquire_lock():
             try:
                 pp = subprocess.Popen(args, stdout=subprocess.PIPE)
+                #output = pp.stdout.read()
                 pp.wait()
             except OSError:
                 try:
                     os.remove(filename)
                 finally:
                     lock.release_lock()
+                # The message of this exception is strange, because having an
+                # OSError on the subprocess is not linked to the lock !!!!
                 raise Exception('Found an old lock')
             else:
+                # Being here does not guarantee use that the command was
+                # successfully done. We should test the existence of the
+                # generated filename, as it's done in the main "else" block
                 lock.release_lock()
+                #print output
                 return PaperPageThumbnail.P_SUCCESS, filename
 
         else:  # another thread is already working on the file, we wait for it
@@ -258,7 +272,7 @@ class PaperPageThumbnail(object):
             else:
                 raise Exception('File `%s` does not exist, but it should' % filename)
 
-    def _generate_big_image_from_pdf(self):
+    def _generate_big_image_from_pdf(self, force_resolution=None):
         pdf_filename, img_filename = self._get_paths(size=PAPERPAGE_IMAGE_HEIGHT, format='png')
 
         if self.check_file_freshness(pdf_filename, img_filename):
@@ -266,25 +280,29 @@ class PaperPageThumbnail(object):
 
         # pyPDF raise when opening some bad constructed PDFs, so instead of not
         # having any image at all, simply tell gs about the wanted resolution
+        size_arg = None
         try:
             self._load_pdf_infos()
-            size_arg = '-g%sx%s' % (self.width, self.height)
+            if not force_resolution:
+                size_arg = '-g%sx%s' % (self.width, self.height)
         except (TypeError,        # bad xfer resulting in "TypeError 'NumberObject' object has no attribute '__getitem__'"
                 AssertionError,   # no xfer resulting in "raise False" in pyPDF if no xfer
                 ValueError):      # bad xfer can also result in "ValueError invalid literal for int() with base 10: 'f'"
-            self.resolution = 72.0
-            size_arg = '-dDEVICEHEIGHT=%s' % PAPERPAGE_IMAGE_HEIGHT  # may not be used
-                                                                     # without width
-        args = ('gs',
+            if not force_resolution:
+                self.resolution = 72.0
+                size_arg = '-dDEVICEHEIGHT=%s' % PAPERPAGE_IMAGE_HEIGHT  # may not be used
+                                                                         # without width
+        args = ['gs',
                 '-dBATCH',
                 '-dNOPAUSE',
                 '-sDEVICE=png16m',
                 '-dTextAlphaBits=4',
                 '-sOutputFile=%s' % img_filename,
-                size_arg,
-                '-r%s' % self.resolution,
+                '-r%s' % (force_resolution or self.resolution),
                 pdf_filename
-        )
+        ]
+        if size_arg:
+            args.append(size_arg)
         return self._subprocess_action(args=args, filename=img_filename)
 
     def check_file_freshness(self, pdf_filename, image_filename):
