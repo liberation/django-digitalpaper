@@ -198,23 +198,39 @@ class FileLock(object):
         return os.path.exists(self.lockname)
 
 
+def open_pdf(filename, password=None):
+    """
+    Open a PDF with PdfFileReader and return it.
+    If the PDF seems encrypted, try to decrypt with the given password.
+    Some PDFs are encrypted with a default empty password, so we try with this
+    if no password is given
+    """
+    from pyPdf import PdfFileReader
+    from pyPdf.utils import PdfReadError
+    pdf = PdfFileReader(file(filename, "rb"))
+    if pdf.isEncrypted:
+        if not pdf.decrypt('' if password is None else password):
+            raise PdfReadError('Unable to decrypt pdf %s' % filename)
+    return pdf
+
+
 class PaperPageThumbnail(object):
     P_ERROR_BAD = 1
     P_ERROR_OS = 2
     P_SUCCESS = 3
 
-    def __init__(self, paperpage, field="original_file"):
+    def __init__(self, paperpage, field="original_file", pdf_password=None):
         self._infos_loaded = False
         self.paperpage = paperpage
         self.file_field = getattr(paperpage, field)
+        self.pdf_password = pdf_password
 
     def _load_pdf_infos(self):
         if self._infos_loaded:
             return
 
         # Read the pdf to find the correct ratio to use
-        from pyPdf import PdfFileReader
-        pdf = PdfFileReader(file(self.file_field.path, "rb"))
+        pdf = open_pdf(self.file_field.path, self.pdf_password)
         box = pdf.getPage(0).cropBox
         topleft = box.getUpperLeft()
         bottomright = box.getLowerRight()
@@ -380,7 +396,7 @@ class PaperPageThumbnail(object):
         return self._subprocess_action(args=args, filename=cropped_filename)
 
 
-def split_multipage_pdf(filename, destination=None):
+def split_multipage_pdf(filename, destination=None, pdf_password=None):
     """
     Split a PDF with many pages into many PDFs, one per page.
     `filename` is the absolute path of the pdf to split.
@@ -390,14 +406,14 @@ def split_multipage_pdf(filename, destination=None):
     If no PDF was generated, the returned list is empty.
     This method DO NOT manage any exception raised by pyPdf
     """
-    from pyPdf import PdfFileReader, PdfFileWriter
+    from pyPdf import PdfFileWriter
 
     if not destination:
         destination = os.path.dirname(filename)
 
     basename = os.path.splitext(os.path.basename(filename))[0]
 
-    input_pdf = PdfFileReader(file(filename, "rb"))
+    input_pdf = open_pdf(filename, pdf_password)
     if input_pdf.numPages < 2:
         return []
 
