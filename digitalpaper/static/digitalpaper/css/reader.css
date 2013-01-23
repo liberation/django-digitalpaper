@@ -102,7 +102,6 @@ html, body {
     position: relative;
     display: inline-block;
     height: 100%;
-    max-height: 500px;
     outline: 1px solid #CCC;
     cursor: -moz-zoom-in;
     cursor: -webkit-zoom-in;    
@@ -121,7 +120,6 @@ html, body {
 .page {
     position: relative;
     display: none;
-    height: 500px;
     overflow: hidden;
 }
 .page .area {

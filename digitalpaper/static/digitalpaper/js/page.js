@@ -179,6 +179,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     
     _pageElement = document.createElement("div");
     _pageElement.className = "page loading";
+    jQuery(_pageElement).height(libeConfig.pageHeight);  // page height is always fixed from config - width is dynamic
     if (_pageId > 0) {
         _pageElement.id = 'page_' + _pageId;
     }
@@ -187,8 +188,8 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     // Set thumbnails, they are always visible, unless the page is under construction
     if (_pageId > 0) {
         baseSrc = libeConfig.webservices.paper_page_resized.replace('{format}', 'jpg').replace('{id}', _pageId);
-        _smallestImageSource = baseSrc.replace('{size}', 'x50');
-        _smallImageSource    = baseSrc.replace('{size}', 'x148');
+        _smallestImageSource = baseSrc.replace('{size}', 'x' + libeConfig.pageSmallThumbnailHeight);
+        _smallImageSource    = baseSrc.replace('{size}', 'x' + libeConfig.pageThumbnailHeight);
     } else {
         _smallestImageSource = libeConfig.pageUnderConstructionImageSmallest;
         _smallImageSource = libeConfig.pageUnderConstructionImage;
@@ -226,8 +227,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             jQuery(_pageElement).removeClass('loading');
             jQuery(_pageElement).addClass('warning');
         });
-        // FIXME don't hardcore sizes, get them from config
-        img.src = _imageSource = baseSrc.replace('{size}', 'x500');
+        img.src = _imageSource = baseSrc.replace('{size}', 'x' + libeConfig.pageHeight);
         _pageElement.appendChild(img);
     }
     

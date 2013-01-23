@@ -16,6 +16,7 @@ from digitalpaper.utils import (get_model_for_paperpage,
 def reader_settings(request, *args, **kwargs):
     data = {
         "pageThumbnailHeight": constants.PAPERPAGE_IMAGE_SMALL_HEIGHT, 
+        "pageSmallThumbnailHeight": constants.PAPERPAGE_IMAGE_EXTRASMALL_HEIGHT,
         "error_message": "Oops !", 
         "pageHeight": constants.PAPERPAGE_IMAGE_PREVIEW_HEIGHT, 
         "imagesPerRow": constants.PAPERPAGE_CROP_IMAGES_PER_ROW, 
