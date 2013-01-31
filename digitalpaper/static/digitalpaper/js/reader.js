@@ -31,6 +31,21 @@ var libeReader = function() {
         jQuery(document).unbind('keydown', keyboardCallback);
     }
     
+    function bindHistory() {
+        jQuery(window).bind('popstate', function(e) {
+            // close the window in case we hit the back button
+            $.fn.closeDOMWindow();
+        });
+        
+        jQuery(window).bind('hashchange', function(e) { 
+            e.preventDefault();
+            p = _parseHashtoGetParams(location.hash);
+            if (_displayedPage != p[1]) {
+                showPage(p[1]);
+            }
+        });
+    }
+
     function zoom(event) {
         var offset = jQuery(this).offset();
         if (!offset) {
@@ -812,6 +827,7 @@ var libeReader = function() {
             jQuery('#bookSwitcher').append(a);
             a.bind('click', showSelectedPage);
         }
+        bindHistory();
     }
     
     return {
