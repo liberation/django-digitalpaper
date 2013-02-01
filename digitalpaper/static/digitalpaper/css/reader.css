@@ -34,15 +34,15 @@ html, body {
 #pagesAfter, #pagesBefore {
     display: block;
     position: absolute;
-    right: 2px;
-    top: 225px;
+    right: -48px;
+    top: 175px; /* (500-150)/2 */
     width: 48px;
     outline: 1px solid #CCC;
     height: 150px;
 }
 
 #pagesBefore {
-    left: 2px;
+    left: -48px;
     top: 225px;
 }
 
