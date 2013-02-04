@@ -188,13 +188,13 @@
             settings.windowSourceID = $(passingThis).attr('href') || settings.windowSourceID;
             settings.windowSourceURL = $(passingThis).attr(settings.windowSourceAttrURL) || settings.windowSourceURL;
             settings.windowBGImage = settings.windowBGImage ? 'background-image:url('+settings.windowBGImage+')' : '';
-            var urlOnly, urlQueryObject;
+            var urlOnly, urlQueryObject, anchoredPositions, anchoredPositionX, anchoredPositionY;
             
             if(settings.positionType == 'anchored'){//anchored DOM window
                 
-                var anchoredPositions = $(settings.anchoredSelector).position();
-                var anchoredPositionX = anchoredPositions.left + settings.positionLeft;
-                var anchoredPositionY = anchoredPositions.top + settings.positionTop;
+                anchoredPositions = $(settings.anchoredSelector).position();
+                anchoredPositionX = anchoredPositions.left + settings.positionLeft;
+                anchoredPositionY = anchoredPositions.top + settings.positionTop;
                 
                 $('body').append('<div class="'+settings.anchoredClassName+'" style="'+settings.windowBGImage+';background-repeat:no-repeat;padding:'+settings.windowPadding+'px;overflow:auto;position:absolute;top:'+anchoredPositionY+'px;left:'+anchoredPositionX+'px;height:'+settings.height+'px;width:'+settings.width+'px;background-color:'+settings.windowBGColor+';border:'+settings.borderSize+'px solid '+settings.borderColor+';z-index:10001"><div id="DOMWindowContent" style="display:none"></div></div>');
                 //loader
@@ -290,9 +290,9 @@
                         fixedDOMWindow();
                     break;
                     case 'anchoredSingleWindow':
-                        var anchoredPositions = $(settings.anchoredSelector).position();
-                        var anchoredPositionX = anchoredPositions.left + settings.positionLeft;
-                        var anchoredPositionY = anchoredPositions.top + settings.positionTop;
+                        anchoredPositions = $(settings.anchoredSelector).position();
+                        anchoredPositionX = anchoredPositions.left + settings.positionLeft;
+                        anchoredPositionY = anchoredPositions.top + settings.positionTop;
                         $DOMWindow.css({'top':anchoredPositionY + 'px','left':anchoredPositionX+'px'});
                                 
                     break;
