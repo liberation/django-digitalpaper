@@ -11,7 +11,7 @@
                 var $anchorClassName = $('.'+settings.anchoredClassName);
                 $anchorClassName.fadeOut('fast',function(){
                     if($.fn.draggable){
-                        $anchorClassName.draggable('destory').trigger("unload").remove();
+                        $anchorClassName.draggable('destroy').trigger("unload").remove();
                     }else{
                         $anchorClassName.trigger("unload").remove();
                     }
