@@ -96,11 +96,18 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                     windowSource: libeConfig.modelmapping[k],
                     loader: 1,
                     functionCallOnClose: function() {
-                        if (window.history.state == 'popup') window.history.back();
+                        if(window.history) {
+                            if (window.history.state == 'popup') {
+                                // pop the 'popup' state
+                                window.history.back();
+                            }
+                        }
                         jQuery('body').css({'overflow': 'auto'});
                     },
                     functionCallOnOpen: function() {
-                        window.history.pushState('popup', '');
+                        if(window.history && window.history.pushState) {
+                            window.history.pushState('popup', '');
+                        }
                         jQuery('body').css({'overflow': 'hidden'});
                     }
                 });

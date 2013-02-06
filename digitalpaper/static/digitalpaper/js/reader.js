@@ -32,11 +32,16 @@ var libeReader = function() {
     }
     
     function bindHistory() {
-        jQuery(window).bind('popstate', function(e) {
-            // close the window in case we hit the back button
-            $.fn.closeDOMWindow();
-        });
-        
+        if (window.history) {
+            jQuery(window).bind('popstate', function(e) {
+                if (e.originalEvent.state == 'zoom') {
+                    quitZoom();
+                } else {
+                    // close the window in case we hit the back button
+                    $.fn.closeDOMWindow();
+                }
+            });
+        }
         jQuery(window).bind('hashchange', function(e) { 
             e.preventDefault();
             p = _parseHashtoGetParams(location.hash);
@@ -62,6 +67,11 @@ var libeReader = function() {
             x = x + previousElement.width();
         }
         zoomAtCoordinates(x, y);
+
+        if(window.history && window.history.pushState) {
+            window.history.pushState('zoom', '');
+        }
+
         return false;
     }
     
