@@ -90,8 +90,8 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                 var dw = jQuery(this).openDOMWindow({
                     windowSourceURL: url,
                     windowSourceID: '#contentmodelContent',
-                    width: parseInt(document.body.clientWidth * 90 / 100, 10),
-                    height: parseInt(document.body.clientHeight * 90 / 100, 10),
+                    width: parseInt(document.documentElement.clientWidth * 90 / 100, 10),
+                    height: parseInt(document.documentElement.clientHeight * 90 / 100, 10),
                     fixedWindowY: 0,
                     windowSource: libeConfig.modelmapping[k],
                     loader: 1,
