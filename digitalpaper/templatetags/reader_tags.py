@@ -8,9 +8,11 @@ from digitalpaper.utils import get_publication_date_field, get_model_for_paperpa
 
 register = template.Library()
 
+
 @register.filter
 def get_publication_date(o):
     return getattr(o, get_publication_date_field())
+
 
 @register.simple_tag
 def paperpage_preview_absolute_url(paperpage, size='x148'):
@@ -22,6 +24,19 @@ def paperpage_preview_absolute_url(paperpage, size='x148'):
     else:
         url = paperpage.get_preview_absolute_url(size=size)
     return conditional_escape(url)
+
+
+@register.simple_tag
+def book_preview_absolute_url(book, size='x148'):
+    """
+    Returns a correctly formatted absolute_url in order to print a book preview.
+    """
+    if not book:
+        url = get_model_for_paperpage().get_page_under_construction_preview_url(size=size)
+    else:
+        url = book.get_preview_absolute_url(size=size)
+    return conditional_escape(url)
+
 
 @register.simple_tag
 def publication_preview_absolute_url(publication, size='x148'):

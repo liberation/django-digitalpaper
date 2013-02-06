@@ -2,11 +2,11 @@
 from django.conf import settings
 from django.db import models
 
+
 class AbstractDigitalPaperPage(models.Model):
     class Meta:
         abstract = True
         get_latest_by = ('id')
-
 
     def get_preview_absolute_url(self, size='x148'):
         """
@@ -35,11 +35,23 @@ class AbstractDigitalPaperPage(models.Model):
         return '%s%s' % (settings.STATIC_URL, img)
 
 
-class AbstractDigitalPublication(models.Model):
+class AbstractDigitalBook(models.Model):
     class Meta:
         abstract = True
         get_latest_by = ('id')
 
+    def get_preview_absolute_url(self, size='x148'):
+        """
+        Return the url corresponding to the preview image for the Book
+        at the given size.
+        """
+        pass
+
+
+class AbstractDigitalPublication(models.Model):
+    class Meta:
+        abstract = True
+        get_latest_by = ('id')
 
     def get_preview_absolute_url(self, size='x250'):
         """
