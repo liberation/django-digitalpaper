@@ -89,9 +89,9 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                 libeConfig.modelmapping[k] == 'inline') {
                 var dw = jQuery(this).openDOMWindow({
                     windowSourceURL: url,
-                    windowSourceID: '#contentmodelContent', 
-                    width: parseInt(window.innerWidth * 90 / 100, 10),
-                    height: parseInt(window.innerHeight * 90 / 100, 10),
+                    windowSourceID: '#contentmodelContent',
+                    width: parseInt(document.body.clientWidth * 90 / 100, 10),
+                    height: parseInt(document.body.clientHeight * 90 / 100, 10),
                     fixedWindowY: 0,
                     windowSource: libeConfig.modelmapping[k],
                     loader: 1,
