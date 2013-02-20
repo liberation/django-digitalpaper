@@ -447,7 +447,6 @@ var libeReader = function() {
         var previousButtons = jQuery('#previousCorner, #pagesBefore');
         if (_displayedPage - 2 >= 0) {
             previousButtons.show();
-            _positionPagesMenu();
         } else {
             previousButtons.hide();
         }
@@ -455,7 +454,6 @@ var libeReader = function() {
         var nextButtons = jQuery('#nextCorner, #pagesAfter');
         if (_displayedPage + 2 <= _selectedBook.pagination) {
             nextButtons.show();
-            _positionPagesMenu();
         } else {
             nextButtons.hide();
         }
@@ -621,21 +619,6 @@ var libeReader = function() {
         showPage(_selectedBook.pagination);
     }
     
-    function _positionPagesMenu() {
-        jQuery('#pagesAfter').position({
-            of: jQuery('#oddSide'),
-            my: 'left center',
-            at: 'right center',
-            offset: '1'
-        });
-        jQuery('#pagesBefore').position({
-            of: jQuery('#evenSide'),
-            my: 'right center',
-            at: 'left center',
-            offset: '-1'
-        });
-    }
-    
     function sizeKnown(e) {
         var sides = jQuery('#evenSide, #oddSide');
         sides.width(libeConfig.pageWidth);
@@ -644,7 +627,6 @@ var libeReader = function() {
         if (parent) {
             parent.width(sides.outerWidth() * 2);
         }
-        _positionPagesMenu();
         jQuery(window).unbind(e);
     }
     
