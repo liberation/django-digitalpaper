@@ -31,6 +31,26 @@ var libeReader = function() {
         jQuery(document).unbind('keydown', keyboardCallback);
     }
     
+    function bindHistory() {
+        if (window.history) {
+            jQuery(window).bind('popstate', function(e) {
+                if (e.originalEvent.state == 'zoom') {
+                    quitZoom();
+                } else {
+                    // close the window in case we hit the back button
+                    $.fn.closeDOMWindow();
+                }
+            });
+        }
+        jQuery(window).bind('hashchange', function(e) { 
+            e.preventDefault();
+            p = _parseHashtoGetParams(location.hash);
+            if (_displayedPage != p[1]) {
+                showPage(p[1]);
+            }
+        });
+    }
+
     function zoom(event) {
         var offset = jQuery(this).offset();
         if (!offset) {
@@ -47,6 +67,11 @@ var libeReader = function() {
             x = x + previousElement.width();
         }
         zoomAtCoordinates(x, y);
+
+        if(window.history && window.history.pushState) {
+            window.history.pushState('zoom', '');
+        }
+
         return false;
     }
     
@@ -812,6 +837,7 @@ var libeReader = function() {
             jQuery('#bookSwitcher').append(a);
             a.bind('click', showSelectedPage);
         }
+        bindHistory();
     }
     
     return {
