@@ -539,11 +539,17 @@ var libeReader = function() {
             'left': position.left});
         transitionContainerElement.append(transitionElement);
         evenSide.parent().append(transitionContainerElement);
-        
-        transitionElement.animate({'width': 2 * finalWidth}, function() { 
-            cleanAfterShowPage(number); 
-            jQuery(this).parent().detach();
-        });
+
+        transitionElement.animate({'width': 2 * finalWidth}, {
+                                   'step' : function _stepCallback(now,opts) {
+                                        // Stop browser rounding errors
+                                        now = opts.now = Math.round(now);
+                                   }, 
+                                   'complete' : function() { 
+                                        cleanAfterShowPage(number); 
+                                        jQuery(this).parent().detach();
+                                   }
+                                  });
     }
     
     function _hideOldPages() {
