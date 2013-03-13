@@ -93,6 +93,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                     href: url,
                     iframe: true,
                     opacity: 0.7,
+                    close: '', // avoid a translation headache, who needs a label anyway ?
                     width: parseInt(document.documentElement.clientWidth * 90 / 100, 10),
                     height: parseInt(document.documentElement.clientHeight * 90 / 100, 10),
                     onClosed: function() {

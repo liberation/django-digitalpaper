@@ -37,10 +37,13 @@ var libeConfigFunc = function (data) {
             href:'#restrictedAccess',
             width: 760,
             height: 480,
+            close: '',
             onOpen:function() {
+                jQuery('body').css({'overflow': 'auto'});
                 jQuery('div#restrictedAccess').show();
             },
             onClosed:function() {
+                jQuery('body').css({'overflow': 'hidden'});
                 jQuery('div#restrictedAccess').hide();
             }
         });
