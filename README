@@ -23,3 +23,13 @@ depends on it), you'll need to install the python requirements by doing
 pip install -r requirements.txt and have the following binaries in your PATH:
 - convert (from imagemagick)
 - gs (from ghostscript)
+
+We are now using Colorbox as a popup manager, you can change its default 
+behavior by doing something like this:
+
+var colorbox_defaults = {
+    close: '',
+    [insert any setting here]
+};
+
+$.extend($.colorbox.settings, colorbox_defaults);
