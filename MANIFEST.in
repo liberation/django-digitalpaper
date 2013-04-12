@@ -1,0 +1,8 @@
+include README
+include LICENSE
+recursive-include docs *
+recursive-include digitalpaper/fixtures *.json
+recursive-include digitalpaper/locale *
+recursive-include digitalpaper/static *
+recursive-include digitalpaper/templates *.txt *.html *.xml *.js
+prune docs/build
