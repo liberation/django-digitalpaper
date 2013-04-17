@@ -169,6 +169,7 @@ var libeReader = function() {
         jQuery(document.body).css({'overflow': 'visible', 'height': 'auto' });
         _isZoomed = false;
         jQuery('#zoomButton').removeClass('unzoom');
+
         return false;
     }
     
@@ -179,7 +180,7 @@ var libeReader = function() {
     }
     
     function keyboardCallback(e) {
-        if (jQuery('#DOMWindow').length <= 0) {
+        if (jQuery('#colorbox').css('display') != 'block') {
             if (_isZoomed) {
                 return zoomedKeyboardCallback(e);
             } else {

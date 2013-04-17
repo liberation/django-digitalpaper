@@ -66,6 +66,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             return false;
         }
         var data = jQuery(this).data('area');
+
         if (data.object_class == "article") {
             var url = libeConfig.webservices.contentmodel;
             var replaces = {
@@ -87,28 +88,13 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             if (libeConfig.modelmapping[k] == 'iframe' ||
                 libeConfig.modelmapping[k] == 'ajax'   ||
                 libeConfig.modelmapping[k] == 'inline') {
-                var dw = jQuery(this).openDOMWindow({
-                    windowSourceURL: url,
-                    windowSourceID: '#contentmodelContent',
+
+                var dw = jQuery.colorbox({
+                    href: url,
+                    iframe: true,
                     width: parseInt(document.documentElement.clientWidth * 90 / 100, 10),
-                    height: parseInt(document.documentElement.clientHeight * 90 / 100, 10),
-                    fixedWindowY: 0,
-                    windowSource: libeConfig.modelmapping[k],
-                    loader: 1,
-                    functionCallOnClose: function() {
-                        jQuery('body').css({'overflow': 'auto'});
-                    },
-                    functionCallOnOpen: function() {
-                        jQuery('body').css({'overflow': 'hidden'});
-                    }
+                    height: parseInt(document.documentElement.clientHeight * 90 / 100, 10)
                 });
-                if (libeConfig.modelmapping[k] == 'inline') {
-                    // inline is interesting to add custom content, but
-                    // it doesn't load the URL, so we have to do it manually
-                    // Note: have a .inner element inside your #contentmodelContent
-                    // when you want to use this!
-                    jQuery('#DOMWindow .inner').load(url);
-                }
             } else {
                 window.open(url);
             }

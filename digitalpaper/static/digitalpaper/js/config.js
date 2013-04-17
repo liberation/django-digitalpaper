@@ -32,11 +32,21 @@ var libeConfigFunc = function (data) {
        
     var restrictedAccess = function() {
         jQuery(document).trigger('show-restricted-access');
-        jQuery.openDOMWindow({
-            windowSourceID: '#restrictedAccess',
+        jQuery.colorbox({
+            iframe:false,
+            inline:true,
+            href:'#restrictedAccess',
             width: 760,
             height: 480,
-            windowPadding: 0
+            close: '',
+            onOpen:function() {
+                jQuery('body').css({'overflow': 'auto'});
+                jQuery('div#restrictedAccess').show();
+            },
+            onClosed:function() {
+                jQuery('body').css({'overflow': 'hidden'});
+                jQuery('div#restrictedAccess').hide();
+            }
         });
         return false;
     };
