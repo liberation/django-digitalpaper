@@ -33,6 +33,7 @@ var libeConfigFunc = function (data) {
     var restrictedAccess = function() {
         jQuery(document).trigger('show-restricted-access');
         jQuery.colorbox({
+            iframe:false,
             inline:true,
             href:'#restrictedAccess',
             width: 760,
