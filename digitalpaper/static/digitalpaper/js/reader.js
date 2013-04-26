@@ -6,16 +6,40 @@ function Reader(settings) {
         'publicationId' : null,
         /********* end of mandatory settings *******/
 
-        /********* api **********/
+        /********* urls **********/
         "pageLimitedAccessImage": '/static/digitalpaper/img/page-only-subscribers.png',
         "pageUnderConstructionImage": '/static/digitalpaper/img/page-under-construction.png',
         "pageUnderConstructionImageSmallest": '/static/digitalpaper/img/page-under-construction_smallest.png',
+        // TODO: because we removed the webservices object, we should change those names so that it is more clear
+        // that they are urls
         "token": '/digitalpaper/token/',
         "publication": '/digitalpaper/publication/{id}/',
         "reader_by_date": '/digitalpaper/date/{date}/',
         "paper_page_resized": '/digitalpaper/page/{id}/',
         "paper_page_cropped": '/digitalpaper/page/{id}/',
-        /****** end of api ******/
+        /****** end of urls ******/
+
+        /********** markup ************/
+        'evenSideElement': jQuery('#evenSide'),
+        'oddSideElement': jQuery('#oddSide'),
+        'restrictedAccessElement': jQuery('#restrictedAccess'),
+        'previousButtonElement': jQuery('#previousButton'),
+        'nextButtonElement': jQuery('#nextButton'),
+        'firstButtonElement': jQuery('#firstButton'),
+        'lastButtonElement': jQuery('#lastButton'),
+        'previousCornerElement': jQuery('#previousCorner'),
+        'nextCornerElement': jQuery('#nextCorner'),
+        'previousButtonsParent': jQuery('#pagesBefore'),
+        'nextButtonsParent': jQuery('#pagesAfter'),
+        'zoomButtonElement': jQuery('#zoomButton'),
+        'bookSwitcherElement': jQuery('#bookSwitcher'),
+        'pagesSliderElement': jQuery('#pagesSlider'),
+        'bookSwitcherElement': jQuery('#bookSwitcher'),
+        'evenPageInfoElement': jQuery('#evenSide .pageInfo'),
+        'oddPageInfoElement': jQuery('#oddSide .pageInfo'),
+        'bookPagesElement': jQuery('#bookPages'),
+        'contentmodelContentElement': jQuery('#contentmodelContent'),
+        /******* end of markup ********/
 
         'accessLevel' : 0,
         'accessLevelNeeded' : 1,
@@ -25,9 +49,11 @@ function Reader(settings) {
         'pageThumbnailHeight': 148,
         'pagesFree': [1],
         'error_message': "Something terrible just happened.",
-        "imagesPerRow": 4,
-        "imagesPerColumn": 4,
-        "zoomFactor": 4,
+        'imagesPerRow': 4,
+        'imagesPerColumn': 4,
+        'zoomFactor': 4,
+        'animationStep': 21,
+
         'canAccess': function(pageNumber, pageId) {
             return this.accessLevel >= this.accessLevelNeeded || jQuery.inArray(pageNumber, this.pagesFree) >= 0;
         },
@@ -39,7 +65,7 @@ function Reader(settings) {
         },
         'restrictedAccess' : function() {
             jQuery.openDOMWindow({
-                windowSourceID: '#restrictedAccess',
+                windowSourceID: '#'+self.restrictedAccessElement.attr('id'), // it's ugly but who cares, it will get away with the colorbox merge
                 width: 760,
                 height: 480,
                 windowPadding: 0
@@ -54,13 +80,12 @@ function Reader(settings) {
             }
             return false;
         },
-        'evenSideElement' : jQuery('#evenSide'),
-        'oddSideElement' : jQuery('#oddSide'), 
+
         'defaultError' : function(xhr, status) {
             if (jQuery('#errorPopin').length <= 0) {
                 jQuery('#main').append('<div id="errorPopin"></div>');
             }
-            jQuery('#bookPages, #pagesBefore, #pagesAfter, #pagesSlider').hide();
+            jQuery('#bookPages, #pagesBefore, #pagesAfter, #pagesSlider').hide(); // TODO: im not too sure about this bookPage tingy
             jQuery('#errorPopin').text(this.error_message + ' (Err. ' + xhr.status + ')').show();
         },
         'modelmapping': {
@@ -71,25 +96,29 @@ function Reader(settings) {
     var _bookName, _publication, _selectedBook, _pages, 
         _displayedPage, _displayedBook, _zoomWindow, _winHeight, _winWidth, 
         _numberOfPages, _isZoomed, _zoomedPageHeight, _zoomedPageWidth, 
-        _zoomMouseInit, _zoomPosInit, _zoomedPages, _zoomMouseDown, _step,
+        _zoomMouseInit, _zoomPosInit, _zoomedPages, _zoomMouseDown,
         _HDgridContainer;
-        
-    _step = 21; // TODO: settingsify this
     
     this.bindButtons = function() {
-        jQuery('#previousButton, #previousCorner').click(this.showPreviousPage);
-        jQuery('#nextButton, #nextCorner').click(this.showNextPage);
-        jQuery('#firstButton').click(this.showFirstPage);
-        jQuery('#lastButton').click(this.showLastPage);
-        jQuery('#evenSide, #oddSide').click(this.zoom); // TODO: there are settings for those elements, but i wonder if it makes sense.
+        this.previousButtonElement.click(this.showPreviousPage);
+        this.previousCornerElement.click(this.showPreviousPage);
+        this.nextButtonElement.click(this.showNextPage);
+        this.nextCornerElement.click(this.showNextPage);
+        this.firstButtonElement.click(this.showFirstPage);
+        this.lastButtonElement.click(this.showLastPage);
+        this.evenSideElement.click(this.zoom);
+        this.oddSideElement.click(this.zoom);
     };
     
     this.unbindButtons = function() {
-        jQuery('#previousButton, #previousCorner').unbind("click", this.showPreviousPage);
-        jQuery('#nextButton, #nextCorner').unbind("click", this.showNextPage);
-        jQuery('#firstButton').unbind("click", this.showFirstPage);
-        jQuery('#lastButton').unbind("click", this.showLastPage);
-        jQuery('#evenSide, #oddSide').unbind("click", this.zoom);
+        this.previousButtonElement.unbind("click", this.showPreviousPage);
+        this.previousCornerElement.unbind("click", this.showPreviousPage);
+        this.nextButtonElement.unbind("click", this.showNextPage);
+        this.nextCornerElement.unbind("click", this.showNextPage);
+        this.firstButtonElement.unbind("click", this.showFirstPage);
+        this.lastButtonElement.unbind("click", this.showLastPage);
+        this.evenSideElement.unbind("click", this.zoom);
+        this.oddSideElement.unbind("click", this.zoom);
     };
     
     this.bindKeyboard = function() {
@@ -135,14 +164,15 @@ function Reader(settings) {
         _zoomedPageHeight = this.pageHeight * this.zoomFactor;
         _zoomedPageWidth = this.pageWidth * this.zoomFactor;
         
-        jQuery('#pagesSlider').hide();
-        jQuery('#bookSwitcher').hide();
+        this.pagesSliderElement.hide(); //TODO: clean
+        this.bookSwitcherElement.hide();
         
         var height = jQuery(window).height();
         jQuery(document.body).css({'overflow': 'hidden', 'height': height });
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
         
+        // TODO: use jQuery to create the elements for compatibility reasons
         _zoomWindow = jQuery(document.createElement('div'));
         _zoomWindow.attr('id', 'zoomWindow');
         _zoomWindow.addClass('grab');
@@ -203,7 +233,7 @@ function Reader(settings) {
         
         this.zoomInitHDGrid(top, left);
         _isZoomed = true;
-        jQuery('#zoomButton').addClass('unzoom');
+        this.zoomButtonElement.addClass('unzoom');
         jQuery(document).trigger('page-afterzoom', [_displayedPage]);
     };
     
@@ -233,11 +263,11 @@ function Reader(settings) {
         jQuery(window).unbind('resize', this.zoomResize);
         jQuery(document.body).unbind('mousewheel');
         jQuery(document.body).removeClass('zoomed');        
-        jQuery('#pagesSlider').show();
-        jQuery('#bookSwitcher').show();
+        self.pagesSliderElement.show();
+        self.bookSwitcherElement.show();
         jQuery(document.body).css({'overflow': 'visible', 'height': 'auto' });
         _isZoomed = false;
-        jQuery('#zoomButton').removeClass('unzoom');
+        self.zoomButtonElement.removeClass('unzoom');
         return false;
     };
     
@@ -310,16 +340,16 @@ function Reader(settings) {
                     e.preventDefault();
                     break;
                 case 37: // left
-                    x = -_step;
+                    x = -this.animationStep;
                     break;
                 case 38: // up
-                    y = -_step;
+                    y = -this.animationStep;
                     break;
                 case 39: // right
-                    x = _step;
+                    x = this.animationStep;
                     break;
                 case 40: // bottom
-                    y = _step;
+                    y = this.animationStep;
                     break;
                 default:
                     break;
@@ -373,7 +403,7 @@ function Reader(settings) {
     
     this.zoomMouseWheel = function(e, deltaX, deltaY) {
         self.zoomLoadPosInit();
-        self.zoomBy(-_step * deltaX, -_step * deltaY);
+        self.zoomBy(-this.animationStep * deltaX, -this.animationStep * deltaY);
         e.preventDefault();
     };
     
@@ -507,20 +537,20 @@ function Reader(settings) {
     };
     
     this.displayPagination = function() {
-        var previousButtons = jQuery('#previousCorner, #pagesBefore');
+        var previousButtons = this.previousCornerElement.add(this.previousButtonsParent);
         if (_displayedPage - 2 >= 0) {
             previousButtons.show();
         } else {
             previousButtons.hide();
         }
         
-        var nextButtons = jQuery('#nextCorner, #pagesAfter');
+        var nextButtons = this.nextCornerElement.add(this.nextButtonsParent);
         if (_displayedPage + 2 <= _selectedBook.pagination) {
             nextButtons.show();
         } else {
             nextButtons.hide();
         }
-        readerSlider.moveIntoView(_displayedPage); // TODO
+        readerSlider.moveIntoView(_displayedPage); // TODO: readerSlider is still global
     };
     
     this.showPage = function(number) {
@@ -531,13 +561,14 @@ function Reader(settings) {
             return;
         }
         
-        jQuery('#oddSide .pageInfo, #evenSide .pageInfo').fadeOut();
+        this.evenPageInfoElement.fadeOut();
+        this.oddPageInfoElement.fadeOut();
         
         this.unbindButtons();
         this.unbindKeyboard(); // TODO: get rid of that please ? .live ?
         
-        var evenSide = jQuery('#evenSide');
-        var oddSide =  jQuery('#oddSide');
+        var evenSide = jQuery(this.evenSideElement);
+        var oddSide =  jQuery(this.oddSideElement);
         var finalWidth = evenSide.width();
         var height = evenSide.parent().height();
         var position = evenSide.position();
@@ -600,7 +631,7 @@ function Reader(settings) {
         var page = _pages[number];
         page.show();
         this.highlightCurrentPages(_displayedBook, number);
-        var elm = jQuery('#' + ((page.pageNumber % 2 === 0) ? 'even' : 'odd') + 'Side .pageInfo');
+        var elm = page.pageNumber % 2 ? this.oddPageInfoElement : this.evenPageInfoElement;
         elm.html(page.getPageInfo());
         elm.fadeIn();
     };
@@ -682,7 +713,7 @@ function Reader(settings) {
     };
     
     this.sizeKnown = function(e) {
-        var sides = jQuery('#evenSide, #oddSide');
+        var sides = self.evenSideElement.add(self.oddSideElement);
         sides.width(self.pageWidth);
         sides.css('max-height', self.pageHeight + 'px');
         var parent = sides.parent();
@@ -733,7 +764,7 @@ function Reader(settings) {
         if (_displayedBook != newBook) {
             jQuery('#pagesList').empty();
             jQuery('#pagesList').css({'left' : 0 });
-            jQuery('#bookSwitcher a').removeClass('selected');
+            jQuery(this.bookSwitcherELement+' a').removeClass('selected');
             jQuery('#bookThumb-' + parseInt(newBook, 10)).addClass('selected');
         }
         _selectedBook = _publication.books[newBook];
@@ -852,14 +883,14 @@ function Reader(settings) {
             var a = obj.getThumbnailForList(i);
             a.attr('id', "bookThumb-" + i);
             a.append('<span class="bookName">' + _publication.books[i].name + '</span>');
-            jQuery('#bookSwitcher').append(a);
+            jQuery(this.bookSwitcherElement).append(a);
             a.bind('click', this.showSelectedPage);
         }
     };
 
     this.init = function() {
         if (settings.publicationId == 'undefined') {
-            throw "What the fuck man ?! are you drunk ? there is no publicationId !"; // TODO
+            throw "What the fuck man ?! are you drunk ? there is no publicationId !";
             return false;
         }
 
@@ -876,7 +907,7 @@ function Reader(settings) {
                 });
         
                 // TODO: this has nothing to do here
-                jQuery('#zoomButton').click(function (e) {
+                self.zoomButtonElement.click(function (e) {
                     if (_isZoomed) {
                         self.quitZoom();
                     } else {
@@ -885,16 +916,16 @@ function Reader(settings) {
                     return false;
                 });
                 // TODO: this either
-                jQuery('#previousCorner, #nextCorner').hover(self.showHoverCorner, self.hideHoverCorner);
+                self.previousCornerElement.hover(self.showHoverCorner, self.hideHoverCorner);
+                self.nextCornerElement.hover(self.showHoverCorner, self.hideHoverCorner);
             } catch (e) {
-                console.log(e); // TODO
-                throw e;
+                
             }
         }
 
         // TODO: move this in a more appropriate place
         if (this.pageHeight) {
-            jQuery('#bookPages').height(this.pageHeight);
+            this.bookPagesElement.height(this.pageHeight);
         }
 
         jQuery.ajax({

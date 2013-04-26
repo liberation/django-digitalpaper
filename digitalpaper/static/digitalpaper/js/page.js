@@ -90,7 +90,7 @@ var Page = function(reader, pageNumber, pageId, pageChannel, pageMaps) {
                 reader.modelmapping[k] == 'inline') {
                 var dw = jQuery(this).openDOMWindow({
                     windowSourceURL: url,
-                    windowSourceID: '#contentmodelContent',
+                    windowSourceID: reader.contentmodelContentElement,
                     width: parseInt(document.documentElement.clientWidth * 90 / 100, 10),
                     height: parseInt(document.documentElement.clientHeight * 90 / 100, 10),
                     fixedWindowY: 0,
@@ -231,7 +231,7 @@ var Page = function(reader, pageNumber, pageId, pageChannel, pageMaps) {
         img.src = _imageSource = baseSrc.replace('{size}', 'x' + reader.pageHeight);
         _pageElement.appendChild(img);
     }
-
+    
     if (_pageNumber % 2 === 0) {
         reader.evenSideElement.append(_pageElement);
     } else {
