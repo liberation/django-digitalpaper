@@ -62,21 +62,13 @@
 
 {% block jqueryjs %}
     {% include "digitalpaper/_jquery.html" %}
-{% endblock %}
-
-{% block dynamicjs %}{% endblock %}
-
-{% block readerjsonp %}
-<!--script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/config.js"></script-->
-<!--script type="text/javascript" src="{% url reader_settings %}?format=jsonp&amp;jsonp=Config=ConfigFunc"></script-->
-
+    <script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/jquery.jdpicker.js"></script>
 {% endblock %}
 
 {% block readerjs %}
 <script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/reader.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/page.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/slideshow.js"></script>
-<!--script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/init.js"></script-->
 <script type="text/javascript">
 jQuery(function() {
     var reader = new Reader({
@@ -94,16 +86,16 @@ jQuery(function() {
         "token": "{% url reader_token %}",
         "publication": "/app/publication/{id}/", // TODO: DRY ALERT : i need a templatetag from the get_uri_template util
         "paper_page_resized": "/app/reader_page_resized/{id}/?format={format}&x={x}&y={y}",
-        "paper_page_cropped": "/app/reader_page_resized/{id}/?format={format}&x={x}&y={y}&crop={crop}",
-         /* "reader_by_date": get_uri_template("digitalpaper_reader_date"),
-            "contentmodel": ""  */
+        "paper_page_cropped": "",
+        "reader_by_date": "/digitalpaper/reader/date/{date}/",
+        "contentmodel": ""
     });
 
     jQuery('#calendarButton').val('{{ publication|get_publication_date|date:"Y/m/d" }}');
     jQuery('#calendarButton').bind('change', function(e) {
         var val = jQuery(this).val();
         val = val.replace(/\//gi, '-');
-        location.href = Config.webservices.reader_by_date.replace('{date}', val);
+        location.href = reader.reader_by_date.replace('{date}', val);
     });
 
     jQuery('#calendarButton').jdPicker({

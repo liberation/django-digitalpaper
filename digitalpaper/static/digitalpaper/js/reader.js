@@ -151,7 +151,7 @@ function Reader(settings) {
         
         _zoomedPages = jQuery(document.createElement('div'));
         _zoomedPages.attr('id', 'zoomedPages');
-        
+
         _numberOfPages = 0;
         if (_pages[_displayedPage]) {
             var leftPage = jQuery(document.createElement('img'));
@@ -497,7 +497,6 @@ function Reader(settings) {
             }
             img.attr('src', src);
         }
-        console.log(src);
     };
     
     this.showHoverCorner = function() {

@@ -237,4 +237,8 @@ var Page = function(reader, pageNumber, pageId, pageChannel, pageMaps) {
     } else {
         reader.oddSideElement.append(_pageElement);
     }
+
+    // TODO: clean and clarify the private and public properties
+    this.imageSource = _imageSource;
+
 };
