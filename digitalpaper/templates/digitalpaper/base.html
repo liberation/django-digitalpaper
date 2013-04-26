@@ -64,25 +64,55 @@
     {% include "digitalpaper/_jquery.html" %}
 {% endblock %}
 
-{% block dynamicjs %}
-<script type="text/javascript">
-var publicationId = {{ publication.id }};
-var startDate = '{{ publication|get_publication_date|date:"Y/m/d" }}';
-var lastDate  = '{{ latest_publication|get_publication_date|date:"Y/m/d" }}';
-var firstDate = '{{ first_publication|get_publication_date|date:"Y/m/d" }}';
-</script>
-{% endblock %}
+{% block dynamicjs %}{% endblock %}
 
 {% block readerjsonp %}
-<script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/config.js"></script>
-<script type="text/javascript" src="{% url reader_settings %}?format=jsonp&amp;jsonp=libeConfig=libeConfigFunc"></script>
+<!--script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/config.js"></script-->
+<!--script type="text/javascript" src="{% url reader_settings %}?format=jsonp&amp;jsonp=Config=ConfigFunc"></script-->
+
 {% endblock %}
 
 {% block readerjs %}
 <script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/reader.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/page.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/slideshow.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/init.js"></script>
+<!--script type="text/javascript" src="{{ STATIC_URL }}digitalpaper/js/init.js"></script-->
+<script type="text/javascript">
+jQuery(function() {
+    var reader = new Reader({
+        "publicationId": {{ publication.id }},
+        "pageThumbnailHeight": {{ constants.PAPERPAGE_IMAGE_SMALL_HEIGHT }},
+        "pageSmallThumbnailHeight": {{ constants.PAPERPAGE_IMAGE_EXTRASMALL_HEIGHT }},
+        "error_message": "Oops !",
+        "pageHeight": {{ constants.PAPERPAGE_IMAGE_PREVIEW_HEIGHT }},
+        "imagesPerRow": {{ constants.PAPERPAGE_CROP_IMAGES_PER_ROW }},
+        "imagesPerColumn": {{ constants.PAPERPAGE_CROP_IMAGES_PER_COLUMN }},
+        "zoomFactor": {{ constants.PAPERPAGE_CROPPED_ZOOM_FACTOR }},
+        "pageLimitedAccessImage": "{{ STATIC_URL }}digitalpaper/img/page-only-subscribers.png",
+        "pageUnderConstructionImage": "{{ STATIC_URL }}digitalpaper/img/page-under-construction.png",
+        "pageUnderConstructionImageSmallest": "{{ STATIC_URL }}digitalpaper/img/page-under-construction_smallest.png",
+        "token": "{% url reader_token %}",
+        "publication": "/app/publication/{id}/", // TODO: DRY ALERT : i need a templatetag from the get_uri_template util
+        "paper_page_resized": "/app/reader_page_resized/{id}/?format={format}&x={x}&y={y}",
+        "paper_page_cropped": "/app/reader_page_resized/{id}/?format={format}&x={x}&y={y}&crop={crop}",
+         /* "reader_by_date": get_uri_template("digitalpaper_reader_date"),
+            "contentmodel": ""  */
+    });
+
+    jQuery('#calendarButton').val('{{ publication|get_publication_date|date:"Y/m/d" }}');
+    jQuery('#calendarButton').bind('change', function(e) {
+        var val = jQuery(this).val();
+        val = val.replace(/\//gi, '-');
+        location.href = Config.webservices.reader_by_date.replace('{date}', val);
+    });
+
+    jQuery('#calendarButton').jdPicker({
+        'date_max' : '{{ latest_publication|get_publication_date|date:"Y/m/d" }}',
+        'date_min' : '{{ first_publication|get_publication_date|date:"Y/m/d" }}'
+    });
+});
+</script>
+
 {% endblock %}
 </div>
 <div id="restrictedAccess" style="display: none;"><div>{% block restricted_access %}<p>Access to this functionality is restricted, please 

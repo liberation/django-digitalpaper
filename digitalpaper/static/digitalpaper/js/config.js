@@ -1,9 +1,9 @@
-var libeConfigFunc = function (data) {
+/* var ConfigFunc = function (data) {
    
     var evenSideElement = document.getElementById('evenSide');
     var oddSideElement = document.getElementById('oddSide');
     var accessLevel = 0;
-    var accessLevelNeeded = 20;    
+    var accessLevelNeeded = 20;
     var authenticated = false;
     
     var canAccess = function(pageNumber, pageId) {
@@ -44,10 +44,8 @@ var libeConfigFunc = function (data) {
     var setSize = function(w, h) {
         // dynamic config should set height
         if (w) {
-            libeConfig.pageWidth = w;
-            // libeConfig.pageHeight = h
-            // libeConfig.pageThumbnailHeight = 
-            libeConfig.pageThumbnailWidth = parseInt(w * libeConfig.pageThumbnailHeight / libeConfig.pageHeight, 10);
+            Config.pageWidth = w;
+            Config.pageThumbnailWidth = parseInt(w * Config.pageThumbnailHeight / Config.pageHeight, 10);
             jQuery(window).trigger('size-known');
             return true;
         }
@@ -58,12 +56,12 @@ var libeConfigFunc = function (data) {
         if (jQuery('#errorPopin').length <= 0) {
             jQuery('#main').append('<div id="errorPopin"></div>');
         }
-        jQuery('#errorPopin').text(libeConfig.error_message + ' (Err. ' + xhr.status + ')');
+        jQuery('#errorPopin').text(Config.error_message + ' (Err. ' + xhr.status + ')');
         jQuery('#bookPages, #pagesBefore, #pagesAfter, #pagesSlider').hide();
         jQuery('#errorPopin').show();
     };
 
-    this.settings = {
+    settings = {
         'authenticated' : authenticated,
         'accessLevel' : accessLevel,
         'accessLevelNeeded' : accessLevelNeeded,
@@ -97,4 +95,7 @@ var libeConfigFunc = function (data) {
         }
     }    
     return this.settings;
-};
+}; */
+
+
+

@@ -9,7 +9,8 @@ from datetime import datetime
 from digitalpaper.utils import get_model_for_publication, \
                                get_manager_for_publication, \
                                get_manager_method_for_publication_by_date, \
-                               get_publication_date_field \
+                               get_publication_date_field
+from digitalpaper import constants
 
 def reader_latest(request):
     publication_model = get_model_for_publication()
@@ -34,6 +35,7 @@ def reader(request, publication_id):
     context = {
         'publication': pub,
         'latest_publication' : get_manager_for_publication(publication_model).latest(),
-        'first_publication'  : get_manager_for_publication(publication_model).reverse().latest()
+        'first_publication'  : get_manager_for_publication(publication_model).reverse().latest(),
+        'constants': constants
     }
     return render_to_response('digitalpaper/reader.html', context, context_instance=RequestContext(request))

@@ -11,8 +11,8 @@ from urllib import quote, quote_plus
 
 from django.http import HttpResponse
 from django.conf import settings
-from django.db.models import Model, loading
-from django.core.urlresolvers import resolve, Resolver404, get_resolver
+from django.db.models import loading
+from django.core.urlresolvers import get_resolver
 
 from digitalpaper.constants import (ACCEPTED_THUMB_SIZE, PAPERPAGE_IMAGE_HEIGHT,
                                     PAPERPAGE_CROP_IMAGES_PER_COLUMN,
@@ -22,21 +22,26 @@ from digitalpaper.constants import (ACCEPTED_THUMB_SIZE, PAPERPAGE_IMAGE_HEIGHT,
 def get_publication_date_field():
     return settings.READER_PUBLICATION_DATE_FIELD
 
+
 def get_model_for_publication():
     return loading.get_model(settings.READER_PUBLICATION_APP_NAME, settings.READER_PUBLICATION_MODEL_NAME)
 
+
 def get_model_for_paperpage():
     return loading.get_model(settings.READER_PAPERPAGE_APP_NAME, settings.READER_PAPERPAGE_MODEL_NAME)
-   
+
+
 def get_manager_for_publication(inst):
     name = getattr(settings, 'READER_PUBLICATION_MANAGER_NAME', 'objects')
     manager = getattr(get_model_for_publication(), name)
     return manager
-   
+
+
 def get_manager_method_for_publication_by_date(inst):
     manager = get_manager_for_publication(inst)
     method = getattr(manager, settings.READER_PUBLICATION_MANAGER_METHOD_BYDATE_NAME)
     return method
+
 
 def build_parameters(*args, **kwargs):
     '''
@@ -48,13 +53,14 @@ def build_parameters(*args, **kwargs):
         rval = []
         for k, v in d.items():
             k = quote_plus(str(k))
-            v = quote_plus(str(v), safe='{}') # To allow {} in uri templates without escaping
+            v = quote_plus(str(v), safe='{}')  # To allow {} in uri templates without escaping
             rval.append('%s=%s' % (k, v))
         return "&".join(rval)
 
     d = dict(zip(args, ['{%s}' % (str(a), ) for a in args]))
     d.update(kwargs)
     return _urlencode_custom(d)
+
 
 def get_uris_templates_for_settings(urlnames, prefix=""):
     '''
@@ -66,6 +72,7 @@ def get_uris_templates_for_settings(urlnames, prefix=""):
         rval[urlname.split(':')[-1]] = get_uri_template(urlname, prefix=prefix)
     return rval
 
+
 def get_uris_templates_for_settings_with_params(urlnamesandargs, prefix=""):
     '''
     Utility function to return a dict mapping urlnames to URI Templates,
@@ -76,6 +83,7 @@ def get_uris_templates_for_settings_with_params(urlnamesandargs, prefix=""):
     for urlname, args in urlnamesandargs:
         rval[urlname.split(':')[-1]] = get_uri_template(urlname, prefix=prefix) + '?' + build_parameters(*args)
     return rval
+
 
 def get_uri_template(urlname, args=None, prefix=""):
     '''
@@ -130,6 +138,7 @@ def get_uri_template(urlname, args=None, prefix=""):
                 if sorted(params) == expected_params:
                     return _convert(result, params)
     return None
+
 
 class HttpResponseXFile(HttpResponse):
     def __init__(self, filename, *args, **kwargs):

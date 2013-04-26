@@ -1,37 +1,106 @@
-var libeReader = function() {
-    var _publicationId, _bookName, _publication, _selectedBook, _pages, 
+function Reader(settings) {
+    var self = this;
+    /********************* DEFAULT settings **********************/
+    this.default_settings = {
+        /********* mandatory settings (have to be overwriten) **********/
+        'publicationId' : null,
+        /********* end of mandatory settings *******/
+
+        /********* api **********/
+        "pageLimitedAccessImage": '/static/digitalpaper/img/page-only-subscribers.png',
+        "pageUnderConstructionImage": '/static/digitalpaper/img/page-under-construction.png',
+        "pageUnderConstructionImageSmallest": '/static/digitalpaper/img/page-under-construction_smallest.png',
+        "token": '/digitalpaper/token/',
+        "publication": '/digitalpaper/publication/{id}/',
+        "reader_by_date": '/digitalpaper/date/{date}/',
+        "paper_page_resized": '/digitalpaper/page/{id}/',
+        "paper_page_cropped": '/digitalpaper/page/{id}/',
+        /****** end of api ******/
+
+        'accessLevel' : 0,
+        'accessLevelNeeded' : 1,
+        'pageWidth': 354,
+        'pageHeight': 500,
+        'pageThumbnailWidth': 104,
+        'pageThumbnailHeight': 148,
+        'pagesFree': [1],
+        'error_message': "Something terrible just happened.",
+        "imagesPerRow": 4,
+        "imagesPerColumn": 4,
+        "zoomFactor": 4,
+        'canAccess': function(pageNumber, pageId) {
+            return this.accessLevel >= this.accessLevelNeeded || jQuery.inArray(pageNumber, this.pagesFree) >= 0;
+        },
+        'canZoom': function(pageNumber, pageId) {
+            return this.accessLevel >= this.accessLevelNeeded && this.pageWidth && this.pageHeight;
+        },
+        'canUseMap': function(pageNumber, pageId) {
+            return this.accessLevel >= this.accessLevelNeeded && this.pageWidth && this.pageHeight;
+        },
+        'restrictedAccess' : function() {
+            jQuery.openDOMWindow({
+                windowSourceID: '#restrictedAccess',
+                width: 760,
+                height: 480,
+                windowPadding: 0
+            });
+        },
+        'setSize' : function(w, h) {
+            if (w) {
+                this.pageWidth = w;
+                this.pageThumbnailWidth = parseInt(w * this.pageThumbnailHeight / this.pageHeight, 10);
+                jQuery(window).trigger('size-known');
+                return true;
+            }
+            return false;
+        },
+        'evenSideElement' : jQuery('#evenSide'),
+        'oddSideElement' : jQuery('#oddSide'), 
+        'defaultError' : function(xhr, status) {
+            if (jQuery('#errorPopin').length <= 0) {
+                jQuery('#main').append('<div id="errorPopin"></div>');
+            }
+            jQuery('#bookPages, #pagesBefore, #pagesAfter, #pagesSlider').hide();
+            jQuery('#errorPopin').text(this.error_message + ' (Err. ' + xhr.status + ')').show();
+        },
+        'modelmapping': {
+            'default': 'iframe'
+        }
+    };
+
+    var _bookName, _publication, _selectedBook, _pages, 
         _displayedPage, _displayedBook, _zoomWindow, _winHeight, _winWidth, 
         _numberOfPages, _isZoomed, _zoomedPageHeight, _zoomedPageWidth, 
         _zoomMouseInit, _zoomPosInit, _zoomedPages, _zoomMouseDown, _step,
         _HDgridContainer;
         
-    _step = 21;
+    _step = 21; // TODO: settingsify this
     
-    function bindButtons() {
-        jQuery('#previousButton, #previousCorner').click(showPreviousPage);
-        jQuery('#nextButton, #nextCorner').click(showNextPage);
-        jQuery('#firstButton').click(showFirstPage);
-        jQuery('#lastButton').click(showLastPage);
-        jQuery('#evenSide, #oddSide').click(zoom);
-    }
+    this.bindButtons = function() {
+        jQuery('#previousButton, #previousCorner').click(this.showPreviousPage);
+        jQuery('#nextButton, #nextCorner').click(this.showNextPage);
+        jQuery('#firstButton').click(this.showFirstPage);
+        jQuery('#lastButton').click(this.showLastPage);
+        jQuery('#evenSide, #oddSide').click(this.zoom); // TODO: there are settings for those elements, but i wonder if it makes sense.
+    };
     
-    function unbindButtons() {
-        jQuery('#previousButton, #previousCorner').unbind("click", showPreviousPage);
-        jQuery('#nextButton, #nextCorner').unbind("click", showNextPage);
-        jQuery('#firstButton').unbind("click", showFirstPage);
-        jQuery('#lastButton').unbind("click", showLastPage);
-        jQuery('#evenSide, #oddSide').unbind("click");
-    }
+    this.unbindButtons = function() {
+        jQuery('#previousButton, #previousCorner').unbind("click", this.showPreviousPage);
+        jQuery('#nextButton, #nextCorner').unbind("click", this.showNextPage);
+        jQuery('#firstButton').unbind("click", this.showFirstPage);
+        jQuery('#lastButton').unbind("click", this.showLastPage);
+        jQuery('#evenSide, #oddSide').unbind("click", this.zoom);
+    };
     
-    function bindKeyboard() {
-        jQuery(document).bind('keydown', keyboardCallback);
-    }
+    this.bindKeyboard = function() {
+        jQuery(document).bind('keydown', this.keyboardCallback);
+    };
     
-    function unbindKeyboard() {
-        jQuery(document).unbind('keydown', keyboardCallback);
-    }
+    this.unbindKeyboard = function() {
+        jQuery(document).unbind('keydown', this.keyboardCallback);
+    };
     
-    function zoom(event) {
+    this.zoom = function(event) {
         var offset = jQuery(this).offset();
         if (!offset) {
             offset = {
@@ -46,26 +115,25 @@ var libeReader = function() {
         if (previousElement) {
             x = x + previousElement.width();
         }
-        zoomAtCoordinates(x, y);
+        self.zoomAtCoordinates(x, y);
         return false;
-    }
+    };
     
-    function zoomAtCoordinates(x, y) {
-        if (!libeConfig.canZoom()) {
-            libeConfig.restrictedAccess();
+    this.zoomAtCoordinates = function(x, y) {
+        if (!this.canZoom()) {
+            this.restrictedAccess();
             return false;
         }
         if (_isZoomed) {
             return false;
         }
-        
         jQuery(document).trigger('page-beforezoom', [_displayedPage]);
 
-        x = x * libeConfig.zoomFactor;
-        y = y * libeConfig.zoomFactor;
+        x = x * this.zoomFactor;
+        y = y * this.zoomFactor;
 
-        _zoomedPageHeight = libeConfig.pageHeight * libeConfig.zoomFactor;
-        _zoomedPageWidth = libeConfig.pageWidth * libeConfig.zoomFactor;
+        _zoomedPageHeight = this.pageHeight * this.zoomFactor;
+        _zoomedPageWidth = this.pageWidth * this.zoomFactor;
         
         jQuery('#pagesSlider').hide();
         jQuery('#bookSwitcher').hide();
@@ -79,7 +147,7 @@ var libeReader = function() {
         _zoomWindow.attr('id', 'zoomWindow');
         _zoomWindow.addClass('grab');
 
-        zoomResize();
+        this.zoomResize();
         
         _zoomedPages = jQuery(document.createElement('div'));
         _zoomedPages.attr('id', 'zoomedPages');
@@ -102,50 +170,51 @@ var libeReader = function() {
         }
         
         var top = y - (_winHeight / 2);
-        top = zoomTopInArea(top);
+        top = this.zoomTopInArea(top);
         
         if (_numberOfPages == 1 && x > _zoomedPageWidth) {
             x = x - _zoomedPageWidth;
         }
         var left = x - (_winWidth / 2);
-        left = zoomLeftInArea(left);
+        left = this.zoomLeftInArea(left);
         _zoomedPages.css({'height': _zoomedPageHeight, 'width': _numberOfPages * _zoomedPageWidth, 'top': -top, 'left': -left});
         
         _zoomWindow.append(_zoomedPages);
-        _zoomWindow.dblclick(quitZoom);
+        _zoomWindow.dblclick(this.quitZoom);
         
-        _zoomWindow.mousedown(zoomMouseDown);
-        _zoomWindow.mouseup(zoomMouseUp);
-        _zoomWindow.mousemove(zoomMouseMove);
-        jQuery(document.body).mouseleave(zoomMouseUp);
-        jQuery(document.body).bind('mousewheel', zoomMouseWheel);
+        _zoomWindow.mousedown(this.zoomMouseDown);
+        _zoomWindow.mouseup(this.zoomMouseUp);
+        _zoomWindow.mousemove(this.zoomMouseMove);
+        jQuery(document.body).mouseleave(this.zoomMouseUp);
+        jQuery(document.body).bind('mousewheel', this.zoomMouseWheel);
         jQuery(document.body).addClass('zoomed');
-        jQuery(window).bind('resize', zoomResize);
+        jQuery(window).bind('resize', this.zoomResize);
         
         jQuery(document.body).append(_zoomWindow);
         
         // Just for Apple touch, jQuery suxx and delete e.touches
-        var zw = document.getElementById('zoomWindow');
+        var zw = jQuery('#zoomWindow');
         if (zw && zw.addEventListener) {
-            zw.addEventListener('touchstart', zoomMouseDown, true);
-            zw.addEventListener('touchend', zoomMouseUp, true);
-            zw.addEventListener('touchmove', zoomMouseMove, true);
+            // TODO: use jquery event binder to handle ie 7-8
+            zw.addEventListener('touchstart', this.zoomMouseDown, true);
+            zw.addEventListener('touchend', this.zoomMouseUp, true);
+            zw.addEventListener('touchmove', this.zoomMouseMove, true);
         }
         
-        zoomInitHDGrid(top, left);
+        this.zoomInitHDGrid(top, left);
         _isZoomed = true;
         jQuery('#zoomButton').addClass('unzoom');
         jQuery(document).trigger('page-afterzoom', [_displayedPage]);
-    }
+    };
     
-    function zoomInitHDGrid(top, left) {
+    this.zoomInitHDGrid = function(top, left) {
         _HDgridContainer = jQuery(document.createElement('div'));
         _HDgridContainer.css({'height': _zoomedPageHeight, 'width': _numberOfPages * _zoomedPageWidth, 'top': -top, 'left': -left});
         _HDgridContainer.attr('id', 'HDGrid');
         
-        var nbZones = _numberOfPages * libeConfig.imagesPerRow * libeConfig.imagesPerColumn;
-        var xRowSize = Math.floor(_zoomedPageWidth / libeConfig.imagesPerRow);
-        var yColumnSize = Math.floor(_zoomedPageHeight / libeConfig.imagesPerColumn);
+        var nbZones = _numberOfPages * this.imagesPerRow * this.imagesPerColumn;
+        var xRowSize = Math.floor(_zoomedPageWidth / this.imagesPerRow);
+        var yColumnSize = Math.floor(_zoomedPageHeight / this.imagesPerColumn);
         
         for (var i = 0; i < nbZones; i++) {
             var img = jQuery(document.createElement('img'));
@@ -155,13 +224,13 @@ var libeReader = function() {
         }
         _zoomWindow.append(_HDgridContainer);
         
-        zoomHighDefAtCoordinates(left, top);
-    }
+        this.zoomHighDefAtCoordinates(left, top);
+    };
     
-    function quitZoom() {
+    this.quitZoom = function() {
         jQuery(document).trigger('page-leavezoom', [_displayedPage]);
         jQuery(_zoomWindow).detach();
-        jQuery(window).unbind('resize', zoomResize);
+        jQuery(window).unbind('resize', this.zoomResize);
         jQuery(document.body).unbind('mousewheel');
         jQuery(document.body).removeClass('zoomed');        
         jQuery('#pagesSlider').show();
@@ -170,25 +239,25 @@ var libeReader = function() {
         _isZoomed = false;
         jQuery('#zoomButton').removeClass('unzoom');
         return false;
-    }
+    };
     
-    function zoomResize() {
+    this.zoomResize = function() {
         var win = jQuery(window);
         _winHeight = win.height();
         _winWidth = win.width();
-    }
+    };
     
-    function keyboardCallback(e) {
+    this.keyboardCallback = function(e) {
         if (jQuery('#DOMWindow').length <= 0) {
             if (_isZoomed) {
-                return zoomedKeyboardCallback(e);
+                return self.zoomedKeyboardCallback(e);
             } else {
-                return normalKeyboardCallback(e);        
+                return self.normalKeyboardCallback(e);        
             }
         }
-    }
+    };
     
-    function normalKeyboardCallback(e) {
+    this.normalKeyboardCallback = function(e) {
         if (e.ctrlKey) {
             switch (e.which) {
                 case 109: // -
@@ -198,29 +267,29 @@ var libeReader = function() {
                 case 61:  // =
                 case 107: // +
                 case 38:  // up
-                    zoom(e);
+                    self.zoom(e);
                     e.preventDefault();
                     break;
                 case 35: // end
-                    showLastPage(e);
+                    self.showLastPage(e);
                     break;
                 case 36: // home
-                    showFirstPage(e);
+                    self.showFirstPage(e);
                     break;                
                 case 37: // left
-                    showPreviousPage(e);
+                    self.showPreviousPage(e);
                     break;
                 case 39: // right
-                    showNextPage(e);
+                    self.showNextPage(e);
                     break;
                 default:
                     break;
             }
         }
-    }
+    };
     
-    function zoomedKeyboardCallback(e) {
-        _zoomLoadPosInit();
+    this.zoomedKeyboardCallback = function(e) {
+        this.zoomLoadPosInit();
         var x = 0;
         var y = 0;
         if (e.ctrlKey) {
@@ -228,7 +297,7 @@ var libeReader = function() {
                 case 27:  // esc
                 case 109: // -
                 case 40: // bottom
-                    quitZoom();
+                    self.quitZoom();
                     e.preventDefault();
                     break;
                 default:
@@ -237,7 +306,7 @@ var libeReader = function() {
         } else {
             switch (e.which) {
                  case 27:  // esc
-                    quitZoom();
+                    self.quitZoom();
                     e.preventDefault();
                     break;
                 case 37: // left
@@ -257,74 +326,69 @@ var libeReader = function() {
             }
         }
         if (x || y) {
-            zoomBy(x, y);
+            self.zoomBy(x, y);
             e.preventDefault();
         }
-    }
+    };
     
-    function _zoomLoadPosInit() {
+    this.zoomLoadPosInit = function() {
         _zoomPosInit = {x: -parseInt(_zoomedPages.css('left'), 10), y: -parseInt(_zoomedPages.css('top'), 10)};
-    }
+    };
     
-    function zoomMouseDown(e) {    
+    this.zoomMouseDown = function(e) {
         // iPhone/iPad
+        e.preventDefault();
         if (e.touches) {
-            e.preventDefault();
             e = e.touches[0];
-        } else {
-            e.preventDefault();
-        }        
+        }
 
         _zoomMouseDown = true;
-        _zoomLoadPosInit();
+        self.zoomLoadPosInit();
         _zoomMouseInit = {x: e.clientX, y: e.clientY};
         _zoomWindow.addClass('grabbing');
         _zoomWindow.removeClass('grab');        
-    }
+    };
     
-    function zoomMouseUp(e) {
+    this.zoomMouseUp = function(e) {
         _zoomMouseDown = false;
         _zoomWindow.addClass('grab');
         _zoomWindow.removeClass('grabbing');
         e.preventDefault();
         
-        zoomHighDefAtCoordinates(-parseInt(_zoomedPages.css('left'), 10), -parseInt(_zoomedPages.css('top'), 10));
-    }
+        self.zoomHighDefAtCoordinates(-parseInt(_zoomedPages.css('left'), 10), -parseInt(_zoomedPages.css('top'), 10));
+    };
     
-    function zoomMouseMove(e) {
+    this.zoomMouseMove = function(e) {
         if (_zoomMouseDown !== true) {
             return;
         }
-        
+        e.preventDefault();
         // iPhone/iPad
         if (e.touches) {
-            e.preventDefault();
-            e = e.touches[0];
-        } else {
-            e.preventDefault();
+            e = e.touches[0]; // TODO: wtf ? why would we want to lose datas
         }
 
-        zoomBy(_zoomMouseInit.x - e.clientX, _zoomMouseInit.y - e.clientY);
-    }
+        self.zoomBy(_zoomMouseInit.x - e.clientX, _zoomMouseInit.y - e.clientY);
+    };
     
-    function zoomMouseWheel(e, deltaX, deltaY) {
-        _zoomLoadPosInit();
-        zoomBy(-_step * deltaX, -_step * deltaY);
+    this.zoomMouseWheel = function(e, deltaX, deltaY) {
+        self.zoomLoadPosInit();
+        self.zoomBy(-_step * deltaX, -_step * deltaY);
         e.preventDefault();
-    }
+    };
     
-    function zoomBy(x, y) {
+    this.zoomBy = function(x, y) {
         var newLeft = _zoomPosInit.x + (x);
         var newTop = _zoomPosInit.y + (y);
         
-        newLeft = zoomLeftInArea(newLeft);
-        newTop = zoomTopInArea(newTop);
+        newLeft = self.zoomLeftInArea(newLeft);
+        newTop = self.zoomTopInArea(newTop);
         
         _zoomedPages.css({'left': -newLeft, 'top': -newTop});
         _HDgridContainer.css({'left': -newLeft, 'top': -newTop});
-    }
+    };
     
-    function zoomLeftInArea(left) {
+    this.zoomLeftInArea = function(left) {
         if (left < 0) {
             left = 0;
         }
@@ -333,8 +397,8 @@ var libeReader = function() {
         }
         
         return left;
-    }
-    function zoomTopInArea(top) {
+    };
+    this.zoomTopInArea = function(top) {
         if (top < 0) {
             top = 0;
         }
@@ -343,36 +407,36 @@ var libeReader = function() {
             top = _zoomedPageHeight - _winHeight;
         }
         return top;
-    }
+    };
     
-    function zoomHighDefAtCoordinates(x, y) {
+    this.zoomHighDefAtCoordinates = function(x, y) {
         x = x + (_winWidth / 2);
         y = y + (_winHeight / 2);
         
-        var xRowSize = _zoomedPageWidth / libeConfig.imagesPerRow;
-        var yColumnSize = _zoomedPageHeight / libeConfig.imagesPerColumn;
+        var xRowSize = _zoomedPageWidth / this.imagesPerRow;
+        var yColumnSize = _zoomedPageHeight / this.imagesPerColumn;
             
         var xRow = Math.floor(x / xRowSize);
         var yColumn = Math.floor(y / yColumnSize);
-        getZoomImage(xRow, yColumn);
+        this.getZoomImage(xRow, yColumn);
         
-        for (var i = 0; i < _numberOfPages * libeConfig.imagesPerRow + libeConfig.imagesPerColumn; i++) {
+        for (var i = 0; i < _numberOfPages * this.imagesPerRow + this.imagesPerColumn; i++) {
             for (var j = 0; j < i; j++) {
                 var plop = i - j;
-                getZoomImage(xRow - j, yColumn - plop);
-                getZoomImage(xRow + j, yColumn + plop);
-                getZoomImage(xRow - plop, yColumn + j);
-                getZoomImage(xRow + plop, yColumn - j);
+                this.getZoomImage(xRow - j, yColumn - plop);
+                this.getZoomImage(xRow + j, yColumn + plop);
+                this.getZoomImage(xRow - plop, yColumn + j);
+                this.getZoomImage(xRow + plop, yColumn - j);
             }
         }
-    }
+    };
     
-    function getZoomImage(xRow, yColumn) {    
+    this.getZoomImage = function(xRow, yColumn) { // TODO: dafuq names
         if (xRow < 0 || yColumn < 0) {
             return;
         }
         
-        if (yColumn >= libeConfig.imagesPerColumn) {
+        if (yColumn >= this.imagesPerColumn) {
             return;
         }
 
@@ -382,11 +446,11 @@ var libeReader = function() {
             // Constraints need to change in that case, to allow the coordinates 
             // on the right (where the first page is) and disallow the ones on the left
             // (where there isn't any page)
-            if (xRow >= 2 * libeConfig.imagesPerRow || xRow < libeConfig.imagesPerRow) {
+            if (xRow >= 2 * this.imagesPerRow || xRow < this.imagesPerRow) {
                 return;
             }
         } else {
-            if (xRow >= _numberOfPages * libeConfig.imagesPerRow) {
+            if (xRow >= _numberOfPages * this.imagesPerRow) {
                 return;
             }
         }
@@ -397,9 +461,9 @@ var libeReader = function() {
             // the indexing need to be changed. (Note: we don't want to change xRow and yColumn
             // directly, the web services expect x to be > imagesPerRow on the right page, 
             // even if it's the first one!)
-            imgIndex = yColumn * libeConfig.imagesPerRow + xRow - libeConfig.imagesPerRow;
+            imgIndex = yColumn * this.imagesPerRow + xRow - this.imagesPerRow;
         } else {
-            imgIndex = yColumn * libeConfig.imagesPerRow * _numberOfPages + xRow;
+            imgIndex = yColumn * this.imagesPerRow * _numberOfPages + xRow;
         }
         
         var img = _HDgridContainer.children().eq(imgIndex);
@@ -411,39 +475,39 @@ var libeReader = function() {
             return;
         }
         
-        var currentPage = _pages[_displayedPage + Math.floor(xRow / libeConfig.imagesPerRow)];
+        var currentPage = _pages[_displayedPage + Math.floor(xRow / this.imagesPerRow)];
         if (!currentPage) {
             return;
         }
-        
         if (currentPage.pageId <= 0) {
             img.css({'visibility' : 'hidden'});
         } else {
             var replaces = {
                 '{format}': 'png',
                 '{id}': currentPage.pageId,
-                '{crop}': libeConfig.imagesPerRow + 'x' + libeConfig.imagesPerColumn,
+                '{crop}': this.imagesPerRow + 'x' + this.imagesPerColumn,
                 '{x}': xRow,
                 '{y}': yColumn
             };
             
-            var src = libeConfig.webservices.paper_page_cropped;
+            var src = this.paper_page_cropped;
             var k;
             for (k in replaces) {
                 src = src.replace(k, replaces[k]);
             }
             img.attr('src', src);
         }
-    }
+        console.log(src);
+    };
     
-    function showHoverCorner() {
+    this.showHoverCorner = function() {
         jQuery(this).css('opacity', 1);
-    }
-    function hideHoverCorner() {
+    };
+    this.hideHoverCorner = function() {
         jQuery(this).css('opacity', 0);
-    }
+    };
     
-    function displayPagination() {
+    this.displayPagination = function() {
         var previousButtons = jQuery('#previousCorner, #pagesBefore');
         if (_displayedPage - 2 >= 0) {
             previousButtons.show();
@@ -457,10 +521,10 @@ var libeReader = function() {
         } else {
             nextButtons.hide();
         }
-        readerSlider.moveIntoView(_displayedPage);
-    }
+        readerSlider.moveIntoView(_displayedPage); // TODO
+    };
     
-    function showPage(number) {
+    this.showPage = function(number) {
         var newDisplayedPage = number - number % 2;
         
         // Non-existant page, nothing to do
@@ -470,8 +534,8 @@ var libeReader = function() {
         
         jQuery('#oddSide .pageInfo, #evenSide .pageInfo').fadeOut();
         
-        unbindButtons();
-        unbindKeyboard();
+        this.unbindButtons();
+        this.unbindKeyboard(); // TODO: get rid of that please ? .live ?
         
         var evenSide = jQuery('#evenSide');
         var oddSide =  jQuery('#oddSide');
@@ -516,12 +580,12 @@ var libeReader = function() {
         evenSide.parent().append(transitionContainerElement);
         
         transitionElement.animate({'width': 2 * finalWidth}, function() { 
-            cleanAfterShowPage(number); 
+            self.cleanAfterShowPage(number); 
             jQuery(this).parent().detach();
         });
-    }
+    };
     
-    function _hideOldPages() {
+    this.hideOldPages = function() {
         if (typeof _displayedPage != "undefined") {
             if (_pages[_displayedPage]) {
                 _pages[_displayedPage].hide();
@@ -530,28 +594,28 @@ var libeReader = function() {
                 _pages[_displayedPage + 1].hide();
             }
         }
-        unHighlightCurrentPages();
-    }
+        this.unHighlightCurrentPages();
+    };
     
-    function displayPage(number) {
+    this.displayPage = function(number) {
         var page = _pages[number];
         page.show();
-        highlightCurrentPages(_displayedBook, number);
+        this.highlightCurrentPages(_displayedBook, number);
         var elm = jQuery('#' + ((page.pageNumber % 2 === 0) ? 'even' : 'odd') + 'Side .pageInfo');
         elm.html(page.getPageInfo());
         elm.fadeIn();
-    }
+    };
     
-    function bookDisplayed() {
+    this.bookDisplayed = function() {
         return _displayedBook;
-    }
+    };
     
-    function pageDisplayed() {
+    this.pageDisplayed = function() {
         return _displayedPage;
-    }
+    };
     
-    function cleanAfterShowPage(number) {
-        _hideOldPages();
+    this.cleanAfterShowPage = function(number) {
+        this.hideOldPages();
 
         var newDisplayedPage = number - number % 2;
         if (_pages[newDisplayedPage] || _pages[newDisplayedPage + 1]) {
@@ -563,14 +627,14 @@ var libeReader = function() {
         var shownPages = [];
         if (_pages[_displayedPage]) {
             shownPages.push(_displayedPage);
-            displayPage(_displayedPage);
+            this.displayPage(_displayedPage);
             if (!_pages[newDisplayedPage].canAccess()) {
                 showRestrictedAccess = true;
             }
         }
         if (_pages[_displayedPage + 1]) {
             shownPages.push(_displayedPage + 1);
-            displayPage(_displayedPage + 1);
+            this.displayPage(_displayedPage + 1);
             if (!_pages[newDisplayedPage + 1].canAccess()) {
                 showRestrictedAccess = true;
             }
@@ -580,72 +644,71 @@ var libeReader = function() {
             // show "access restricted" lightbox if the displayed page
             // is restricted - the user will be able to close it, 
             // it's just to remind him the page isn't free
-            libeConfig.restrictedAccess();
+            this.restrictedAccess();
         }        
-        displayPagination();
-        bindButtons();
-        bindKeyboard();
+        this.displayPagination();
+        this.bindButtons();
+        this.bindKeyboard();
         jQuery(document).trigger('pages-shown', [_displayedBook, shownPages]);
-    }
+    };
         
-    function showSelectedPage(e) {
+    this.showSelectedPage = function(e) {
         e.preventDefault();
-        var tmp = _parseHashtoGetParams(this.href.split('#!/')[1]);
+        var tmp = self.parseHashtoGetParams(this.href.split('#!/')[1]);
         var newDisplayedBook = tmp[0];
         var newDisplayedPage = tmp[1] - tmp[1] % 2;
         
         if (newDisplayedBook != _displayedBook) {
-            showBook(newDisplayedBook, newDisplayedPage);
+            self.showBook(newDisplayedBook, newDisplayedPage);
         } else if (newDisplayedPage != _displayedPage) {
-            showPage(newDisplayedPage);
+            self.showPage(newDisplayedPage);
         }
-    }
+    };
     
-    function showPreviousPage(e) {
+    this.showPreviousPage = function(e) {
         e.preventDefault();
-        showPage(_displayedPage - 2);
-    }
-    function showNextPage(e) {
+        self.showPage(_displayedPage - 2);
+    };
+    this.showNextPage = function(e) {
         e.preventDefault();
-        showPage(_displayedPage + 2);
-    }
+        self.showPage(_displayedPage + 2);
+    };
+    this.showFirstPage = function(e) {
+        e.preventDefault();
+        self.showPage(0);
+    };
+    this.showLastPage = function(e) {
+        e.preventDefault();
+        self.showPage(_selectedBook.pagination);
+    };
     
-    function showFirstPage(e) {
-        e.preventDefault();
-        showPage(0);
-    }
-    function showLastPage(e) {
-        e.preventDefault();
-        showPage(_selectedBook.pagination);
-    }
-    
-    function sizeKnown(e) {
+    this.sizeKnown = function(e) {
         var sides = jQuery('#evenSide, #oddSide');
-        sides.width(libeConfig.pageWidth);
-        sides.css('max-height', libeConfig.pageHeight + 'px');
+        sides.width(self.pageWidth);
+        sides.css('max-height', self.pageHeight + 'px');
         var parent = sides.parent();
         if (parent) {
             parent.width(sides.outerWidth() * 2);
         }
         jQuery(window).unbind(e);
-    }
+    };
     
-    function unHighlightHoveredPages(e) {
+    this.unHighlightHoveredPages = function(e) {
         jQuery('#pagesList a.hovered').removeClass('hovered');
-    }
+    };
     
-    function unHighlightCurrentPages(e) {
+    this.unHighlightCurrentPages = function(e) {
         jQuery('#pagesList a.current').removeClass('current');
-    }
+    };
     
-    function highlightCurrentPages(book, page) {
+    this.highlightCurrentPages = function(book, page) {
         var current = jQuery('#thumb_' + book + '_' + page);
         current.addClass('current');        
-    }
+    };
       
-    function highlightHoveredPages(e) {
+    this.highlightHoveredPages = function (e) {
         // remove old highlight
-        unHighlightHoveredPages();
+        self.unHighlightHoveredPages();
 
         var hovered = jQuery(this);
         var neighbour = jQuery();
@@ -662,9 +725,9 @@ var libeReader = function() {
         // highlight the relevant pages
         hovered.addClass('hovered');        
         neighbour.addClass('hovered');
-    }
+    };
     
-    function _changeBook(newBook) {
+     this.changeBook = function(newBook) {
         if (newBook > _publication.books.length) {
             newBook = 0;
         }
@@ -678,16 +741,16 @@ var libeReader = function() {
         _displayedBook = newBook;
         
         if (typeof _selectedBook == 'undefined' || !_selectedBook.pagination) {
-            libeConfig.defaultError({'status' : 418});
+            this.defaultError({'status' : 418});
             return false;
         }
         return true;
-    }
+    };
     
-    function showBook(bookToShow, possiblePage) {
+    this.showBook = function (bookToShow, possiblePage) {
 
-        _hideOldPages();
-        if (!_changeBook(bookToShow)) {
+        this.hideOldPages();
+        if (!this.changeBook(bookToShow)) {
             return false;
         }
         
@@ -696,29 +759,28 @@ var libeReader = function() {
             pageToShow = possiblePage;
         }
 
-        jQuery(window).bind('size-known', sizeKnown);
+        jQuery(window).bind('size-known', this.sizeKnown);
         
         _pages = new Array(parseInt(_selectedBook.pagination, 10));
-        var i;
-        for (i = 0, il = _selectedBook.pages.length; i < il ; i++) {
+        for (var i = 0; i < _selectedBook.pages.length; i++) {
             var page = _selectedBook.pages[i];
-            _pages[page.page_number] = libePage(page.page_number, page.id, page.paper_channel, page.maps);
+            _pages[page.page_number] = new Page(this, page.page_number, page.id, page.paper_channel, page.maps);
         }
         for (i = 1; i <= _selectedBook.pagination; i++) {
             if (!_pages[i]) {
-                _pages[i] = libePage(i);
+                _pages[i] = new Page(this, i);
             }
             var a = _pages[i].getThumbnailForList(_displayedBook, 'smallest');
             a.attr({'id' : 'thumb_' + _displayedBook + '_' + i});
             jQuery('#pagesList').append(a);
-            a.bind('click', showSelectedPage);
-            a.bind('mouseover', highlightHoveredPages);
+            a.bind('click', this.showSelectedPage);
+            a.bind('mouseover', this.highlightHoveredPages);
         }
         jQuery(document).trigger('book-load', [_selectedBook, _displayedBook]);
-        showPage(pageToShow);
-    }
+        this.showPage(pageToShow);
+    };
     
-    function findPageFromId(id) {
+    this.findPageFromId = function(id) {
         var len = _publication.books.length;
         for (var i = 0; i < len; i++) {
             var book = _publication.books[i];
@@ -731,9 +793,9 @@ var libeReader = function() {
             }
         }
         return null;
-    }
+    };
     
-    function _parseHashtoGetParams(hash) {
+    this.parseHashtoGetParams = function (hash) {
         if (!hash) {
             return [0, 0];
         }
@@ -747,52 +809,34 @@ var libeReader = function() {
         var bookToShow = parseInt(hash.split('_')[0], 10);
         var possiblePage = parseInt(hash.split('_')[1], 10);
         return [bookToShow, possiblePage];
-    }
+    };
     
-    function handlePublication(data) {
+    this.handlePublication = function(data) {
         _publication = data;
         
         // If the publication data contains an access level, use it as the new
         // access level needed.
         if (typeof data.access !== 'undefined') {
-            libeConfig.changeAccessLevelNeeded(parseInt(data.access, 10));
+            self.changeAccessLevelNeeded(parseInt(data.access, 10));
         }
-        
-        jQuery('#pagesList').bind('mouseout', unHighlightHoveredPages);
+
+        jQuery('#pagesList').bind('mouseout', self.unHighlightHoveredPages);
         
         // Trigger a first event before showing any pages
-        jQuery(document).trigger('publication-beforeload', [_publication, _publicationId]);
+        jQuery(document).trigger('publication-beforeload', [_publication, self.publicationId]);
         
         var tmp = [0, 0];
         if (location.hash !== "") {
-            tmp = _parseHashtoGetParams(location.hash.split('#!/')[1]);
+            tmp = self.parseHashtoGetParams(location.hash.split('#!/')[1]);
         }
         
-        showBookList(); // call first, so that we can play with the list in showBook()
-        showBook((tmp[0] || 0), (tmp[1] || 0));
+        self.showBookList(); // call first, so that we can play with the list in showBook()
+        self.showBook((tmp[0] || 0), (tmp[1] || 0));
         
-        jQuery(document).trigger('publication-load', [data, _publicationId]);
-    }
+        jQuery(document).trigger('publication-load', [data, self.publicationId]);
+    };
     
-    function init(publicationId) {
-        _publicationId = publicationId;
-
-        var url = libeConfig.webservices.publication.replace('{format}', 'json').replace('{id}', publicationId);
-
-        jQuery.ajax({url: url, dataType: "json", success: handlePublication, error: libeConfig.defaultError});
-        
-        jQuery('#zoomButton').click(function (e) {
-            if (_isZoomed) {
-                quitZoom();
-            } else {
-                zoomAtCoordinates(0, 0);
-            }
-            return false;
-        });
-        jQuery('#previousCorner, #nextCorner').hover(showHoverCorner, hideHoverCorner);
-    }
-    
-    function showBookList() {
+    this.showBookList = function() {
         var len = _publication.books.length;
         for (var i = 0; i < len; i++) {
             var page = _publication.books[i].pages[0];
@@ -801,27 +845,69 @@ var libeReader = function() {
                 // First page should always be numbered 1. If it's non existant
                 // or if it's not numbered 1, then the first page is still in
                 // construction... Fake it.
-                obj = libePage(1);
+                obj = new Page(this, 1);
             } else {
-                obj = libePage(page.page_number, page.id, page.paper_channel, page.maps);
+                obj = new Page(this, page.page_number, page.id, page.paper_channel, page.maps);
             }
             
             var a = obj.getThumbnailForList(i);
             a.attr('id', "bookThumb-" + i);
             a.append('<span class="bookName">' + _publication.books[i].name + '</span>');
             jQuery('#bookSwitcher').append(a);
-            a.bind('click', showSelectedPage);
+            a.bind('click', this.showSelectedPage);
         }
-    }
-    
-    return {
-        init: init,
-        showPage: showPage,
-        showPreviousPage: showPreviousPage,
-        showNextPage: showNextPage,
-        showSelectedPage: showSelectedPage,
-        showBook: showBook,
-        bookDisplayed : bookDisplayed,
-        pageDisplayed: pageDisplayed
     };
-}();
+
+    this.init = function() {
+        if (settings.publicationId == 'undefined') {
+            throw "What the fuck man ?! are you drunk ? there is no publicationId !"; // TODO
+            return false;
+        }
+
+        jQuery.extend(this, this.default_settings, settings);
+
+        function readerInitCallback(data, textStatus, xhrobject) {
+            try {
+                self.accessLevel = data['access_level'];
+                jQuery.ajax({
+                    url: self.publication.replace('{format}', 'json').replace('{id}', self.publicationId),
+                    dataType: "json",
+                    success: self.handlePublication,
+                    error: self.defaultError
+                });
+        
+                // TODO: this has nothing to do here
+                jQuery('#zoomButton').click(function (e) {
+                    if (_isZoomed) {
+                        self.quitZoom();
+                    } else {
+                        self.zoomAtCoordinates(0, 0);
+                    }
+                    return false;
+                });
+                // TODO: this either
+                jQuery('#previousCorner, #nextCorner').hover(self.showHoverCorner, self.hideHoverCorner);
+            } catch (e) {
+                console.log(e); // TODO
+                throw e;
+            }
+        }
+
+        // TODO: move this in a more appropriate place
+        if (this.pageHeight) {
+            jQuery('#bookPages').height(this.pageHeight);
+        }
+
+        jQuery.ajax({
+            'url': this.token.replace('{format}', 'json'),
+            'type': 'post',
+            'data' : {'use_session' : 1 },
+            'dataType': 'json',
+            'success': readerInitCallback,
+            'error': readerInitCallback
+        });
+    };
+    
+    // here we go
+    this.init();
+};

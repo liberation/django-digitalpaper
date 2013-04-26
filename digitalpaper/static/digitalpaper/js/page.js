@@ -1,11 +1,12 @@
-var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
+var Page = function(reader, pageNumber, pageId, pageChannel, pageMaps) {
+    var self = this;
     var _pageElement = [], _areasElement = [];
     var map = {};
-    var _pageNumber = -1, _pageId = -1;
+    var _pageNumber = -1;
     var _mapsLoaded = false;
     var _smallImageSource = null, _smallestImageSource = null, _imageSource = null;
     var _pageChannel = "";
-    
+
     function hoverArea() {
         var target = jQuery(this);
         var objectId = target.data('area').object_id;
@@ -22,7 +23,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         if (_mapsLoaded) {
             return;
         }
-        if (!libeConfig.pageWidth) {
+        if (!reader.pageWidth) {
             // too soon! better luck next time.
             return;
         }
@@ -30,7 +31,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         if (!map || !map.areas || !map.areas.length || !map.width || !map.height) {
             return;
         }
-        var reductionRatio = libeConfig.pageWidth / map.width;
+        var reductionRatio = reader.pageWidth / map.width;
         for (var i = 0, il = map.areas.length; i < il; i++) {
             var area = map.areas[i];
             var coords = area.coords.split(",");
@@ -61,13 +62,13 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     }
     
     function openArea() {
-        if (!libeConfig.canUseMap(_pageNumber, _pageId)) {
-            libeConfig.restrictedAccess();
+        if (!reader.canUseMap(_pageNumber, this.pageId)) {
+            reader.restrictedAccess();
             return false;
         }
         var data = jQuery(this).data('area');
         if (data.object_class == "article") {
-            var url = libeConfig.webservices.contentmodel;
+            var url = reader.contentmodel;
             var replaces = {
                 '{format}' : 'html',
                 '{id}' : data.object_id,
@@ -80,20 +81,20 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             }
             
             k = 'default';
-            if (typeof libeConfig.modelmapping[data.object_class] !== 'undefined') {
+            if (typeof reader.modelmapping[data.object_class] !== 'undefined') {
                 k = data.object_class;
             }
 
-            if (libeConfig.modelmapping[k] == 'iframe' ||
-                libeConfig.modelmapping[k] == 'ajax'   ||
-                libeConfig.modelmapping[k] == 'inline') {
+            if (reader.modelmapping[k] == 'iframe' ||
+                reader.modelmapping[k] == 'ajax'   ||
+                reader.modelmapping[k] == 'inline') {
                 var dw = jQuery(this).openDOMWindow({
                     windowSourceURL: url,
                     windowSourceID: '#contentmodelContent',
                     width: parseInt(document.documentElement.clientWidth * 90 / 100, 10),
                     height: parseInt(document.documentElement.clientHeight * 90 / 100, 10),
                     fixedWindowY: 0,
-                    windowSource: libeConfig.modelmapping[k],
+                    windowSource: reader.modelmapping[k],
                     loader: 1,
                     functionCallOnClose: function() {
                         jQuery('body').css({'overflow': 'auto'});
@@ -102,7 +103,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
                         jQuery('body').css({'overflow': 'hidden'});
                     }
                 });
-                if (libeConfig.modelmapping[k] == 'inline') {
+                if (reader.modelmapping[k] == 'inline') {
                     // inline is interesting to add custom content, but
                     // it doesn't load the URL, so we have to do it manually
                     // Note: have a .inner element inside your #contentmodelContent
@@ -123,24 +124,24 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         jQuery(this).clearQueue().animate({opacity: 0}, 250);
     }
         
-    function show() {
+    this.show = function() {
         jQuery(_pageElement).show();
-    }
+    };
     
-    function hide() {
+    this.hide = function() {
         jQuery(_pageElement).hide();
-    }
+    };
     
-    function getPageInfo() {
+    this.getPageInfo = function() {
         return '<span class="pageNumber">' + _pageNumber + '</span>' +
                '<span class="pageChannel">' + _pageChannel + '</span>';
-    }
+    };
     
-    function canAccess() {
-        return libeConfig.canAccess(_pageNumber, _pageId);
-    }
+    this.canAccess = function() {
+        return reader.canAccess(_pageNumber, this.pageId);
+    };
     
-    function getThumbnailForList(book, size) {
+    this.getThumbnailForList = function(book, size) {
         var src;
         if (typeof size == 'undefined' || size != 'smallest') {
             size = 'small';
@@ -161,7 +162,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
         a.append(img);
         a.append('<span class="pageNumber">' + _pageNumber + '</span>');
         return a;
-    }
+    };
     
     // Init Code
     
@@ -170,7 +171,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     }
 
     if (typeof(pageId) !== 'undefined') {
-        _pageId = parseInt(pageId, 10);
+        this.pageId = parseInt(pageId, 10);
     }
     
     if (typeof(pageChannel) !== 'undefined') {
@@ -179,34 +180,34 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
     
     _pageElement = document.createElement("div");
     _pageElement.className = "page loading";
-    jQuery(_pageElement).height(libeConfig.pageHeight);  // page height is always fixed from config - width is dynamic
-    if (_pageId > 0) {
-        _pageElement.id = 'page_' + _pageId;
+    jQuery(_pageElement).height(reader.pageHeight);  // page height is always fixed from config - width is dynamic
+    if (this.pageId > 0) {
+        _pageElement.id = 'page_' + this.pageId;
     }
     
     var baseSrc = "";
     // Set thumbnails, they are always visible, unless the page is under construction
-    if (_pageId > 0) {
-        baseSrc = libeConfig.webservices.paper_page_resized.replace('{format}', 'jpg').replace('{id}', _pageId);
-        _smallestImageSource = baseSrc.replace('{size}', 'x' + libeConfig.pageSmallThumbnailHeight);
-        _smallImageSource    = baseSrc.replace('{size}', 'x' + libeConfig.pageThumbnailHeight);
+    if (this.pageId > 0) {
+        baseSrc = reader.paper_page_resized.replace('{format}', 'jpg').replace('{id}', this.pageId);
+        _smallestImageSource = baseSrc.replace('{size}', 'x' + reader.pageSmallThumbnailHeight);
+        _smallImageSource    = baseSrc.replace('{size}', 'x' + reader.pageThumbnailHeight);
     } else {
-        _smallestImageSource = libeConfig.pageUnderConstructionImageSmallest;
-        _smallImageSource = libeConfig.pageUnderConstructionImage;
+        _smallestImageSource = reader.pageUnderConstructionImageSmallest;
+        _smallImageSource = reader.pageUnderConstructionImage;
     }
 
     var img;
     if (_pageNumber <= 0) {
         // non existant page, do nothing
-    } else if (!canAccess()) {
+    } else if (!this.canAccess()) {
         // page that the user isn't allowed to read
         img = document.createElement("img");
-        img.src = _imageSource = libeConfig.pageLimitedAccessImage;
+        img.src = _imageSource = reader.pageLimitedAccessImage;
         _pageElement.appendChild(img);
-    } else if (_pageId <= 0) {
+    } else if (this.pageId <= 0) {
         // page not yet included in the book, but that should exist: display it as "under construction"
         img = document.createElement("img");
-        img.src = _imageSource = libeConfig.pageUnderConstructionImage;
+        img.src = _imageSource = reader.pageUnderConstructionImage;
         _pageElement.appendChild(img);
     } else {
         // normal page
@@ -217,7 +218,7 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             // Little trick: use _pageElement and not the image to find out the dimensions of the 
             // content, since the load event might occur at a time the image is hidden (if the user
             // is flipping through pages very fast).
-            if (libeConfig.setSize(jQuery(_pageElement).width(), jQuery(_pageElement).height())) {
+            if (reader.setSize(jQuery(_pageElement).width(), jQuery(_pageElement).height())) {
                 // handleMap() would make more sense in showPage(), but we really need
                 // to know the right width before calling it, so we call it here.
                 handleMap();
@@ -227,25 +228,13 @@ var libePage = function(pageNumber, pageId, pageChannel, pageMaps) {
             jQuery(_pageElement).removeClass('loading');
             jQuery(_pageElement).addClass('warning');
         });
-        img.src = _imageSource = baseSrc.replace('{size}', 'x' + libeConfig.pageHeight);
+        img.src = _imageSource = baseSrc.replace('{size}', 'x' + reader.pageHeight);
         _pageElement.appendChild(img);
     }
-    
+
     if (_pageNumber % 2 === 0) {
-        libeConfig.evenSideElement.appendChild(_pageElement);
+        reader.evenSideElement.append(_pageElement);
     } else {
-        libeConfig.oddSideElement.appendChild(_pageElement);
+        reader.oddSideElement.append(_pageElement);
     }
-    
-    return {
-        show: show,
-        hide: hide,
-        imageSource: _imageSource,
-        pageId: _pageId,
-        pageNumber: _pageNumber,
-        handleMap: handleMap,
-        getPageInfo: getPageInfo,
-        getThumbnailForList: getThumbnailForList,
-        canAccess: canAccess
-    };
 };
