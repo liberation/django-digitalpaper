@@ -20,6 +20,7 @@ function Reader(settings) {
         /****** end of urls ******/
 
         /********** markup ************/
+        // TODO: why not create all these elements dinamycally ?
         'evenSideElement': jQuery('#evenSide'),
         'oddSideElement': jQuery('#oddSide'),
         'restrictedAccessElement': jQuery('#restrictedAccess'),
@@ -85,7 +86,7 @@ function Reader(settings) {
             if (jQuery('#errorPopin').length <= 0) {
                 jQuery('#main').append('<div id="errorPopin"></div>');
             }
-            jQuery('#bookPages, #pagesBefore, #pagesAfter, #pagesSlider').hide(); // TODO: im not too sure about this bookPage tingy
+            jQuery('#bookPages, #pagesBefore, #pagesAfter, #pagesSlider').hide(); // TODO: im not too sure about this bookPages tingy
             jQuery('#errorPopin').text(this.error_message + ' (Err. ' + xhr.status + ')').show();
         },
         'modelmapping': {
@@ -168,11 +169,9 @@ function Reader(settings) {
         this.bookSwitcherElement.hide();
         
         var height = jQuery(window).height();
-        jQuery(document.body).css({'overflow': 'hidden', 'height': height });
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
+        jQuery("body").css({'overflow': 'hidden', 'height': height })
+                      .scrollTop(0);
         
-        // TODO: use jQuery to create the elements for compatibility reasons
         _zoomWindow = jQuery(document.createElement('div'));
         _zoomWindow.attr('id', 'zoomWindow');
         _zoomWindow.addClass('grab');
@@ -215,21 +214,16 @@ function Reader(settings) {
         _zoomWindow.mousedown(this.zoomMouseDown);
         _zoomWindow.mouseup(this.zoomMouseUp);
         _zoomWindow.mousemove(this.zoomMouseMove);
-        jQuery(document.body).mouseleave(this.zoomMouseUp);
-        jQuery(document.body).bind('mousewheel', this.zoomMouseWheel);
-        jQuery(document.body).addClass('zoomed');
+        jQuery("body").mouseleave(this.zoomMouseUp);
+        jQuery("body").bind('mousewheel', this.zoomMouseWheel);
+        jQuery("body").addClass('zoomed');
         jQuery(window).bind('resize', this.zoomResize);
         
-        jQuery(document.body).append(_zoomWindow);
+        jQuery("body").append(_zoomWindow);
         
-        // Just for Apple touch, jQuery suxx and delete e.touches
-        var zw = jQuery('#zoomWindow');
-        if (zw && zw.addEventListener) {
-            // TODO: use jquery event binder to handle ie 7-8
-            zw.addEventListener('touchstart', this.zoomMouseDown, true);
-            zw.addEventListener('touchend', this.zoomMouseUp, true);
-            zw.addEventListener('touchmove', this.zoomMouseMove, true);
-        }
+        _zoomWindow.bind('touchstart', this.zoomMouseDown, true);
+        _zoomWindow.bind('touchend', this.zoomMouseUp, true);
+        _zoomWindow.bind('touchmove', this.zoomMouseMove, true);
         
         this.zoomInitHDGrid(top, left);
         _isZoomed = true;
@@ -260,12 +254,12 @@ function Reader(settings) {
     this.quitZoom = function() {
         jQuery(document).trigger('page-leavezoom', [_displayedPage]);
         jQuery(_zoomWindow).detach();
-        jQuery(window).unbind('resize', this.zoomResize);
-        jQuery(document.body).unbind('mousewheel');
-        jQuery(document.body).removeClass('zoomed');        
+        jQuery(window).unbind('resize', self.zoomResize);
+        jQuery("body").unbind('mousewheel');
+        jQuery("body").removeClass('zoomed');        
         self.pagesSliderElement.show();
         self.bookSwitcherElement.show();
-        jQuery(document.body).css({'overflow': 'visible', 'height': 'auto' });
+        jQuery("body").css({'overflow': 'visible', 'height': 'auto' });
         _isZoomed = false;
         self.zoomButtonElement.removeClass('unzoom');
         return false;
@@ -567,8 +561,8 @@ function Reader(settings) {
         this.unbindButtons();
         this.unbindKeyboard(); // TODO: get rid of that please ? .live ?
         
-        var evenSide = jQuery(this.evenSideElement);
-        var oddSide =  jQuery(this.oddSideElement);
+        var evenSide = this.evenSideElement;
+        var oddSide =  this.oddSideElement;
         var finalWidth = evenSide.width();
         var height = evenSide.parent().height();
         var position = evenSide.position();
