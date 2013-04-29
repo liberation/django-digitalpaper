@@ -550,7 +550,7 @@ function Reader(settings) {
         } else {
             nextButtons.hide();
         }
-        readerSlider.moveIntoView(_displayedPage); // TODO: readerSlider is still global
+        this.slider.moveIntoView(_displayedPage);
     };
     
     this.showPage = function(number) {
@@ -888,6 +888,33 @@ function Reader(settings) {
         }
     };
 
+    this.initUI = function () {
+        // this method handles everything UI
+        // slider
+        this.slider = new readerSlider();
+        jQuery('#sliderPrev').bind('mousedown', this.slider.prev);
+        jQuery('#sliderNext').bind('mousedown', this.slider.next);
+        jQuery('#sliderPrev').bind('click', function(e) { e.preventDefault(); });
+        jQuery('#sliderNext').bind('click', function(e) { e.preventDefault(); });
+        jQuery(document).bind('mouseup', this.slider.cancel);
+
+        // zoom
+        this.zoomButtonElement.click(function (e) {
+            if (_isZoomed) {
+                self.quitZoom();
+            } else {
+                self.zoomAtCoordinates(0, 0);
+            }
+            return false;
+        });
+
+        // corners
+        this.previousCornerElement.hover(this.showHoverCorner, this.hideHoverCorner);
+        this.nextCornerElement.hover(this.showHoverCorner, this.hideHoverCorner);
+
+        if (this.pageHeight) this.bookPagesElement.height(this.pageHeight);
+    };
+
     this.init = function() {
         if (settings.publicationId == 'undefined') {
             throw "What the fuck man ?! are you drunk ? there is no publicationId !";
@@ -906,26 +933,10 @@ function Reader(settings) {
                     error: self.defaultError
                 });
         
-                // TODO: this has nothing to do here
-                self.zoomButtonElement.click(function (e) {
-                    if (_isZoomed) {
-                        self.quitZoom();
-                    } else {
-                        self.zoomAtCoordinates(0, 0);
-                    }
-                    return false;
-                });
-                // TODO: this either
-                self.previousCornerElement.hover(self.showHoverCorner, self.hideHoverCorner);
-                self.nextCornerElement.hover(self.showHoverCorner, self.hideHoverCorner);
+                self.initUI();
             } catch (e) {
                 
             }
-        }
-
-        // TODO: move this in a more appropriate place
-        if (this.pageHeight) {
-            this.bookPagesElement.height(this.pageHeight);
         }
 
         jQuery.ajax({
