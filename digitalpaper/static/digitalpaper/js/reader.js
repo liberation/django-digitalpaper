@@ -65,11 +65,18 @@ function Reader(settings) {
             return this.accessLevel >= this.accessLevelNeeded && this.pageWidth && this.pageHeight;
         },
         'restrictedAccess' : function() {
-            jQuery.openDOMWindow({
-                windowSourceID: '#'+self.restrictedAccessElement.attr('id'), // it's ugly but who cares, it will get away with the colorbox merge
+            jQuery.colorbox({
+                iframe: false,
+                inline: true,
+                href: '#'+self.restrictedAccessElement.attr('id'),
                 width: 760,
                 height: 480,
-                windowPadding: 0
+                onOpen: function() {
+                    self.restrictedAccessElement.show();
+                },
+                onClosed: function() {
+                    self.restrictedAccessElement.hide();
+                }
             });
         },
         'setSize' : function(w, h) {
@@ -255,11 +262,11 @@ function Reader(settings) {
         jQuery(document).trigger('page-leavezoom', [_displayedPage]);
         jQuery(_zoomWindow).detach();
         jQuery(window).unbind('resize', self.zoomResize);
-        jQuery("body").unbind('mousewheel');
-        jQuery("body").removeClass('zoomed');        
+        jQuery("body").unbind('mousewheel')
+                      .removeClass('zoomed')
+                      .css({'overflow': 'visible', 'height': 'auto' });
         self.pagesSliderElement.show();
         self.bookSwitcherElement.show();
-        jQuery("body").css({'overflow': 'visible', 'height': 'auto' });
         _isZoomed = false;
         self.zoomButtonElement.removeClass('unzoom');
         return false;
@@ -272,7 +279,7 @@ function Reader(settings) {
     };
     
     this.keyboardCallback = function(e) {
-        if (jQuery('#DOMWindow').length <= 0) {
+        if (jQuery('#colorbox').css('display') != 'block') {
             if (_isZoomed) {
                 return self.zoomedKeyboardCallback(e);
             } else {
@@ -841,7 +848,7 @@ function Reader(settings) {
         // If the publication data contains an access level, use it as the new
         // access level needed.
         if (typeof data.access !== 'undefined') {
-            self.changeAccessLevelNeeded(parseInt(data.access, 10));
+            self.accessLevelNeeded = parseInt(data.access, 10);
         }
 
         jQuery('#pagesList').bind('mouseout', self.unHighlightHoveredPages);

@@ -343,3 +343,35 @@ p {
     left: 260px;
     display: none;
 }
+
+/****************** minimal out of the box Colorbox styles ***************/
+#colorbox {
+    background-color: white;
+    z-index: 5;
+    overflow:hidden;
+}
+#colorbox div {
+    margin:0;
+    padding:0;
+}
+#colorbox iframe {
+    margin-bottom:-5px;
+}
+#cboxOverlay {
+    z-index: 4;
+    background-color: #000;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+}
+#cboxContent {
+    position: relative;
+}
+#cboxClose {
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
