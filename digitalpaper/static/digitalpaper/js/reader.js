@@ -53,15 +53,17 @@ function Reader(settings) {
         'imagesPerColumn': 4,
         'zoomFactor': 4,
         'animationStep': 21,
-
+        'checkAccessLevel' : function() {
+            return this.token_data.access_level >= this.accessLevelNeeded;
+        },
         'canAccess': function(pageNumber, pageId) {
-            return this.token_data.accessLevel >= this.accessLevelNeeded || jQuery.inArray(pageNumber, this.pagesFree) >= 0;
+            return this.checkAccessLevel() || jQuery.inArray(pageNumber, this.pagesFree) >= 0;
         },
         'canZoom': function(pageNumber, pageId) {
-            return this.token_data.accessLevel >= this.accessLevelNeeded && this.pageWidth && this.pageHeight;
+            return this.checkAccessLevel() && this.pageWidth && this.pageHeight;
         },
         'canUseMap': function(pageNumber, pageId) {
-            return this.token_data.accessLevel >= this.accessLevelNeeded && this.pageWidth && this.pageHeight;
+            return this.checkAccessLevel() && this.pageWidth && this.pageHeight;
         },
         'restrictedAccess' : function() {
             jQuery.colorbox({
@@ -100,12 +102,13 @@ function Reader(settings) {
         }
     };
 
+    // TODO: make some methods be private to cleanup the object prototype, also cleanup some of these 'private' vars
     var _bookName, _publication, _selectedBook, _pages, 
         _displayedPage, _displayedBook, _zoomWindow, _winHeight, _winWidth, 
         _numberOfPages, _isZoomed, _zoomedPageHeight, _zoomedPageWidth, 
         _zoomMouseInit, _zoomPosInit, _zoomedPages, _zoomMouseDown,
         _HDgridContainer;
-    
+
     this.bindButtons = function() {
         this.previousButtonElement.click(this.showPreviousPage);
         this.previousCornerElement.click(this.showPreviousPage);
@@ -863,6 +866,7 @@ function Reader(settings) {
         self.showBookList(); // call first, so that we can play with the list in showBook()
         self.showBook((tmp[0] || 0), (tmp[1] || 0));
         
+        // TODO: make it sure it does not break anything, and add a prefix to this evenement
         jQuery(document).trigger('publication-load', [data, self.publicationId]);
     };
     
@@ -926,6 +930,7 @@ function Reader(settings) {
         function readerInitCallback(data, textStatus, xhrobject) {
             try {
                 self.token_data = data;
+                jQuery(document).trigger('digitalpaper-token-received');
                 jQuery.ajax({
                     url: self.publication.replace('{format}', 'json').replace('{id}', self.publicationId),
                     dataType: "json",
