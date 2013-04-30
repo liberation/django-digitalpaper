@@ -226,5 +226,5 @@ var Page = function(reader, pageNumber, pageId, pageChannel, pageMaps) {
 
     // TODO: clean and clarify the private and public properties
     this.imageSource = _imageSource;
-
+    this.pageNumber = _pageNumber;
 };
