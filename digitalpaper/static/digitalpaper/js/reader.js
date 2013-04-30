@@ -42,7 +42,6 @@ function Reader(settings) {
         'contentmodelContentElement': jQuery('#contentmodelContent'),
         /******* end of markup ********/
 
-        'accessLevel' : 0,
         'accessLevelNeeded' : 1,
         'pageWidth': 354,
         'pageHeight': 500,
@@ -56,13 +55,13 @@ function Reader(settings) {
         'animationStep': 21,
 
         'canAccess': function(pageNumber, pageId) {
-            return this.accessLevel >= this.accessLevelNeeded || jQuery.inArray(pageNumber, this.pagesFree) >= 0;
+            return this.token_data.accessLevel >= this.accessLevelNeeded || jQuery.inArray(pageNumber, this.pagesFree) >= 0;
         },
         'canZoom': function(pageNumber, pageId) {
-            return this.accessLevel >= this.accessLevelNeeded && this.pageWidth && this.pageHeight;
+            return this.token_data.accessLevel >= this.accessLevelNeeded && this.pageWidth && this.pageHeight;
         },
         'canUseMap': function(pageNumber, pageId) {
-            return this.accessLevel >= this.accessLevelNeeded && this.pageWidth && this.pageHeight;
+            return this.token_data.accessLevel >= this.accessLevelNeeded && this.pageWidth && this.pageHeight;
         },
         'restrictedAccess' : function() {
             jQuery.colorbox({
@@ -926,7 +925,7 @@ function Reader(settings) {
 
         function readerInitCallback(data, textStatus, xhrobject) {
             try {
-                self.accessLevel = data['access_level'];
+                self.token_data = data;
                 jQuery.ajax({
                     url: self.publication.replace('{format}', 'json').replace('{id}', self.publicationId),
                     dataType: "json",
