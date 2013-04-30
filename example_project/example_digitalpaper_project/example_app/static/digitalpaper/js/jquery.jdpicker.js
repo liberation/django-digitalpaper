@@ -186,6 +186,7 @@ jdPicker.prototype = {
 
     this.dateSelector = this.rootLayers = $('<div class="date_selector" '+style+'></div>').append(nav, tableShell).insertAfter(this.input);
     
+    /* Sorry, we don't care about ie6 for the example project..
     if ($.browser.msie && $.browser.version < 7) {
       
       this.ieframe = $('<iframe class="date_selector_ieframe" frameborder="0" src="#"></iframe>').insertBefore(this.dateSelector);
@@ -193,7 +194,7 @@ jdPicker.prototype = {
       
       $(".button", nav).mouseover(function() { $(this).addClass("hover"); });
       $(".button", nav).mouseout(function() { $(this).removeClass("hover"); });
-    };
+    };*/
     
     this.tbody = $("tbody", this.dateSelector);
 
