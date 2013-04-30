@@ -53,6 +53,7 @@ function Reader(settings) {
         'imagesPerColumn': 4,
         'zoomFactor': 4,
         'animationStep': 21,
+
         'checkAccessLevel' : function() {
             return this.token_data.access_level >= this.accessLevelNeeded;
         },
@@ -924,8 +925,13 @@ function Reader(settings) {
             throw "What the fuck man ?! are you drunk ? there is no publicationId !";
             return false;
         }
-
+        
         jQuery.extend(this, this.default_settings, settings);
+        for (key in settings) {
+            if (typeof(settings[key]) == "object") {
+                $.extend(this, settings[key]);
+            }
+        }
 
         function readerInitCallback(data, textStatus, xhrobject) {
             try {
