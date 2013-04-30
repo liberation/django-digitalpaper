@@ -68,7 +68,7 @@ function Reader(settings) {
             jQuery.colorbox({
                 iframe: false,
                 inline: true,
-                href: '#'+self.restrictedAccessElement.attr('id'),
+                href: self.restrictedAccessElement,
                 width: 760,
                 height: 480,
                 onOpen: function() {
