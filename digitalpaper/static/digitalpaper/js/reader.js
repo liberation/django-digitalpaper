@@ -1,7 +1,7 @@
 function Reader(settings) {
     var self = this;
     /********************* DEFAULT settings **********************/
-    this.default_settings = {
+    var default_settings = {
         /********* mandatory settings (have to be overwriten) **********/
         'publicationId' : null,
         /********* end of mandatory settings *******/
@@ -10,8 +10,6 @@ function Reader(settings) {
         "pageLimitedAccessImage": '/static/digitalpaper/img/page-only-subscribers.png',
         "pageUnderConstructionImage": '/static/digitalpaper/img/page-under-construction.png',
         "pageUnderConstructionImageSmallest": '/static/digitalpaper/img/page-under-construction_smallest.png',
-        // TODO: because we removed the webservices object, we should change those names so that it is more clear
-        // that they are urls
         "token": '/digitalpaper/token/',
         "publication": '/digitalpaper/publication/{id}/',
         "reader_by_date": '/digitalpaper/date/{date}/',
@@ -21,6 +19,7 @@ function Reader(settings) {
 
         /********** markup ************/
         // TODO: why not create all these elements dinamycally ?
+        // its a pain to follow a given markup
         'evenSideElement': jQuery('#evenSide'),
         'oddSideElement': jQuery('#oddSide'),
         'restrictedAccessElement': jQuery('#restrictedAccess'),
@@ -40,6 +39,7 @@ function Reader(settings) {
         'oddPageInfoElement': jQuery('#oddSide .pageInfo'),
         'bookPagesElement': jQuery('#bookPages'),
         'contentmodelContentElement': jQuery('#contentmodelContent'),
+        'pagesListElement': jQuery('#pagesList'),
         /******* end of markup ********/
 
         'accessLevelNeeded' : 1,
@@ -53,54 +53,58 @@ function Reader(settings) {
         'imagesPerColumn': 4,
         'zoomFactor': 4,
         'animationStep': 21,
-
-        'checkAccessLevel' : function() {
-            return this.token_data.access_level >= this.accessLevelNeeded;
-        },
-        'canAccess': function(pageNumber, pageId) {
-            return this.checkAccessLevel() || jQuery.inArray(pageNumber, this.pagesFree) >= 0;
-        },
-        'canZoom': function(pageNumber, pageId) {
-            return this.checkAccessLevel() && this.pageWidth && this.pageHeight;
-        },
-        'canUseMap': function(pageNumber, pageId) {
-            return this.checkAccessLevel() && this.pageWidth && this.pageHeight;
-        },
-        'restrictedAccess' : function() {
-            jQuery.colorbox({
-                iframe: false,
-                inline: true,
-                href: self.restrictedAccessElement,
-                width: 760,
-                height: 480,
-                onOpen: function() {
-                    self.restrictedAccessElement.show();
-                },
-                onClosed: function() {
-                    self.restrictedAccessElement.hide();
-                }
-            });
-        },
-        'setSize' : function(w, h) {
-            if (w) {
-                this.pageWidth = w;
-                this.pageThumbnailWidth = parseInt(w * this.pageThumbnailHeight / this.pageHeight, 10);
-                jQuery(window).trigger('size-known');
-                return true;
+    };
+        
+    this.checkAccessLevel = function() {
+        return this.token_data.access_level >= this.accessLevelNeeded;
+    };
+    this.canAccess = function(pageNumber, pageId) {
+        return this.checkAccessLevel() || jQuery.inArray(pageNumber, this.pagesFree) >= 0;
+    };
+    this.canZoom = function(pageNumber, pageId) {
+        return this.checkAccessLevel() && this.pageWidth && this.pageHeight;
+    };
+    this.canUseMap = function(pageNumber, pageId) {
+        return this.checkAccessLevel() && this.pageWidth && this.pageHeight;
+    };
+    this.restrictedAccess = function() {
+        jQuery.colorbox({
+            iframe: false,
+            inline: true,
+            href: self.restrictedAccessElement,
+            width: 760,
+            height: 480,
+            onOpen: function() {
+                self.restrictedAccessElement.show();
+            },
+            onClosed: function() {
+                self.restrictedAccessElement.hide();
             }
-            return false;
-        },
-
-        'defaultError' : function(xhr, status) {
-            if (jQuery('#errorPopin').length <= 0) {
-                jQuery('#main').append('<div id="errorPopin"></div>');
-            }
-            jQuery('#bookPages, #pagesBefore, #pagesAfter, #pagesSlider').hide(); // TODO: im not too sure about this bookPages tingy
-            jQuery('#errorPopin').text(this.error_message + ' (Err. ' + xhr.status + ')').show();
-        },
-        'modelmapping': {
-            'default': 'iframe'
+        });
+    };
+    this.setSize = function(w, h) {
+        if (w) {
+            this.pageWidth = w;
+            this.pageThumbnailWidth = parseInt(w * this.pageThumbnailHeight / this.pageHeight, 10);
+            jQuery(window).trigger('size-known');
+            return true;
         }
+        return false;
+    };
+
+    this.defaultError = function(xhr, status) {
+        if (jQuery('#errorPopin').length <= 0) {
+            jQuery('body').append('<div id="errorPopin"></div>');
+        }
+        self.bookPagesElement.hide();
+        self.previousButtonsParent.hide();
+        self.nextButtonsParent.hide();
+        self.pagesSliderElement.hide();
+        jQuery('#errorPopin').text(self.error_message + ' (Err. ' + xhr.status + ')').show();
+    };
+    
+    this.modelmapping = {
+        'default': 'iframe'
     };
 
     // TODO: make some methods be private to cleanup the object prototype, also cleanup some of these 'private' vars
@@ -110,34 +114,34 @@ function Reader(settings) {
         _zoomMouseInit, _zoomPosInit, _zoomedPages, _zoomMouseDown,
         _HDgridContainer;
 
-    this.bindButtons = function() {
-        this.previousButtonElement.click(this.showPreviousPage);
-        this.previousCornerElement.click(this.showPreviousPage);
-        this.nextButtonElement.click(this.showNextPage);
-        this.nextCornerElement.click(this.showNextPage);
-        this.firstButtonElement.click(this.showFirstPage);
-        this.lastButtonElement.click(this.showLastPage);
-        this.evenSideElement.click(this.zoom);
-        this.oddSideElement.click(this.zoom);
+    var bindButtons = function() {
+        self.previousButtonElement.click(self.showPreviousPage);
+        self.previousCornerElement.click(self.showPreviousPage);
+        self.nextButtonElement.click(self.showNextPage);
+        self.nextCornerElement.click(self.showNextPage);
+        self.firstButtonElement.click(self.showFirstPage);
+        self.lastButtonElement.click(self.showLastPage);
+        self.evenSideElement.click(self.zoom);
+        self.oddSideElement.click(self.zoom);
     };
     
-    this.unbindButtons = function() {
-        this.previousButtonElement.unbind("click", this.showPreviousPage);
-        this.previousCornerElement.unbind("click", this.showPreviousPage);
-        this.nextButtonElement.unbind("click", this.showNextPage);
-        this.nextCornerElement.unbind("click", this.showNextPage);
-        this.firstButtonElement.unbind("click", this.showFirstPage);
-        this.lastButtonElement.unbind("click", this.showLastPage);
-        this.evenSideElement.unbind("click", this.zoom);
-        this.oddSideElement.unbind("click", this.zoom);
+    var unbindButtons = function() {
+        self.previousButtonElement.unbind("click", self.showPreviousPage);
+        self.previousCornerElement.unbind("click", self.showPreviousPage);
+        self.nextButtonElement.unbind("click", self.showNextPage);
+        self.nextCornerElement.unbind("click", self.showNextPage);
+        self.firstButtonElement.unbind("click", self.showFirstPage);
+        self.lastButtonElement.unbind("click", self.showLastPage);
+        self.evenSideElement.unbind("click", self.zoom);
+        self.oddSideElement.unbind("click", self.zoom);
     };
     
-    this.bindKeyboard = function() {
-        jQuery(document).bind('keydown', this.keyboardCallback);
+    var bindKeyboard = function() {
+        jQuery(document).bind('keydown', keyboardCallback);
     };
     
-    this.unbindKeyboard = function() {
-        jQuery(document).unbind('keydown', this.keyboardCallback);
+    var unbindKeyboard = function() {
+        jQuery(document).unbind('keydown', keyboardCallback);
     };
     
     this.zoom = function(event) {
@@ -186,7 +190,7 @@ function Reader(settings) {
         _zoomWindow.attr('id', 'zoomWindow');
         _zoomWindow.addClass('grab');
 
-        this.zoomResize();
+        zoomResize();
         
         _zoomedPages = jQuery(document.createElement('div'));
         _zoomedPages.attr('id', 'zoomedPages');
@@ -209,25 +213,25 @@ function Reader(settings) {
         }
         
         var top = y - (_winHeight / 2);
-        top = this.zoomTopInArea(top);
+        top = zoomTopInArea(top);
         
         if (_numberOfPages == 1 && x > _zoomedPageWidth) {
             x = x - _zoomedPageWidth;
         }
         var left = x - (_winWidth / 2);
-        left = this.zoomLeftInArea(left);
+        left = zoomLeftInArea(left);
         _zoomedPages.css({'height': _zoomedPageHeight, 'width': _numberOfPages * _zoomedPageWidth, 'top': -top, 'left': -left});
         
         _zoomWindow.append(_zoomedPages);
         _zoomWindow.dblclick(this.quitZoom);
         
-        _zoomWindow.mousedown(this.zoomMouseDown);
-        _zoomWindow.mouseup(this.zoomMouseUp);
-        _zoomWindow.mousemove(this.zoomMouseMove);
-        jQuery("body").mouseleave(this.zoomMouseUp);
-        jQuery("body").bind('mousewheel', this.zoomMouseWheel);
+        _zoomWindow.mousedown(zoomMouseDown);
+        _zoomWindow.mouseup(zoomMouseUp);
+        _zoomWindow.mousemove(zoomMouseMove);
+        jQuery("body").mouseleave(zoomMouseUp);
+        jQuery("body").bind('mousewheel', zoomMouseWheel);
         jQuery("body").addClass('zoomed');
-        jQuery(window).bind('resize', this.zoomResize);
+        jQuery(window).bind('resize', zoomResize);
         
         jQuery("body").append(_zoomWindow);
         
@@ -235,13 +239,13 @@ function Reader(settings) {
         _zoomWindow.bind('touchend', this.zoomMouseUp, true);
         _zoomWindow.bind('touchmove', this.zoomMouseMove, true);
         
-        this.zoomInitHDGrid(top, left);
+        zoomInitHDGrid(top, left);
         _isZoomed = true;
         this.zoomButtonElement.addClass('unzoom');
         jQuery(document).trigger('page-afterzoom', [_displayedPage]);
     };
     
-    this.zoomInitHDGrid = function(top, left) {
+    var zoomInitHDGrid = function(top, left) {
         _HDgridContainer = jQuery(document.createElement('div'));
         _HDgridContainer.css({'height': _zoomedPageHeight, 'width': _numberOfPages * _zoomedPageWidth, 'top': -top, 'left': -left});
         _HDgridContainer.attr('id', 'HDGrid');
@@ -258,13 +262,13 @@ function Reader(settings) {
         }
         _zoomWindow.append(_HDgridContainer);
         
-        this.zoomHighDefAtCoordinates(left, top);
+        zoomHighDefAtCoordinates(left, top);
     };
     
     this.quitZoom = function() {
         jQuery(document).trigger('page-leavezoom', [_displayedPage]);
         jQuery(_zoomWindow).detach();
-        jQuery(window).unbind('resize', self.zoomResize);
+        jQuery(window).unbind('resize', zoomResize);
         jQuery("body").unbind('mousewheel')
                       .removeClass('zoomed')
                       .css({'overflow': 'visible', 'height': 'auto' });
@@ -275,23 +279,23 @@ function Reader(settings) {
         return false;
     };
     
-    this.zoomResize = function() {
+    var zoomResize = function() {
         var win = jQuery(window);
         _winHeight = win.height();
         _winWidth = win.width();
     };
     
-    this.keyboardCallback = function(e) {
+    var keyboardCallback = function(e) {
         if (jQuery('#colorbox').css('display') != 'block') {
             if (_isZoomed) {
-                return self.zoomedKeyboardCallback(e);
+                return zoomedKeyboardCallback(e);
             } else {
-                return self.normalKeyboardCallback(e);        
+                return normalKeyboardCallback(e);        
             }
         }
     };
     
-    this.normalKeyboardCallback = function(e) {
+    var normalKeyboardCallback = function(e) {
         if (e.ctrlKey) {
             switch (e.which) {
                 case 109: // -
@@ -322,7 +326,7 @@ function Reader(settings) {
         }
     };
     
-    this.zoomedKeyboardCallback = function(e) {
+    var zoomedKeyboardCallback = function(e) {
         this.zoomLoadPosInit();
         var x = 0;
         var y = 0;
@@ -360,16 +364,16 @@ function Reader(settings) {
             }
         }
         if (x || y) {
-            self.zoomBy(x, y);
+            zoomBy(x, y);
             e.preventDefault();
         }
     };
     
-    this.zoomLoadPosInit = function() {
+    var zoomLoadPosInit = function() {
         _zoomPosInit = {x: -parseInt(_zoomedPages.css('left'), 10), y: -parseInt(_zoomedPages.css('top'), 10)};
     };
     
-    this.zoomMouseDown = function(e) {
+    var zoomMouseDown = function(e) {
         // iPhone/iPad
         e.preventDefault();
         if (e.touches) {
@@ -377,22 +381,22 @@ function Reader(settings) {
         }
 
         _zoomMouseDown = true;
-        self.zoomLoadPosInit();
+        zoomLoadPosInit();
         _zoomMouseInit = {x: e.clientX, y: e.clientY};
         _zoomWindow.addClass('grabbing');
         _zoomWindow.removeClass('grab');        
     };
     
-    this.zoomMouseUp = function(e) {
+    var zoomMouseUp = function(e) {
         _zoomMouseDown = false;
         _zoomWindow.addClass('grab');
         _zoomWindow.removeClass('grabbing');
         e.preventDefault();
         
-        self.zoomHighDefAtCoordinates(-parseInt(_zoomedPages.css('left'), 10), -parseInt(_zoomedPages.css('top'), 10));
+        zoomHighDefAtCoordinates(-parseInt(_zoomedPages.css('left'), 10), -parseInt(_zoomedPages.css('top'), 10));
     };
     
-    this.zoomMouseMove = function(e) {
+    var zoomMouseMove = function(e) {
         if (_zoomMouseDown !== true) {
             return;
         }
@@ -402,27 +406,27 @@ function Reader(settings) {
             e = e.touches[0]; // TODO: wtf ? why would we want to lose datas
         }
 
-        self.zoomBy(_zoomMouseInit.x - e.clientX, _zoomMouseInit.y - e.clientY);
+        zoomBy(_zoomMouseInit.x - e.clientX, _zoomMouseInit.y - e.clientY);
     };
     
-    this.zoomMouseWheel = function(e, deltaX, deltaY) {
-        self.zoomLoadPosInit();
-        self.zoomBy(-this.animationStep * deltaX, -this.animationStep * deltaY);
+    var zoomMouseWheel = function(e, deltaX, deltaY) {
+        zoomLoadPosInit();
+        zoomBy(-this.animationStep * deltaX, -this.animationStep * deltaY);
         e.preventDefault();
     };
     
-    this.zoomBy = function(x, y) {
+    var zoomBy = function(x, y) {
         var newLeft = _zoomPosInit.x + (x);
         var newTop = _zoomPosInit.y + (y);
         
-        newLeft = self.zoomLeftInArea(newLeft);
-        newTop = self.zoomTopInArea(newTop);
+        newLeft = zoomLeftInArea(newLeft);
+        newTop = zoomTopInArea(newTop);
         
         _zoomedPages.css({'left': -newLeft, 'top': -newTop});
         _HDgridContainer.css({'left': -newLeft, 'top': -newTop});
     };
     
-    this.zoomLeftInArea = function(left) {
+    var zoomLeftInArea = function(left) {
         if (left < 0) {
             left = 0;
         }
@@ -432,7 +436,7 @@ function Reader(settings) {
         
         return left;
     };
-    this.zoomTopInArea = function(top) {
+    var zoomTopInArea = function(top) {
         if (top < 0) {
             top = 0;
         }
@@ -443,7 +447,7 @@ function Reader(settings) {
         return top;
     };
     
-    this.zoomHighDefAtCoordinates = function(x, y) {
+    var zoomHighDefAtCoordinates = function(x, y) {
         x = x + (_winWidth / 2);
         y = y + (_winHeight / 2);
         
@@ -452,20 +456,20 @@ function Reader(settings) {
             
         var xRow = Math.floor(x / xRowSize);
         var yColumn = Math.floor(y / yColumnSize);
-        this.getZoomImage(xRow, yColumn);
+        getZoomImage(xRow, yColumn);
         
-        for (var i = 0; i < _numberOfPages * this.imagesPerRow + this.imagesPerColumn; i++) {
+        for (var i = 0; i < _numberOfPages * self.imagesPerRow + self.imagesPerColumn; i++) {
             for (var j = 0; j < i; j++) {
                 var plop = i - j;
-                this.getZoomImage(xRow - j, yColumn - plop);
-                this.getZoomImage(xRow + j, yColumn + plop);
-                this.getZoomImage(xRow - plop, yColumn + j);
-                this.getZoomImage(xRow + plop, yColumn - j);
+                getZoomImage(xRow - j, yColumn - plop);
+                getZoomImage(xRow + j, yColumn + plop);
+                getZoomImage(xRow - plop, yColumn + j);
+                getZoomImage(xRow + plop, yColumn - j);
             }
         }
     };
     
-    this.getZoomImage = function(xRow, yColumn) { // TODO: dafuq names
+    var getZoomImage = function(xRow, yColumn) { // TODO: dafuq names
         if (xRow < 0 || yColumn < 0) {
             return;
         }
@@ -480,11 +484,11 @@ function Reader(settings) {
             // Constraints need to change in that case, to allow the coordinates 
             // on the right (where the first page is) and disallow the ones on the left
             // (where there isn't any page)
-            if (xRow >= 2 * this.imagesPerRow || xRow < this.imagesPerRow) {
+            if (xRow >= 2 * self.imagesPerRow || xRow < self.imagesPerRow) {
                 return;
             }
         } else {
-            if (xRow >= _numberOfPages * this.imagesPerRow) {
+            if (xRow >= _numberOfPages * self.imagesPerRow) {
                 return;
             }
         }
@@ -495,9 +499,9 @@ function Reader(settings) {
             // the indexing need to be changed. (Note: we don't want to change xRow and yColumn
             // directly, the web services expect x to be > imagesPerRow on the right page, 
             // even if it's the first one!)
-            imgIndex = yColumn * this.imagesPerRow + xRow - this.imagesPerRow;
+            imgIndex = yColumn * self.imagesPerRow + xRow - self.imagesPerRow;
         } else {
-            imgIndex = yColumn * this.imagesPerRow * _numberOfPages + xRow;
+            imgIndex = yColumn * self.imagesPerRow * _numberOfPages + xRow;
         }
         
         var img = _HDgridContainer.children().eq(imgIndex);
@@ -509,7 +513,7 @@ function Reader(settings) {
             return;
         }
         
-        var currentPage = _pages[_displayedPage + Math.floor(xRow / this.imagesPerRow)];
+        var currentPage = _pages[_displayedPage + Math.floor(xRow / self.imagesPerRow)];
         if (!currentPage) {
             return;
         }
@@ -519,12 +523,12 @@ function Reader(settings) {
             var replaces = {
                 '{format}': 'png',
                 '{id}': currentPage.pageId,
-                '{crop}': this.imagesPerRow + 'x' + this.imagesPerColumn,
+                '{crop}': self.imagesPerRow + 'x' + self.imagesPerColumn,
                 '{x}': xRow,
                 '{y}': yColumn
             };
             
-            var src = this.paper_page_cropped;
+            var src = self.paper_page_cropped;
             var k;
             for (k in replaces) {
                 src = src.replace(k, replaces[k]);
@@ -533,28 +537,28 @@ function Reader(settings) {
         }
     };
     
-    this.showHoverCorner = function() {
+    var showHoverCorner = function() {
         jQuery(this).css('opacity', 1);
     };
-    this.hideHoverCorner = function() {
+    var hideHoverCorner = function() {
         jQuery(this).css('opacity', 0);
     };
     
-    this.displayPagination = function() {
-        var previousButtons = this.previousCornerElement.add(this.previousButtonsParent);
+    var displayPagination = function() {
+        var previousButtons = self.previousCornerElement.add(self.previousButtonsParent);
         if (_displayedPage - 2 >= 0) {
             previousButtons.show();
         } else {
             previousButtons.hide();
         }
         
-        var nextButtons = this.nextCornerElement.add(this.nextButtonsParent);
+        var nextButtons = self.nextCornerElement.add(self.nextButtonsParent);
         if (_displayedPage + 2 <= _selectedBook.pagination) {
             nextButtons.show();
         } else {
             nextButtons.hide();
         }
-        this.slider.moveIntoView(_displayedPage);
+        self.slider.moveIntoView(_displayedPage);
     };
     
     this.showPage = function(number) {
@@ -568,8 +572,8 @@ function Reader(settings) {
         this.evenPageInfoElement.fadeOut();
         this.oddPageInfoElement.fadeOut();
         
-        this.unbindButtons();
-        this.unbindKeyboard(); // TODO: get rid of that please ? .live ?
+        unbindButtons();
+        unbindKeyboard();
         
         var evenSide = this.evenSideElement;
         var oddSide =  this.oddSideElement;
@@ -614,12 +618,12 @@ function Reader(settings) {
         evenSide.parent().append(transitionContainerElement);
         
         transitionElement.animate({'width': 2 * finalWidth}, function() { 
-            self.cleanAfterShowPage(number); 
+            cleanAfterShowPage(number); 
             jQuery(this).parent().detach();
         });
     };
     
-    this.hideOldPages = function() {
+    var hideOldPages = function() {
         if (typeof _displayedPage != "undefined") {
             if (_pages[_displayedPage]) {
                 _pages[_displayedPage].hide();
@@ -628,13 +632,13 @@ function Reader(settings) {
                 _pages[_displayedPage + 1].hide();
             }
         }
-        this.unHighlightCurrentPages();
+        unHighlightCurrentPages();
     };
     
     this.displayPage = function(number) {
         var page = _pages[number];
         page.show();
-        this.highlightCurrentPages(_displayedBook, number);
+        highlightCurrentPages(_displayedBook, number);
         var elm = page.pageNumber % 2 ? this.oddPageInfoElement : this.evenPageInfoElement;
         elm.html(page.getPageInfo());
         elm.fadeIn();
@@ -648,8 +652,8 @@ function Reader(settings) {
         return _displayedPage;
     };
     
-    this.cleanAfterShowPage = function(number) {
-        this.hideOldPages();
+    var cleanAfterShowPage = function(number) {
+        hideOldPages();
 
         var newDisplayedPage = number - number % 2;
         if (_pages[newDisplayedPage] || _pages[newDisplayedPage + 1]) {
@@ -661,14 +665,14 @@ function Reader(settings) {
         var shownPages = [];
         if (_pages[_displayedPage]) {
             shownPages.push(_displayedPage);
-            this.displayPage(_displayedPage);
+            self.displayPage(_displayedPage);
             if (!_pages[newDisplayedPage].canAccess()) {
                 showRestrictedAccess = true;
             }
         }
         if (_pages[_displayedPage + 1]) {
             shownPages.push(_displayedPage + 1);
-            this.displayPage(_displayedPage + 1);
+            self.displayPage(_displayedPage + 1);
             if (!_pages[newDisplayedPage + 1].canAccess()) {
                 showRestrictedAccess = true;
             }
@@ -678,17 +682,17 @@ function Reader(settings) {
             // show "access restricted" lightbox if the displayed page
             // is restricted - the user will be able to close it, 
             // it's just to remind him the page isn't free
-            this.restrictedAccess();
+            self.restrictedAccess();
         }        
-        this.displayPagination();
-        this.bindButtons();
-        this.bindKeyboard();
+        displayPagination();
+        bindButtons();
+        bindKeyboard();
         jQuery(document).trigger('pages-shown', [_displayedBook, shownPages]);
     };
         
-    this.showSelectedPage = function(e) {
+    var showSelectedPage = function(e) {
         e.preventDefault();
-        var tmp = self.parseHashtoGetParams(this.href.split('#!/')[1]);
+        var tmp = parseHashtoGetParams(this.href.split('#!/')[1]);
         var newDisplayedBook = tmp[0];
         var newDisplayedPage = tmp[1] - tmp[1] % 2;
         
@@ -716,7 +720,7 @@ function Reader(settings) {
         self.showPage(_selectedBook.pagination);
     };
     
-    this.sizeKnown = function(e) {
+    var sizeKnown = function(e) {
         var sides = self.evenSideElement.add(self.oddSideElement);
         sides.width(self.pageWidth);
         sides.css('max-height', self.pageHeight + 'px');
@@ -727,22 +731,22 @@ function Reader(settings) {
         jQuery(window).unbind(e);
     };
     
-    this.unHighlightHoveredPages = function(e) {
-        jQuery('#pagesList a.hovered').removeClass('hovered');
+    var unHighlightHoveredPages = function(e) {
+        jQuery('a.hovered', this.pagesListElement).removeClass('hovered');
     };
     
-    this.unHighlightCurrentPages = function(e) {
-        jQuery('#pagesList a.current').removeClass('current');
+    var unHighlightCurrentPages = function(e) {
+        jQuery('a.current', this.pagesListElement).removeClass('current');
     };
     
-    this.highlightCurrentPages = function(book, page) {
+    var highlightCurrentPages = function(book, page) {
         var current = jQuery('#thumb_' + book + '_' + page);
         current.addClass('current');        
     };
       
-    this.highlightHoveredPages = function (e) {
+    var highlightHoveredPages = function (e) {
         // remove old highlight
-        self.unHighlightHoveredPages();
+        unHighlightHoveredPages();
 
         var hovered = jQuery(this);
         var neighbour = jQuery();
@@ -766,8 +770,8 @@ function Reader(settings) {
             newBook = 0;
         }
         if (_displayedBook != newBook) {
-            jQuery('#pagesList').empty();
-            jQuery('#pagesList').css({'left' : 0 });
+            this.pagesListElement.empty()
+                                 .css({'left' : 0 });
             jQuery(this.bookSwitcherELement+' a').removeClass('selected');
             jQuery('#bookThumb-' + parseInt(newBook, 10)).addClass('selected');
         }
@@ -783,7 +787,7 @@ function Reader(settings) {
     
     this.showBook = function (bookToShow, possiblePage) {
 
-        this.hideOldPages();
+        hideOldPages();
         if (!this.changeBook(bookToShow)) {
             return false;
         }
@@ -793,7 +797,7 @@ function Reader(settings) {
             pageToShow = possiblePage;
         }
 
-        jQuery(window).bind('size-known', this.sizeKnown);
+        jQuery(window).bind('size-known', sizeKnown);
         
         _pages = new Array(parseInt(_selectedBook.pagination, 10));
         for (var i = 0; i < _selectedBook.pages.length; i++) {
@@ -806,15 +810,15 @@ function Reader(settings) {
             }
             var a = _pages[i].getThumbnailForList(_displayedBook, 'smallest');
             a.attr({'id' : 'thumb_' + _displayedBook + '_' + i});
-            jQuery('#pagesList').append(a);
-            a.bind('click', this.showSelectedPage);
-            a.bind('mouseover', this.highlightHoveredPages);
+            this.pagesListElement.append(a);
+            a.bind('click', showSelectedPage);
+            a.bind('mouseover', highlightHoveredPages);
         }
         jQuery(document).trigger('book-load', [_selectedBook, _displayedBook]);
         this.showPage(pageToShow);
     };
     
-    this.findPageFromId = function(id) {
+    var findPageFromId = function(id) {
         var len = _publication.books.length;
         for (var i = 0; i < len; i++) {
             var book = _publication.books[i];
@@ -829,7 +833,7 @@ function Reader(settings) {
         return null;
     };
     
-    this.parseHashtoGetParams = function (hash) {
+    var parseHashtoGetParams = function (hash) {
         if (!hash) {
             return [0, 0];
         }
@@ -845,7 +849,7 @@ function Reader(settings) {
         return [bookToShow, possiblePage];
     };
     
-    this.handlePublication = function(data) {
+    var handlePublication = function(data) {
         _publication = data;
         
         // If the publication data contains an access level, use it as the new
@@ -854,24 +858,24 @@ function Reader(settings) {
             self.accessLevelNeeded = parseInt(data.access, 10);
         }
 
-        jQuery('#pagesList').bind('mouseout', self.unHighlightHoveredPages);
+        self.pagesListElement.bind('mouseout', unHighlightHoveredPages);
         
         // Trigger a first event before showing any pages
         jQuery(document).trigger('publication-beforeload', [_publication, self.publicationId]);
         
         var tmp = [0, 0];
         if (location.hash !== "") {
-            tmp = self.parseHashtoGetParams(location.hash.split('#!/')[1]);
+            tmp = parseHashtoGetParams(location.hash.split('#!/')[1]);
         }
         
-        self.showBookList(); // call first, so that we can play with the list in showBook()
+        showBookList(); // call first, so that we can play with the list in showBook()
         self.showBook((tmp[0] || 0), (tmp[1] || 0));
         
-        // TODO: make it sure it does not break anything, and add a prefix to this evenement
+        // TODO: make it sure it does not break anything, and add a prefix to self evenement
         jQuery(document).trigger('publication-load', [data, self.publicationId]);
     };
     
-    this.showBookList = function() {
+    var showBookList = function() {
         var len = _publication.books.length;
         for (var i = 0; i < len; i++) {
             var page = _publication.books[i].pages[0];
@@ -880,31 +884,31 @@ function Reader(settings) {
                 // First page should always be numbered 1. If it's non existant
                 // or if it's not numbered 1, then the first page is still in
                 // construction... Fake it.
-                obj = new Page(this, 1);
+                obj = new Page(self, 1);
             } else {
-                obj = new Page(this, page.page_number, page.id, page.paper_channel, page.maps);
+                obj = new Page(self, page.page_number, page.id, page.paper_channel, page.maps);
             }
             
             var a = obj.getThumbnailForList(i);
             a.attr('id', "bookThumb-" + i);
             a.append('<span class="bookName">' + _publication.books[i].name + '</span>');
             jQuery(this.bookSwitcherElement).append(a);
-            a.bind('click', this.showSelectedPage);
+            a.bind('click', showSelectedPage);
         }
     };
 
-    this.initUI = function () {
+    var initUI = function () {
         // this method handles everything UI
         // slider
-        this.slider = new readerSlider();
-        jQuery('#sliderPrev').bind('mousedown', this.slider.prev);
-        jQuery('#sliderNext').bind('mousedown', this.slider.next);
-        jQuery('#sliderPrev').bind('click', function(e) { e.preventDefault(); });
-        jQuery('#sliderNext').bind('click', function(e) { e.preventDefault(); });
-        jQuery(document).bind('mouseup', this.slider.cancel);
+        self.slider = new readerSlider();
+        jQuery('#sliderPrev').bind('mousedown', self.slider.prev)
+            .bind('click', function(e) { e.preventDefault(); });
+        jQuery('#sliderNext').bind('mousedown', self.slider.next)
+            .bind('click', function(e) { e.preventDefault(); });
+        jQuery(document).bind('mouseup', self.slider.cancel);
 
         // zoom
-        this.zoomButtonElement.click(function (e) {
+        self.zoomButtonElement.click(function (e) {
             if (_isZoomed) {
                 self.quitZoom();
             } else {
@@ -914,22 +918,22 @@ function Reader(settings) {
         });
 
         // corners
-        this.previousCornerElement.hover(this.showHoverCorner, this.hideHoverCorner);
-        this.nextCornerElement.hover(this.showHoverCorner, this.hideHoverCorner);
+        self.previousCornerElement.hover(showHoverCorner, hideHoverCorner);
+        self.nextCornerElement.hover(showHoverCorner, hideHoverCorner);
 
-        if (this.pageHeight) this.bookPagesElement.height(this.pageHeight);
+        if (self.pageHeight) self.bookPagesElement.height(self.pageHeight);
     };
 
-    this.init = function() {
+    var init = function() {
         if (settings.publicationId == 'undefined') {
             throw "What the fuck man ?! are you drunk ? there is no publicationId !";
             return false;
         }
         
-        jQuery.extend(this, this.default_settings, settings);
+        jQuery.extend(self, default_settings, settings);
         for (key in settings) {
             if (typeof(settings[key]) == "object") {
-                $.extend(this, settings[key]);
+                $.extend(self, settings[key]);
             }
         }
 
@@ -940,18 +944,17 @@ function Reader(settings) {
                 jQuery.ajax({
                     url: self.publication.replace('{format}', 'json').replace('{id}', self.publicationId),
                     dataType: "json",
-                    success: self.handlePublication,
+                    success: handlePublication,
                     error: self.defaultError
                 });
         
-                self.initUI();
+                initUI();
             } catch (e) {
-                
             }
         }
 
         jQuery.ajax({
-            'url': this.token.replace('{format}', 'json'),
+            'url': self.token.replace('{format}', 'json'),
             'type': 'post',
             'data' : {'use_session' : 1 },
             'dataType': 'json',
@@ -961,5 +964,5 @@ function Reader(settings) {
     };
     
     // here we go
-    this.init();
+    init();
 };

@@ -174,6 +174,7 @@ var Page = function(reader, pageNumber, pageId, pageChannel, pageMaps) {
     var baseSrc = "";
     // Set thumbnails, they are always visible, unless the page is under construction
     if (this.pageId > 0) {
+        console.log(reader);
         baseSrc = reader.paper_page_resized.replace('{format}', 'jpg').replace('{id}', this.pageId);
         _smallestImageSource = baseSrc.replace('{size}', 'x' + reader.pageSmallThumbnailHeight);
         _smallImageSource    = baseSrc.replace('{size}', 'x' + reader.pageThumbnailHeight);

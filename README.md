@@ -41,6 +41,8 @@ You can build and initialize the reader like this :
 var reader = Reader({'publicationId':45});
 ```
 
+Note : For now, it requires a specific markup, refer to /templates/digitalpaper/base.html
+
 Colorbox
 --------
 
@@ -115,15 +117,27 @@ publicationId is the only mandatory setting, but you can override all of them:
     };
 ```
 
-As a convenience, you can also override any public methods to change digitalpaper's behavior,
-here is a full list:
+As a convenience, you can also override any public methods to change digitalpaper's default behavior,
+by defining them in the settings you pass when instantiating the reader, here is a full list:
 
-* checkAccessLevel
-  note : token_data is the data returned by the token view 
+* checkAccessLevel() 
+* canAccess(pageNumber, pageId) 
+* canZoom(pageNumber, pageId) 
+* canUseMap(pageNumber, pageId) 
+* restrictedAccess() 
+* setSize() 
+* defaultError(xhr, status) 
+* zoom(e) 
+* zoomAtCoordinates(x, y) 
+* quitZoom() 
 
-* canAccess(pageNumber, pageId)
-* canZoom(pageNumber, pageId)
-* canUseMap(pageNumber, pageId)
-
-
-
+Some methods are public but it's not a good idea to override them 
+(but you can call them if you need to hook the digitalpaper with other features): 
+* bookDisplayed() 
+* pageDisplayed() 
+* showPreviousPage(e) 
+* showNextPage(e) 
+* showFirstPage(e) 
+* showLastpage(e) 
+* changeBook(book) 
+* showBook(book, page) 
