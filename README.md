@@ -89,7 +89,7 @@ You can build and initialize the reader like this :
 var reader = Reader({'publicationId':45});
 ```
 
-Note : For now, it requires a specific markup to work properly, refer to [base.html](digitalpaper/templates/digitalpaper/base.html)
+Note : For now, it requires a specific markup to work properly, refer to [the base template](digitalpaper/templates/digitalpaper/base.html)
 
 Colorbox
 --------
