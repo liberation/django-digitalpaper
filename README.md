@@ -30,24 +30,72 @@ Basic usage
 Server side
 -----------
 
-You need at least an ajax view to return the publication object as json
+You need at least an ajax view to return the publication object as json 
+Here is the most basic example of the response data (from the example project): 
+
+```json
+{
+ "books": [
+  {
+   "pagination": 4,
+   "pages": [
+    {
+     "maps": {},
+     "page_number": 1,
+     "id": 1,
+     "paper_channel": ""
+    },
+    {
+     "maps": {},
+     "page_number": 2,
+     "id": 2,
+     "paper_channel": ""
+    },
+    {
+     "maps": {},
+     "page_number": 3,
+     "id": 3,
+     "paper_channel": ""
+    },
+    {
+     "maps": {},
+     "page_number": 4,
+     "id": 4,
+     "paper_channel": ""
+    }
+   ]
+  }
+ ]
+}
+```
+
+And if you need to manage permissions, another ajax view to return the token datas. 
+Here is a basic example, note that the whole object will be available in reader.token_data, 
+so you can add anything like a boolean knowing if the user is authentified, and check for this value 
+in the (overriden) checkAccessLevel method (which is called by default in every permission checking views). 
+
+```json
+{
+ "access_level": false
+}
+```
 
 Client side
 -----------
 
-You can build and initialize the reader like this :
+You can build and initialize the reader like this : 
 
-```javascript
+```javascript 
 var reader = Reader({'publicationId':45});
 ```
 
-Note : For now, it requires a specific markup, refer to /templates/digitalpaper/base.html
+Note : For now, it requires a specific markup to work properly, refer to /templates/digitalpaper/base.html
 
 Colorbox
 --------
 
 We are now using Colorbox as a popup manager, you can change its default 
-behavior by doing something like this:
+behavior by doing something like this: 
 
 ```javascript
 var colorbox_defaults = {
@@ -91,29 +139,6 @@ publicationId is the only mandatory setting, but you can override all of them:
         'imagesPerColumn': 4,
         'zoomFactor': 4,
         'animationStep': 21,
-
-        /********** markup ************/
-        'evenSideElement': jQuery('#evenSide'),
-        'oddSideElement': jQuery('#oddSide'),
-        'restrictedAccessElement': jQuery('#restrictedAccess'),
-        'previousButtonElement': jQuery('#previousButton'),
-        'nextButtonElement': jQuery('#nextButton'),
-        'firstButtonElement': jQuery('#firstButton'),
-        'lastButtonElement': jQuery('#lastButton'),
-        'previousCornerElement': jQuery('#previousCorner'),
-        'nextCornerElement': jQuery('#nextCorner'),
-        'previousButtonsParent': jQuery('#pagesBefore'),
-        'nextButtonsParent': jQuery('#pagesAfter'),
-        'zoomButtonElement': jQuery('#zoomButton'),
-        'bookSwitcherElement': jQuery('#bookSwitcher'),
-        'pagesSliderElement': jQuery('#pagesSlider'),
-        'bookSwitcherElement': jQuery('#bookSwitcher'),
-        'evenPageInfoElement': jQuery('#evenSide .pageInfo'),
-        'oddPageInfoElement': jQuery('#oddSide .pageInfo'),
-        'bookPagesElement': jQuery('#bookPages'),
-        'contentmodelContentElement': jQuery('#contentmodelContent'),
-        'pagesListElement': jQuery('#pagesList'),
-        /******* end of markup ********/
     };
 ```
 
@@ -127,9 +152,6 @@ by defining them in the settings you pass when instantiating the reader, here is
 * restrictedAccess() 
 * setSize() 
 * defaultError(xhr, status) 
-* zoom(e) 
-* zoomAtCoordinates(x, y) 
-* quitZoom() 
 
 Some methods are public but it's not a good idea to override them 
 (but you can call them if you need to hook the digitalpaper with other features): 
@@ -141,3 +163,10 @@ Some methods are public but it's not a good idea to override them
 * showLastpage(e) 
 * changeBook(book) 
 * showBook(book, page) 
+* zoom(e) 
+* zoomAtCoordinates(x, y) 
+* quitZoom() 
+
+If you look at the source file you will notice a list of 'markup' elements in the settings, 
+the goal was to be able to use digitalpaper on any html tree, but for now some functionalities are still heavily tied to the html structure. 
+It will hopefully change in the future. 
