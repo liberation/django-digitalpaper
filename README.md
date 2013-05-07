@@ -89,12 +89,12 @@ You can build and initialize the reader like this :
 var reader = Reader({'publicationId':45});
 ```
 
-Note : For now, it requires a specific markup to work properly, refer to [digitalpaper/templates/digitalpaper/base.html](base.html)
+Note : For now, it requires a specific markup to work properly, refer to [/digitalpaper/templates/digitalpaper/base.html](base.html)
 
 Colorbox
 --------
 
-We are now using [Colorbox](http://http://www.jacklmoore.com/colorbox/) as a popup manager, you can change its default 
+We are now using [Colorbox](http://www.jacklmoore.com/colorbox/) as a popup manager, you can change its default 
 behavior by doing something like this: 
 
 ```javascript
