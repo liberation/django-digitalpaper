@@ -76,12 +76,4 @@ var readerSlider = function() {
         'cancel' : cancel,
         'moveIntoView' : moveIntoView
     };
-}();
-
-jQuery(document).ready(function() {
-    jQuery('#sliderPrev').bind('mousedown', readerSlider.prev);
-    jQuery('#sliderNext').bind('mousedown', readerSlider.next);
-    jQuery('#sliderPrev').bind('click', function(e) { e.preventDefault(); });
-    jQuery('#sliderNext').bind('click', function(e) { e.preventDefault(); });
-    jQuery(document).bind('mouseup', readerSlider.cancel);
-});
+};
