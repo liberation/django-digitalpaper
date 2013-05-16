@@ -327,7 +327,7 @@ function Reader(settings) {
     };
     
     var zoomedKeyboardCallback = function(e) {
-        this.zoomLoadPosInit();
+        zoomLoadPosInit();
         var x = 0;
         var y = 0;
         if (e.ctrlKey) {
@@ -337,7 +337,10 @@ function Reader(settings) {
                 case 40: // bottom
                     self.quitZoom();
                     e.preventDefault();
-                    break;
+                case 107:
+                case 38:
+                case 61:
+                    e.prevenDefault();
                 default:
                     break;
             }
