@@ -352,8 +352,7 @@ class PaperPageThumbnail(object):
                 '-resize',
                 '%s' % size,
                 '-antialias',
-                '-colorspace', 'rgb',
-                '-quality', '90',
+                '-quality', '95',
                 big_filename,
                 thumb_filename
         )
